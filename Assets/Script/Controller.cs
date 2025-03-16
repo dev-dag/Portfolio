@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Controller : MonoBehaviour
+public class Controller : BaseObject
 {
     [SerializeField] private Rigidbody2D targetRB;
     [SerializeField] private PlayerInfo playerInfo;
@@ -10,8 +10,10 @@ public class Controller : MonoBehaviour
     private InputActionMap actionMap;
     private InputAction moveAction;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         inputAction.Enable();
 
         actionMap = inputAction.FindActionMap("Player");
@@ -28,8 +30,10 @@ public class Controller : MonoBehaviour
         jumpAction.started -= OnJump;
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
+
         // 이동 입력 처리
         if (moveAction.IsPressed())
         {
