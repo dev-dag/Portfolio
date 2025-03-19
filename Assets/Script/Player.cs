@@ -15,6 +15,8 @@ public class Player : BaseObject
         public static readonly int DEAD = Animator.StringToHash("Die");
     }
 
+    public static Player Current { get; private set; }
+
     [SerializeField] private InputActionAsset inputAction;
 
     [Space(20f)]
@@ -33,7 +35,17 @@ public class Player : BaseObject
     {
         base.Awake();
 
+        if (Current == null)
+        {
+            Current = this;
+        }
+
         ActiveInput();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
 
         InitStatus();
     }
@@ -43,6 +55,11 @@ public class Player : BaseObject
         base.Update();
 
         BT_Root.Tick(new TimeData(Time.deltaTime));
+    }
+
+    private void OnDestroy()
+    {
+        Current = null;
     }
 
     public void InitStatus()
