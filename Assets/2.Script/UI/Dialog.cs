@@ -14,6 +14,8 @@ public class Dialog : BaseObject
     private List<string> dialogList;
     private int currentIndex = 0;
 
+    private Awaitable typingAwaiter = null;
+
     protected override void Awake()
     {
         base.Awake();
@@ -56,7 +58,24 @@ public class Dialog : BaseObject
     /// </summary>
     private void SetDialog()
     {
-        dialogTMP.text = dialogList[currentIndex];
+        if (typingAwaiter != null) // 타이핑중인 경우
+        {
+            typingAwaiter.Cancel(); // 타이핑 로직을 취소하고 즉시 전체 텍스트를 출력함.
+            typingAwaiter = null;
+
+            dialogTMP.text = dialogList[currentIndex];
+        }
+        else // 다음 다이얼로그로 진행 or 종료
+        {
+            if (dialogList.Count > currentIndex)
+            {
+                typingAwaiter = TypingText();
+            }
+            else
+            {
+                OnDialogEnd();
+            }
+        }
     }
 
     /// <summary>
@@ -64,16 +83,12 @@ public class Dialog : BaseObject
     /// </summary>
     private void OnContinueDialog(InputAction.CallbackContext args)
     {
-        currentIndex++;
+        if (typingAwaiter == null)
+        {
+            currentIndex++; 
+        }
 
-        if (dialogList.Count > currentIndex)
-        {
-            SetDialog();
-        }
-        else
-        {
-            OnDialogEnd();
-        }
+        SetDialog();
     }
 
     /// <summary>
@@ -91,15 +106,27 @@ public class Dialog : BaseObject
 
         // 프로퍼티 상태 변경
         IsActing = false;
-
-        NotifyDialogEnd();
     }
 
-    /// <summary>
-    /// 다이얼로그가 끝났음을 이벤트로 전달하는 함수
-    /// </summary>
-    private void NotifyDialogEnd()
+    private async Awaitable TypingText()
     {
+        dialogTMP.text = string.Empty;
 
+        string typingBuffer = string.Empty;
+        int typingIndex = 0;
+
+        while (dialogTMP.text.Length < dialogList[currentIndex].Length)
+        {
+            typingBuffer = $"{typingBuffer}{dialogList[currentIndex][typingIndex]}";
+            dialogTMP.text = typingBuffer;
+
+            typingIndex++;
+
+            await Awaitable.WaitForSecondsAsync(0.01f);
+        }
+
+        typingAwaiter = null;
+
+        return;
     }
 }

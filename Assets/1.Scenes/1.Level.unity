@@ -372,7 +372,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d00f724f67a51004f8d0a4c550187b4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputAction: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   playerInfo: {fileID: 11400000, guid: 3d159c8ce19c9254ba4309b893e06256, type: 2}
   RB: {fileID: 240202520}
   anim: {fileID: 624713688}
@@ -7579,8 +7578,8 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
-  m_VerticalAlignment: 512
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -7673,7 +7672,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c94539b22a56ec4196b50b630623c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputActionAsset: {fileID: 0}
   dialogTMP: {fileID: 1776124635}
   contentObject: {fileID: 720079150}
 --- !u!1660057539 &9223372036854775807
