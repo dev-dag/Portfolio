@@ -17,8 +17,6 @@ public class Player : BaseObject
 
     public static Player Current { get; private set; }
 
-    [SerializeField] private InputActionAsset inputAction;
-
     [Space(20f)]
     [SerializeField] private PlayerInfo playerInfo;
     [SerializeField] private Rigidbody2D RB;
@@ -77,9 +75,7 @@ public class Player : BaseObject
 
     private void ActiveInput()
     {
-        inputAction.Enable();
-
-        actionMap = inputAction.FindActionMap("Player");
+        actionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("Player");
 
         moveAction = actionMap.FindAction("Move");
         jumpAction = actionMap.FindAction("Jump");

@@ -1,10 +1,14 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class GameManager : SingleTon<GameManager>
 {
+    public InputActionAsset globalInputActionAsset;
+
+    [Space(20f)]
     public DataContainer data;
-    public UI_Manager uiManager;
+    [HideInInspector] public UI_Manager uiManager;
 
     protected override void Awake()
     {
@@ -22,6 +26,8 @@ public class GameManager : SingleTon<GameManager>
     private async Awaitable LoadLevelScene()
     {
         await SceneManager.LoadSceneAsync(1);
+
+        globalInputActionAsset.Enable(); // ¿Œ«≤ »∞º∫»≠
 
         Caching();
     }

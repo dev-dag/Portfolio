@@ -673,6 +673,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3b98798ed5c81745a988b12dbc511a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dialogID: 0
+  overheadDialogID: 0
   overheadUI_Offset: {x: 0, y: 1}
   overheadUI_Distance: 8
   gKeyIconDistance: 2
@@ -1289,6 +1291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   overheadUI_Pool: {fileID: 1168184960}
+  dialog: {fileID: 1799293737}
 --- !u!1 &1505549625
 GameObject:
   m_ObjectHideFlags: 0
@@ -7637,7 +7640,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1799293736
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7670,6 +7673,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c94539b22a56ec4196b50b630623c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputActionAsset: {fileID: 0}
+  dialogTMP: {fileID: 1776124635}
+  contentObject: {fileID: 720079150}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
