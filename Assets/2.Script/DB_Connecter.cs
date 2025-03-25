@@ -52,11 +52,22 @@ public class DB_Connecter
                 dataContainer.overheadDialog.Add(table.ID, table);
             }
         }
+
+        // Quest ·Îµå
+        {
+            var result = connection.Query<Database_Table.Quest>("select * from quest");
+
+            foreach (var table in result)
+            {
+                dataContainer.quest.Add(table.ID, table);
+            }
+        }
     }
 }
 
 public class DataContainer
 {
     public Dictionary<int, List<Database_Table.Dialog>> dialog = new Dictionary<int, List<Database_Table.Dialog>>(); // Dictionary<Dialog.ID, Dialog>
-    public Dictionary<int, OverheadDialog> overheadDialog = new Dictionary<int, OverheadDialog>(); // Dictionary<OverheadDialog.ID, OverheadDialog>
+    public Dictionary<int, Database_Table.OverheadDialog> overheadDialog = new Dictionary<int, Database_Table.OverheadDialog>(); // Dictionary<OverheadDialog.ID, OverheadDialog>
+    public Dictionary<int, Database_Table.Quest> quest = new Dictionary<int, Database_Table.Quest>(); // Dictionary<Quest.ID, Quest>
 }
