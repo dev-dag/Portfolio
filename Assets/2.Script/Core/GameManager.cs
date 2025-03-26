@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : SingleTon<GameManager>
 {
     public InputActionAsset globalInputActionAsset;
+    public QuestSystem questSystem;
 
     [Space(20f)]
     public DataContainer data;
@@ -19,6 +20,8 @@ public class GameManager : SingleTon<GameManager>
         DB_Connecter dbConnecter = new DB_Connecter();
 
         data = dbConnecter.ConnectAndLoadDB();
+
+        questSystem.Init();
 
         LoadLevelScene();
     }

@@ -36,10 +36,10 @@ public class DB_Connecter
             {
                 if (dataContainer.dialog.ContainsKey(table.ID) == false)
                 {
-                    dataContainer.dialog.Add(table.ID, new List<Database_Table.Dialog>());
+                    dataContainer.dialog.Add(table.ID, new DialogWrapper(table.ID));
                 }
 
-                dataContainer.dialog[table.ID].Add(table);
+                dataContainer.dialog[table.ID].DialogText.Add(table.Index, table.DialogText);
             }
         }
 
@@ -67,7 +67,7 @@ public class DB_Connecter
 
 public class DataContainer
 {
-    public Dictionary<int, List<Database_Table.Dialog>> dialog = new Dictionary<int, List<Database_Table.Dialog>>(); // Dictionary<Dialog.ID, Dialog>
+    public Dictionary<int, DialogWrapper> dialog = new Dictionary<int, DialogWrapper>(); // Dictionary<Dialog.ID, DialogWrapper>
     public Dictionary<int, Database_Table.OverheadDialog> overheadDialog = new Dictionary<int, Database_Table.OverheadDialog>(); // Dictionary<OverheadDialog.ID, OverheadDialog>
     public Dictionary<int, Database_Table.Quest> quest = new Dictionary<int, Database_Table.Quest>(); // Dictionary<Quest.ID, Quest>
 }
