@@ -20,14 +20,14 @@ namespace Database_Table
     public class DialogWrapper
     {
         public int ID { get; private set; }
-        public Dictionary<int, string> DialogText { get; private set; } // Dictionary<Index, DialogText>
+        public List<string> DialogTextList { get; private set; } // List<DialogText>
 
         private DialogWrapper() {}
 
         public DialogWrapper(int ID)
         {
             this.ID = ID;
-            DialogText = new Dictionary<int, string>();
+            DialogTextList = new List<string>();
         }
     }
 }

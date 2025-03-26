@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine.InputSystem;
 public class Dialog : BaseObject
 {
     public bool IsActing { get; private set; } = false;
+    public event Action onDialogEndEvent;
 
     [SerializeField] private TMP_Text dialogTMP;
     [SerializeField] private GameObject contentObject;
@@ -35,9 +37,11 @@ public class Dialog : BaseObject
         continueDialogAction.started -= OnContinueDialog;
     }
 
-    public void StartDialog(List<string> dialogList)
+    public void StartDialog(List<string> dialogList, Action callback = null)
     {
         this.dialogList = dialogList;
+
+        onDialogEndEvent += callback;
 
         if (dialogList.Count == 0)
         {
@@ -106,6 +110,9 @@ public class Dialog : BaseObject
 
         // 프로퍼티 상태 변경
         IsActing = false;
+
+        onDialogEndEvent?.Invoke();
+        onDialogEndEvent = null;
     }
 
     private async Awaitable TypingText()

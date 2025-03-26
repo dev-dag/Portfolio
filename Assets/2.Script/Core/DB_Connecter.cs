@@ -30,7 +30,7 @@ public class DB_Connecter
 
         // Dialog ·Îµå
         {
-            var result = connection.Query<Database_Table.Dialog>("select * from dialog");
+            var result = connection.Query<Database_Table.Dialog>("select * from dialog order by `id` asc, `index` asc");
 
             foreach (var table in result)
             {
@@ -39,7 +39,7 @@ public class DB_Connecter
                     dataContainer.dialog.Add(table.ID, new DialogWrapper(table.ID));
                 }
 
-                dataContainer.dialog[table.ID].DialogText.Add(table.Index, table.DialogText);
+                dataContainer.dialog[table.ID].DialogTextList.Add(table.DialogText);
             }
         }
 

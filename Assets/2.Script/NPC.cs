@@ -1,23 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class NPC : BaseObject
 {
-    public bool IsInit { get; private set; } = false;
+    public bool IsInit { get; protected set; } = false;
 
-    public int dialogID = -1;
-    public int overheadDialogID = -1;
+    [SerializeField] protected NPC_Data NPC_Data;
 
-    [Space(20f)]
-    [SerializeField] private Vector2 overheadUI_Offset;
-    [SerializeField] private float overheadUI_Distance;
-    [SerializeField] private float gKeyIconDistance;
-
-    private OverheadUI overheadUI;
+    protected OverheadUI overheadUI;
     private InputAction startDialogAction;
 
     private bool isG_KeyIconActive = false;
@@ -44,7 +37,10 @@ public class NPC : BaseObject
     {
         if (IsInit)
         {
-            CheckDistanceWithPlayer();
+            if (NPC_Data.dialogID != -1 && NPC_Data.overheadDialogID != -1)
+            {
+                CheckDistanceWithPlayer();
+            }
         }
     }
 
@@ -53,24 +49,33 @@ public class NPC : BaseObject
         startDialogAction.started -= OnStartDialog;
     }
 
+    /// <summary>
+    /// 다이얼로그 인스턴스 생성
+    /// </summary>
     private void MakeOverheadUI()
     {
         overheadUI = GameManager.Instance.uiManager.overheadUI_Pool.Burrow<OverheadUI>();
     }
 
-    private void Init()
+    /// <summary>
+    /// 다이얼로그 및 멤버필드 변수 초기화
+    /// </summary>
+    protected virtual void Init()
     {
         MakeOverheadUI();
 
         RectTransform overheadUI_RTR = overheadUI.GetComponent<RectTransform>();
-        overheadUI_RTR.anchoredPosition = (Vector2)transform.position + overheadUI_Offset;
+        overheadUI_RTR.anchoredPosition = (Vector2)transform.position + NPC_Data.overheadUI_Offset;
 
-        overheadUI.SetText(GameManager.Instance.data.overheadDialog[0].DialogText);
         overheadUI.Active(OverheadUI.Feature.ALL, false);
+        SetOverheadDialog();
 
         isG_KeyIconActive = false;
 
-        CheckDistanceWithPlayer();
+        if (HasDialog() || HasOverheadDialog())
+        {
+            CheckDistanceWithPlayer();
+        }
         
         IsInit = true;
     }
@@ -84,28 +89,35 @@ public class NPC : BaseObject
         {
             Vector2 distance = transform.position - Player.Current.transform.position;
 
-            // 오버헤드 다이얼로그 발생 조건 체크
-            if (Math.Abs(distance.x) < overheadUI_Distance && Math.Abs(distance.y) < overheadUI_Distance)
+            if (HasOverheadDialog())
             {
-                overheadUI.Active(OverheadUI.Feature.Dialog, true);
-            }
-            else
-            {
-                overheadUI.Active(OverheadUI.Feature.Dialog, false);
+                // 오버헤드 다이얼로그 발생 조건 체크
+                if (Math.Abs(distance.x) < NPC_Data.overheadUI_Distance && Math.Abs(distance.y) < NPC_Data.overheadUI_Distance)
+                {
+                    SetOverheadDialog();
+                    overheadUI.Active(OverheadUI.Feature.Dialog, true);
+                }
+                else
+                {
+                    overheadUI.Active(OverheadUI.Feature.Dialog, false);
+                }
             }
 
-            // G Key UI 발생 조건 체크
-            if (GameManager.Instance.uiManager.dialog.IsActing)
+            if (HasDialog())
             {
-                SetActiveGKeyIcon(false);
-            }
-            else if (Math.Abs(distance.x) < gKeyIconDistance && Math.Abs(distance.y) < gKeyIconDistance)
-            {
-                SetActiveGKeyIcon(true);
-            }
-            else
-            {
-                SetActiveGKeyIcon(false);
+                // G Key UI 발생 조건 체크
+                if (GameManager.Instance.uiManager.dialog.IsActing)
+                {
+                    SetActiveGKeyIcon(false);
+                }
+                else if (Math.Abs(distance.x) < NPC_Data.gKeyIconDistance && Math.Abs(distance.y) < NPC_Data.gKeyIconDistance)
+                {
+                    SetActiveGKeyIcon(true);
+                }
+                else
+                {
+                    SetActiveGKeyIcon(false);
+                }
             }
 
             await Awaitable.WaitForSecondsAsync(0.1f);
@@ -141,22 +153,60 @@ public class NPC : BaseObject
     private void OnStartDialog(InputAction.CallbackContext args)
     {
         Vector2 distance = transform.position - Player.Current.transform.position;
-
-        if (Math.Abs(distance.x) < gKeyIconDistance && Math.Abs(distance.y) < gKeyIconDistance)
+        
+        if (Math.Abs(distance.x) < NPC_Data.gKeyIconDistance && Math.Abs(distance.y) < NPC_Data.gKeyIconDistance)
         {
-            StartDialog();
+            SetDialog();
         }
     }
 
-    private void StartDialog()
+    /// <summary>
+    /// 출력 가능한 다이얼로그가 있는 경우 True 반환
+    /// </summary>
+    protected virtual bool HasDialog()
     {
-        if (GameManager.Instance.uiManager.dialog.IsActing)
+        if (NPC_Data.dialogID != -1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 출력 가능한 오버헤드 다이얼로그가 있는 경우 True 반환
+    /// </summary>
+    protected virtual bool HasOverheadDialog()
+    {
+        if (NPC_Data.overheadDialogID != -1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// 다이얼로그 인스턴스를 사용해 대화 시작
+    /// </summary>
+    protected virtual void SetDialog()
+    {
+        if (GameManager.Instance.uiManager.dialog.IsActing || HasDialog() == false)
         {
             return;
         }
 
-        List<string> stringList = GameManager.Instance.data.dialog[dialogID].Select((dialog) => dialog.DialogText).ToList();
+        List<string> stringList = GameManager.Instance.data.dialog[NPC_Data.dialogID].DialogTextList;
 
         GameManager.Instance.uiManager.dialog.StartDialog(stringList);
+    }
+
+    protected virtual void SetOverheadDialog()
+    {
+        overheadUI.SetText(GameManager.Instance.data.overheadDialog[NPC_Data.overheadDialogID].DialogText);
     }
 }
