@@ -44,6 +44,11 @@ public class NPC : BaseObject, IInteractable
         }
     }
 
+    private void OnDestroy()
+    {
+        overheadUI.Return();
+    }
+
     /// <summary>
     /// 다이얼로그 인스턴스 생성
     /// </summary>

@@ -24,6 +24,11 @@ public class Portal : BaseObject, IInteractable
         levelSelector.onExitEventHandler += OnInteractionExit;
     }
 
+    private void OnDestroy()
+    {
+        overheadUI.Return();
+    }
+
     public void CancelInteraction()
     {
         levelSelector.Disable();
