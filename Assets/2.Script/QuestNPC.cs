@@ -74,7 +74,7 @@ public class QuestNPC : NPC
         return result;
     }
 
-    protected override void SetDialog()
+    protected override void StartDialog()
     {
         if (GameManager.Instance.uiManager.dialog.IsActing)
         {
@@ -108,7 +108,7 @@ public class QuestNPC : NPC
             }
         }
 
-        base.SetDialog();
+        base.StartDialog();
     }
 
     protected override void SetOverheadDialog()
@@ -121,7 +121,7 @@ public class QuestNPC : NPC
 
                 if (text != null)
                 {
-                    overheadUI.SetText(quest.GetOverheadDialog());
+                    overheadUI.SetDialogText(quest.GetOverheadDialog());
                     return;
                 }
             }

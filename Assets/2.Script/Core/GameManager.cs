@@ -4,12 +4,41 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : SingleTon<GameManager>
 {
+    [Space(20f)]
     public InputActionAsset globalInputActionAsset;
     public QuestSystem questSystem;
 
     [Space(20f)]
     public DataContainer data;
     [HideInInspector] public UI_Manager uiManager;
+
+    [Space(20f), Header("Level Prefabs")]
+    [SerializeField] private GameObject UI_Prefab;
+    [SerializeField] private GameObject baseHomeLevelPrefab;
+    [SerializeField] private GameObject dungeonLevelPrefab;
+
+    /// <summary>
+    /// ¸Ê º¯°æ ÇÔ¼ö
+    /// </summary>
+    /// <param name="ID">¸Ê ID</param>
+    public void ChangeMap(int ID)
+    {
+        switch (ID)
+        {
+            case 0:
+            {
+                Destroy(LevelControl.Current.gameObject);
+                GameObject.Instantiate(baseHomeLevelPrefab);
+                break;
+            }
+            case 1:
+            {
+                Destroy(LevelControl.Current.gameObject);
+                GameObject.Instantiate(dungeonLevelPrefab);
+                break;
+            }
+        }
+    }
 
     protected override void Awake()
     {
@@ -23,26 +52,15 @@ public class GameManager : SingleTon<GameManager>
 
         questSystem.Init();
 
-        LoadLevelScene();
-    }
-
-    private async Awaitable LoadLevelScene()
-    {
-        await SceneManager.LoadSceneAsync(1);
-
         globalInputActionAsset.Enable(); // ÀÎÇ² È°¼ºÈ­
 
-        Caching();
+        CreatePrefab();
     }
 
-    private void Caching()
+    private void CreatePrefab()
     {
-        // UI ¸Å´ÏÀú Ä³½Ì
-        uiManager = GameObject.FindWithTag("UI_Manager")?.GetComponent<UI_Manager>();
+        uiManager = GameObject.Instantiate(UI_Prefab).GetComponent<UI_Manager>();
 
-        if (uiManager == null)
-        {
-            Debug.LogError("UI Manager ÂüÁ¶ Ä³½Ì ½ÇÆÐ");
-        }
+        GameObject.Instantiate(baseHomeLevelPrefab);
     }
 }

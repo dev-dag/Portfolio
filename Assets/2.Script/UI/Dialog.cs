@@ -34,7 +34,7 @@ public class Dialog : BaseObject
     private void OnDisable()
     {
         // 인풋 액션에 이벤트가 남아있으면 제거
-        continueDialogAction.started -= OnContinueDialog;
+        continueDialogAction.performed -= OnContinueDialog;
     }
 
     public void StartDialog(List<string> dialogList, Action callback = null)
@@ -52,9 +52,17 @@ public class Dialog : BaseObject
 
         IsActing = true;
 
-        continueDialogAction.started += OnContinueDialog;
+        continueDialogAction.performed += OnContinueDialog;
 
         SetDialog();
+    }
+
+    /// <summary>
+    /// 다이얼로그를 정지하는 함수
+    /// </summary>
+    public void StopDialog()
+    {
+        OnDialogEnd();
     }
 
     /// <summary>
@@ -106,13 +114,19 @@ public class Dialog : BaseObject
         this.gameObject.SetActive(false);
 
         // 인풋 액션에 달아놓은 이벤트 제거
-        continueDialogAction.started -= OnContinueDialog;
+        continueDialogAction.performed -= OnContinueDialog;
 
         // 프로퍼티 상태 변경
         IsActing = false;
 
         onDialogEndEvent?.Invoke();
         onDialogEndEvent = null;
+
+        if (typingAwaiter != null)
+        {
+            typingAwaiter.Cancel();
+            typingAwaiter = null;
+        }
     }
 
     private async Awaitable TypingText()

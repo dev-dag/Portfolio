@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class NPC : BaseObject
+[RequireComponent(typeof(BoxCollider2D))]
+public class NPC : BaseObject, IInteractable
 {
     public bool IsInit { get; protected set; } = false;
 
@@ -13,13 +15,11 @@ public class NPC : BaseObject
     protected OverheadUI overheadUI;
     private InputAction startDialogAction;
 
-    private bool isG_KeyIconActive = false;
-
     protected override void Awake()
     {
         base.Awake();
 
-        startDialogAction = GameManager.Instance.globalInputActionAsset.FindActionMap("UI")?.FindAction("StartDialog");
+        startDialogAction = GameManager.Instance.globalInputActionAsset.FindActionMap("UI")?.FindAction("Interact");
         if (startDialogAction == null)
         {
             Debug.LogError("Input Action 참조 오류");
@@ -37,16 +37,11 @@ public class NPC : BaseObject
     {
         if (IsInit)
         {
-            if (NPC_Data.dialogID != -1 && NPC_Data.overheadDialogID != -1)
+            if (NPC_Data.overheadDialogID != -1)
             {
                 CheckDistanceWithPlayer();
             }
         }
-    }
-
-    private void OnDisable()
-    {
-        startDialogAction.started -= OnStartDialog;
     }
 
     /// <summary>
@@ -67,12 +62,10 @@ public class NPC : BaseObject
         RectTransform overheadUI_RTR = overheadUI.GetComponent<RectTransform>();
         overheadUI_RTR.anchoredPosition = (Vector2)transform.position + NPC_Data.overheadUI_Offset;
 
-        overheadUI.Active(OverheadUI.Feature.ALL, false);
+        overheadUI.Enable();
         SetOverheadDialog();
 
-        isG_KeyIconActive = false;
-
-        if (HasDialog() || HasOverheadDialog())
+        if (HasOverheadDialog())
         {
             CheckDistanceWithPlayer();
         }
@@ -95,68 +88,22 @@ public class NPC : BaseObject
                 if (Math.Abs(distance.x) < NPC_Data.overheadUI_Distance && Math.Abs(distance.y) < NPC_Data.overheadUI_Distance)
                 {
                     SetOverheadDialog();
-                    overheadUI.Active(OverheadUI.Feature.Dialog, true);
+
+                    if (overheadUI.IsActive(OverheadUI.Feature.Dialog) == false)
+                    {
+                        overheadUI.ActiveDialog(true);
+                    }
                 }
                 else
                 {
-                    overheadUI.Active(OverheadUI.Feature.Dialog, false);
+                    if (overheadUI.IsActive(OverheadUI.Feature.Dialog) == true)
+                    {
+                        overheadUI.ActiveDialog(false);
+                    }
                 }
             }
 
-            if (HasDialog())
-            {
-                // G Key UI 발생 조건 체크
-                if (GameManager.Instance.uiManager.dialog.IsActing)
-                {
-                    SetActiveGKeyIcon(false);
-                }
-                else if (Math.Abs(distance.x) < NPC_Data.gKeyIconDistance && Math.Abs(distance.y) < NPC_Data.gKeyIconDistance)
-                {
-                    SetActiveGKeyIcon(true);
-                }
-                else
-                {
-                    SetActiveGKeyIcon(false);
-                }
-            }
-
-            await Awaitable.WaitForSecondsAsync(0.1f);
-        }
-    }
-
-    /// <summary>
-    /// G Key 아이콘을 노출하고 키보드 입력 이벤트를 등록/해지하는 함수
-    /// </summary>
-    /// <param name="isActive"></param>
-    private void SetActiveGKeyIcon(bool isActive)
-    {
-        if (isG_KeyIconActive != isActive) // 값이 변한 경우에 이벤트 등록/해지
-        {
-            if (isActive == true)
-            {
-                startDialogAction.started += OnStartDialog;
-            }
-            else
-            {
-                startDialogAction.started -= OnStartDialog;
-            }
-
-            isG_KeyIconActive = isActive;
-        }
-
-        overheadUI.Active(OverheadUI.Feature.GKeyIcon, isActive);
-    }
-
-    /// <summary>
-    /// StartDialog Input이 발생했을 때 호출되는 함수. 플레이어와의 거리를 사용해 필터링 한 후 notify
-    /// </summary>
-    private void OnStartDialog(InputAction.CallbackContext args)
-    {
-        Vector2 distance = transform.position - Player.Current.transform.position;
-        
-        if (Math.Abs(distance.x) < NPC_Data.gKeyIconDistance && Math.Abs(distance.y) < NPC_Data.gKeyIconDistance)
-        {
-            SetDialog();
+            await Awaitable.WaitForSecondsAsync(0.5f);
         }
     }
 
@@ -193,7 +140,7 @@ public class NPC : BaseObject
     /// <summary>
     /// 다이얼로그 인스턴스를 사용해 대화 시작
     /// </summary>
-    protected virtual void SetDialog()
+    protected virtual void StartDialog()
     {
         if (GameManager.Instance.uiManager.dialog.IsActing || HasDialog() == false)
         {
@@ -207,6 +154,34 @@ public class NPC : BaseObject
 
     protected virtual void SetOverheadDialog()
     {
-        overheadUI.SetText(GameManager.Instance.data.overheadDialog[NPC_Data.overheadDialogID].DialogText);
+        overheadUI.SetDialogText(GameManager.Instance.data.overheadDialog[NPC_Data.overheadDialogID].DialogText);
+    }
+
+    public bool IsInteractable()
+    {
+        return HasDialog();
+    }
+
+    public void SetInteractionGuide(bool isActive)
+    {
+        overheadUI.ActiveG_Key(isActive);
+    }
+
+    public void StartInteraction(Action interactionCallback)
+    {
+        overheadUI.gameObject.SetActive(false);
+
+        StartDialog();
+
+        GameManager.Instance.uiManager.dialog.onDialogEndEvent += () =>
+        {
+            interactionCallback?.Invoke();
+            overheadUI.gameObject.SetActive(true);
+        };
+    }
+
+    public void CancelInteraction()
+    {
+        GameManager.Instance.uiManager.dialog.StopDialog();
     }
 }

@@ -19,6 +19,13 @@ public class OverheadUI : PoolingObject
 
     public TMP_Text dialogTMP;
 
+    public override void Enable()
+    {
+        base.Enable();
+
+        Active(Feature.ALL, false);
+    }
+
     public void Active(Feature feature, bool isActive)
     {
         int flag = (int)feature;
@@ -34,7 +41,34 @@ public class OverheadUI : PoolingObject
         }
     }
 
-    public void SetText(string text)
+    public bool IsActive(Feature feature)
+    {
+        int flag = (int)feature;
+
+        if ((flag & (int)Feature.Dialog) > 0)
+        {
+            return dialogObject.activeInHierarchy;
+        }
+
+        if ((flag & (int)Feature.GKeyIcon) > 0)
+        {
+            return gKeyObject.activeInHierarchy;
+        }
+
+        return false;
+    }
+
+    public void ActiveDialog(bool isActive)
+    {
+        dialogObject.SetActive(isActive);
+    }
+
+    public void ActiveG_Key(bool isActive)
+    {
+        gKeyObject.SetActive(isActive);
+    }
+
+    public void SetDialogText(string text)
     {
         dialogTMP.text = text;
     }

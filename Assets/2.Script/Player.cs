@@ -2,9 +2,13 @@ using UnityEngine;
 using FluentBehaviourTree;
 using UnityEngine.InputSystem;
 using System.Timers;
+using Unity.Cinemachine;
+using UnityEngine.Rendering;
 
 public class Player : BaseObject
 {
+    private const string INTERACTABLE_OBJECT_LAYER_NAME = "InteractableObject";
+
     public struct AnimHash
     {
         public static readonly int IDLE = Animator.StringToHash("Idle");
@@ -22,30 +26,33 @@ public class Player : BaseObject
     [SerializeField] private Rigidbody2D RB;
     [SerializeField] private Animator anim;
 
+    [Space(20f)]
+    [SerializeField] private float interactableDistance = 2f;
+
     private IBehaviourTreeNode BT_Root;
 
-    private InputActionMap actionMap;
     private InputAction moveAction;
     private InputAction jumpAction;
     private InputAction attackAction;
+    private InputAction interactAction;
+
+    private IInteractable interactionCurrent; // 현재 인터렉션 가능한 대상
+    private bool onInteration = false;
 
     protected override void Awake()
     {
         base.Awake();
 
-        if (Current == null)
-        {
-            Current = this;
-        }
+        Current = this;
 
-        ActiveInput();
+        Init();
+
+        AttachCamera();
     }
 
     protected override void Start()
     {
         base.Start();
-
-        InitStatus();
     }
 
     protected override void Update()
@@ -53,6 +60,8 @@ public class Player : BaseObject
         base.Update();
 
         BT_Root.Tick(new TimeData(Time.deltaTime));
+
+        CheckInteraction();
     }
 
     private void OnDestroy()
@@ -60,9 +69,14 @@ public class Player : BaseObject
         Current = null;
     }
 
-    public void InitStatus()
+    private void OnEnable()
     {
-        playerInfo.Init();
+        interactAction.performed += OnInteract;
+    }
+
+    private void OnDisable()
+    {
+        interactAction.performed -= OnInteract;
     }
 
     /// <summary>
@@ -73,13 +87,78 @@ public class Player : BaseObject
         return playerInfo.HP > 0f ? false : true;
     }
 
-    private void ActiveInput()
+    /// <summary>
+    /// 상호작용 UI 사용 가능 여부 체크
+    /// </summary>
+    private void CheckInteraction()
     {
-        actionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("Player");
+        if (onInteration) // 상호작용 중인경우 반환
+        {
+            return;
+        }
+
+        RaycastHit2D[] hitArr = Physics2D.BoxCastAll(transform.position, Vector2.one * interactableDistance, 0f, Vector2.up, 0f, LayerMask.GetMask(INTERACTABLE_OBJECT_LAYER_NAME));
+        if (hitArr == null || hitArr.Length == 0)
+        {
+            if (interactionCurrent != null)
+            {
+                interactionCurrent.SetInteractionGuide(false);
+                interactionCurrent = null;
+            }
+
+            return;
+        }
+
+        foreach (RaycastHit2D hit in hitArr)
+        {
+            IInteractable interactableHit = hit.collider.GetComponent<IInteractable>();
+
+            if (interactableHit.IsInteractable() == false) // 상호작용 불가능한 대상 제외
+            {
+                continue;
+            }
+
+            if (interactionCurrent == null)
+            {
+                interactionCurrent = interactableHit;
+
+                interactionCurrent.SetInteractionGuide(true);
+            }
+            else if (interactableHit != interactionCurrent) // 현재 상호작용 가능한 대상 갱신 후 반환
+            {
+                interactionCurrent.SetInteractionGuide(false);
+                interactionCurrent = interactableHit;
+
+                interactionCurrent.SetInteractionGuide(true);
+
+                return;
+            }
+        }
+    }
+
+    private void AttachCamera()
+    {
+        var cam = GameObject.FindWithTag("MainCamera");
+        var cineCam = cam.GetComponent<CinemachineCamera>();
+        cineCam.Target = new CameraTarget()
+        {
+            TrackingTarget = this.transform
+        };
+    }
+
+    private void Init()
+    {
+        InputActionMap actionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("Player");
 
         moveAction = actionMap.FindAction("Move");
         jumpAction = actionMap.FindAction("Jump");
         attackAction = actionMap.FindAction("Attack");
+
+        // UI 입력 초기화
+        InputActionMap UI_ActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("UI");
+        interactAction = UI_ActionMap.FindAction("Interact");
+
+        playerInfo.Init();
 
         BT_Root = MakeBehaviourTree();
     }
@@ -143,6 +222,9 @@ public class Player : BaseObject
                             .Do("Run/Idle 애니메이션", DoOnIdleAndRun)
                         .End()
                     .End()
+                .End()
+
+                .Do("Run/Idle 애니메이션", DoOnIdleAndRun)
             .End();
 
             return builder.Build();
@@ -205,10 +287,15 @@ public class Player : BaseObject
     }
 
     /// <summary>
-    /// 기본 입력 처리
+    /// 좌, 우 이동 입력 처리
     /// </summary>
     private BehaviourTreeStatus DoDefaultInputProc(TimeData t)
     {
+        if (onInteration)
+        {
+            return BehaviourTreeStatus.Failure;
+        }
+
         if (moveAction.IsPressed() && moveAction.IsInProgress())
         {
             Vector2 dir = moveAction.ReadValue<Vector2>();
@@ -235,4 +322,22 @@ public class Player : BaseObject
 
         return BehaviourTreeStatus.Success;
     }
+
+    private void OnInteract(InputAction.CallbackContext context)
+    {
+        if (interactionCurrent == null
+            || onInteration == true)
+        {
+            return;
+        }
+
+        onInteration = true;
+        interactionCurrent.StartInteraction(async () =>
+        {
+            interactionCurrent = null;
+            await Awaitable.WaitForSecondsAsync(0.1f); // 상호작용 딜레이 설정
+            onInteration = false;
+        });
+    }
+
 }
