@@ -7,8 +7,7 @@ public class GameManager : SingleTon<GameManager>
     [Space(20f)]
     public InputActionAsset globalInputActionAsset;
     public QuestSystem questSystem;
-    public ObjectPool boxProxyColliderPool;
-    public ObjectPool circleProxyColliderPool;
+    public CombatSystem combatSystem;
 
     [Space(20f)]
     public DataContainer data;

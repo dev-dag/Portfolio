@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Skill에서 사용하기 위한 대리 충돌체
+/// </summary>
 public class CircleProxyCollider : ProxyCollider
 {
     private CircleCollider2D collider;

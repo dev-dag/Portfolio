@@ -149,8 +149,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalInputActionAsset: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   questSystem: {fileID: 178796957}
-  boxProxyColliderPool: {fileID: 345581005}
-  circleProxyColliderPool: {fileID: 1047094902}
+  combatSystem: {fileID: 0}
   uiManager: {fileID: 0}
   UI_Prefab: {fileID: 2355226230311456869, guid: ee0b2feb187134c48979080a86cb0012, type: 3}
   baseHomeLevelPrefab: {fileID: 2887648882320850767, guid: fe600c0044c2534498d59d682f5005a3, type: 3}
@@ -250,6 +249,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &161843507
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 161843508}
+  - component: {fileID: 161843509}
+  m_Layer: 0
+  m_Name: SkillPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &161843508
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161843507}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 686197619}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &161843509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161843507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5810110a1135d614ebbca05d778c380f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  preparedObjectCount: 3
+  prefab: {fileID: 740318091522289163, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
 --- !u!1 &178796956
 GameObject:
   m_ObjectHideFlags: 0
@@ -305,7 +350,7 @@ GameObject:
   - component: {fileID: 345581004}
   - component: {fileID: 345581005}
   m_Layer: 0
-  m_Name: Box Type
+  m_Name: Box Proxy Collider Pool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -731,8 +776,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 686197619}
+  - component: {fileID: 686197620}
   m_Layer: 0
-  m_Name: Combat Proxy Pool
+  m_Name: Combat System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -753,8 +799,85 @@ Transform:
   m_Children:
   - {fileID: 345581004}
   - {fileID: 1047094901}
+  - {fileID: 161843508}
   m_Father: {fileID: 89678696}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &686197620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 686197618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab7291ef2e596e641a9850ac3bd9920e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boxProxyColliderPool: {fileID: 345581005}
+  circleProxyColliderPool: {fileID: 1047094902}
+  skillPool: {fileID: 161843509}
+--- !u!1001 &772463680
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 447628918887244739, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 83eb7c70b3978b64bb15df8a7ee6ef1d, type: 2}
+    - target: {fileID: 740318091522289163, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_Name
+      value: Skill
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099623383329757058, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099623383329757058, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099623383329757058, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099623383329757058, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099623383329757058, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099623383329757058, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099623383329757058, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099623383329757058, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099623383329757058, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6099623383329757058, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 00fe3baece1a806459aab3dbd1c71feb, type: 3}
 --- !u!1 &1047094900
 GameObject:
   m_ObjectHideFlags: 0
@@ -766,7 +889,7 @@ GameObject:
   - component: {fileID: 1047094901}
   - component: {fileID: 1047094902}
   m_Layer: 0
-  m_Name: Circle Type
+  m_Name: Circle Proxy Collider Pool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -809,3 +932,4 @@ SceneRoots:
   - {fileID: 425503558}
   - {fileID: 619394802}
   - {fileID: 120097730}
+  - {fileID: 772463680}
