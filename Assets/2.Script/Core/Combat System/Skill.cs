@@ -6,7 +6,7 @@ public class Skill : PoolingObject
 
     private ProxyCollider proxyCollider;
 
-    private SkillData data;
+    [SerializeField] private SkillData data;
     private Vector2 worldPosition;
 
     public void Init(Vector2 worldPosition, SkillData data)
