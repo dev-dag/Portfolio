@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 12c0ae78fbb67ad46bbd575cc21cf8d9
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 196945
+  packageName: '2D Pixel Effect : Attack&Skill'
+  packageVersion: 1.0
+  assetPath: Assets/PixelAttackFx/Animations/Flash/Flash_03/Flash_03_demo.controller
+  uploadId: 441145

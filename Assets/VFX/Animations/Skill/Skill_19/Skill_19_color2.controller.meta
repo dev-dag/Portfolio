@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3bb59f47ac0bc2a4c9d83b0492a7479b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 196945
+  packageName: '2D Pixel Effect : Attack&Skill'
+  packageVersion: 1.0
+  assetPath: Assets/PixelAttackFx/Animations/Skill/Skill_19/Skill_19_color2.controller
+  uploadId: 441145

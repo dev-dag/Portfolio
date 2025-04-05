@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7f2de63140ce9ef44af3909d099b423e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 196945
+  packageName: '2D Pixel Effect : Attack&Skill'
+  packageVersion: 1.0
+  assetPath: Assets/PixelAttackFx/Animations/Skill/Skill_11/Skill_11.controller
+  uploadId: 441145

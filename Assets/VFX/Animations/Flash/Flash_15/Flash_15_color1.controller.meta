@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2c22a9a9d0bf73d49b95f95985ba4d6e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 196945
+  packageName: '2D Pixel Effect : Attack&Skill'
+  packageVersion: 1.0
+  assetPath: Assets/PixelAttackFx/Animations/Flash/Flash_15/Flash_15_color1.controller
+  uploadId: 441145

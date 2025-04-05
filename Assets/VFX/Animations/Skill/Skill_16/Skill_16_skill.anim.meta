@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b152bb6dbbb4dd04b9d0620fa2bd435f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 196945
+  packageName: '2D Pixel Effect : Attack&Skill'
+  packageVersion: 1.0
+  assetPath: Assets/PixelAttackFx/Animations/Skill/Skill_16/Skill_16_skill.anim
+  uploadId: 441145
