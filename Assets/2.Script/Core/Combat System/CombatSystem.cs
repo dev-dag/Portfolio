@@ -2,6 +2,12 @@ using UnityEngine;
 
 public class CombatSystem : BaseObject
 {
+    public enum EntityType
+    {
+        Player,
+        Enemy
+    }
+
     [SerializeField] private ObjectPool boxProxyColliderPool;
     [SerializeField] private ObjectPool circleProxyColliderPool;
     [SerializeField] private ObjectPool skillPool;

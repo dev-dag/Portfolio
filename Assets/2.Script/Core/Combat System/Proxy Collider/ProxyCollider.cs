@@ -9,9 +9,9 @@ public abstract class ProxyCollider : PoolingObject
 {
     public event Action<ICombatable> onHitEventHandler;
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        ICombatable combatInterface = collision.collider.GetComponentInChildren<ICombatable>();
+        ICombatable combatInterface = collision.GetComponentInChildren<ICombatable>();
 
         if (combatInterface != null)
         {

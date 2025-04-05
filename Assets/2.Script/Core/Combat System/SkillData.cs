@@ -19,8 +19,14 @@ public class SkillData : ScriptableObject
     public SkillCollisionType collisionType;
     public SkillType skillType;
     public float damage;
-    [Tooltip("when collision type is box only.")] public Vector2 size;
-    [Tooltip("when collision type is circle only.")] public float radius;
-    public Vector2 offset;
+    public Vector2 VFX_Offset;
     public RuntimeAnimatorController animationController;
+    public Vector2 colliderOffset;
+    public int castingLayer;
+
+    [Space(20f)]
+    [Tooltip("when collision type is box only.")] public Vector2 colliderSize;
+
+    [Space(20f)]
+    [Tooltip("when collision type is circle only.")] public float radius;
 }

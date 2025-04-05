@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 498709105608993498}
   - component: {fileID: 1002364023983658795}
   - component: {fileID: 2584992744505221506}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Animator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   - component: {fileID: 9127234093057214309}
   - component: {fileID: 5993488160539855931}
   - component: {fileID: 1227313422299097224}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,7 +137,7 @@ Transform:
   m_GameObject: {fileID: 5527590581588932729}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.120001, y: -1.97, z: 0}
+  m_LocalPosition: {x: -13.120001, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -157,9 +157,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d00f724f67a51004f8d0a4c550187b4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testSkillData: {fileID: 11400000, guid: 6185059183bc9604da0036c9ae859aeb, type: 2}
   playerInfo: {fileID: 11400000, guid: 3d159c8ce19c9254ba4309b893e06256, type: 2}
   RB: {fileID: 1227313422299097224}
   anim: {fileID: 2584992744505221506}
+  interactableDistance: 2
 --- !u!50 &1227313422299097224
 Rigidbody2D:
   serializedVersion: 5
@@ -197,7 +199,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2320482422441619104}
   - component: {fileID: 5914767760305966570}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

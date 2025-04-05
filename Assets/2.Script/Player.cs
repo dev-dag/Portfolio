@@ -5,7 +5,7 @@ using System.Timers;
 using Unity.Cinemachine;
 using UnityEngine.Rendering;
 
-public class Player : BaseObject
+public class Player : BaseObject, ICombatable
 {
     private const string INTERACTABLE_OBJECT_LAYER_NAME = "InteractableObject";
 
@@ -13,13 +13,15 @@ public class Player : BaseObject
     {
         public static readonly int IDLE = Animator.StringToHash("Idle");
         public static readonly int RUN = Animator.StringToHash("Run");
-        public static readonly int ATTACK_1 = Animator.StringToHash("PunchA");
+        public static readonly int ATTACK_1 = Animator.StringToHash("SwordAttack");
         public static readonly int JUMP = Animator.StringToHash("Jump");
         public static readonly int FALL = Animator.StringToHash("JumpFall");
         public static readonly int DEAD = Animator.StringToHash("Die");
     }
 
     public static Player Current { get; private set; }
+
+    public SkillData testSkillData;
 
     [Space(20f)]
     [SerializeField] private PlayerInfo playerInfo;
@@ -54,7 +56,7 @@ public class Player : BaseObject
     {
         base.Start();
     }
-
+    int f = 1;
     protected override void Update()
     {
         base.Update();
@@ -197,7 +199,7 @@ public class Player : BaseObject
                                 .End()
 
                                 .Sequence(string.Empty)
-                                    .Condition("공격 버튼을 누른 경우", (t) => attackAction.IsPressed())
+                                    .Condition("공격 버튼을 누른 경우", (t) => attackAction.IsPressed() && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack") == false)
                                     .Do(string.Empty, DoOnAttack)
                                 .End()
                             .End()
@@ -262,10 +264,17 @@ public class Player : BaseObject
         return BehaviourTreeStatus.Running;
     }
 
+    Skill skill;
+
     private BehaviourTreeStatus DoOnAttack(TimeData t)
     {
         // 공격 애니메이션 재생
         anim.Play(AnimHash.ATTACK_1);
+
+        skill = GameManager.Instance.combatSystem.GetSkill();
+        skill.Init(transform.position, this.gameObject.layer, testSkillData);
+
+        skill.Enable();
 
         return BehaviourTreeStatus.Running;
     }
@@ -340,4 +349,8 @@ public class Player : BaseObject
         });
     }
 
+    void ICombatable.TakeHit(float damage)
+    {
+        throw new System.NotImplementedException();
+    }
 }

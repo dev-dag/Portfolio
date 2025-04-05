@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 /// <summary>
 /// Skill에서 사용하기 위한 대리 충돌체
@@ -15,12 +16,25 @@ public class CircleProxyCollider : ProxyCollider
         collider = GetComponent<CircleCollider2D>();
     }
 
-    public void Init(Vector2 worldPosition, float radius, Action<ICombatable> onHitCallback)
+    public void Init(Vector2 worldPosition, Vector2 offset, float radius, int layer, Action<ICombatable> onHitCallback)
     {
         this.transform.position = worldPosition;
+        this.gameObject.layer = layer;
 
         collider.radius = radius;
+        collider.offset = offset;
 
         onHitEventHandler += onHitCallback;
+    }
+
+    public override void Return()
+    {
+        this.transform.position = Vector3.zero;
+        this.gameObject.layer = 0;
+
+        collider.radius = 1f;
+        collider.offset = Vector3.zero;
+
+        base.Return();
     }
 }
