@@ -85,6 +85,11 @@ namespace Monster
 
         void ICombatable.TakeHit(float damage, BaseObject hitter)
         {
+            if (isInteractable)
+            {
+                return;
+            }
+
             hp -= damage;
 
             TakeHitVFX vfx = GameManager.Instance.combatSystem.GetTakeHitVFX();
