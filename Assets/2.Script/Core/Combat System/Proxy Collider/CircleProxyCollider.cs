@@ -16,7 +16,7 @@ public class CircleProxyCollider : ProxyCollider
         collider = GetComponent<CircleCollider2D>();
     }
 
-    public void Init(Vector2 worldPosition, Vector2 offset, float radius, int layer, Action<ICombatable> onHitCallback)
+    public void Init(Vector2 worldPosition, Vector2 offset, float radius, int layer, Action<ICombatable, Rigidbody2D> onHitCallback)
     {
         this.transform.position = worldPosition;
         this.gameObject.layer = layer;

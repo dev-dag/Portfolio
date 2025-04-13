@@ -158,10 +158,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testSkillData: {fileID: 11400000, guid: 6185059183bc9604da0036c9ae859aeb, type: 2}
-  playerInfo: {fileID: 11400000, guid: 3d159c8ce19c9254ba4309b893e06256, type: 2}
+  render: {fileID: 1002364023983658795}
+  info: {fileID: 11400000, guid: 3d159c8ce19c9254ba4309b893e06256, type: 2}
   RB: {fileID: 1227313422299097224}
   anim: {fileID: 2584992744505221506}
   interactableDistance: 2
+  blinkSpeed: 10
+  blinkTime: 0.5
 --- !u!50 &1227313422299097224
 Rigidbody2D:
   serializedVersion: 5

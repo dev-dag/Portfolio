@@ -16,7 +16,7 @@ public class BoxProxyCollider : ProxyCollider
         collider = GetComponent<BoxCollider2D>();
     }
 
-    public void Init(Vector2 worldPosition, Vector2 offset, Vector2 size, int layer, Action<ICombatable> onHitCallback)
+    public void Init(Vector2 worldPosition, Vector2 offset, Vector2 size, int layer, Action<ICombatable, Rigidbody2D> onHitCallback)
     {
         this.transform.position = worldPosition;
         this.gameObject.layer = layer;

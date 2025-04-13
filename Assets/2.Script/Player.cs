@@ -22,7 +22,8 @@ public class Player : BaseObject, ICombatable
     public SkillData testSkillData;
 
     [Space(20f)]
-    [SerializeField] private PlayerInfo playerInfo;
+    [SerializeField] private SpriteRenderer render;
+    [SerializeField] private PlayerInfo info;
     [SerializeField] private Rigidbody2D RB;
     [SerializeField] private Animator anim;
 
@@ -38,6 +39,10 @@ public class Player : BaseObject, ICombatable
 
     private IInteractable interactionCurrent; // 현재 인터렉션 가능한 대상
     private bool onInteration = false;
+    private bool noTakeDamage = false;
+    private float blinkSpeed = 30f;
+    private float blinkTime = 0.5f;
+    Awaitable blinkAwaiter = null;
 
     protected override void Awake()
     {
@@ -87,7 +92,7 @@ public class Player : BaseObject, ICombatable
     /// </summary>
     public bool IsAlive()
     {
-        return playerInfo.HP > 0f ? false : true;
+        return info.HP > 0f ? false : true;
     }
 
     /// <summary>
@@ -161,7 +166,7 @@ public class Player : BaseObject, ICombatable
         InputActionMap UI_ActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("UI");
         interactAction = UI_ActionMap.FindAction("Interact");
 
-        playerInfo.Init();
+        info.Init();
 
         BT_Root = MakeBehaviourTree();
     }
@@ -172,10 +177,10 @@ public class Player : BaseObject, ICombatable
 
         builder = builder
             .Selector("플레이어 BT")
-                .Condition(string.Empty, (t) => playerInfo.isDead)
+                .Condition(string.Empty, (t) => info.isDead)
 
                 .Sequence(string.Empty)
-                    .Condition("죽은 경우", (t) => playerInfo.HP <= 0f)
+                    .Condition("죽은 경우", (t) => info.HP <= 0f)
                     .Do(string.Empty, DoOnDead)
                 .End()
 
@@ -239,7 +244,7 @@ public class Player : BaseObject, ICombatable
         anim.Play(AnimHash.DEAD);
 
         // 생존 여부 필드 설정
-        playerInfo.isDead = true;
+        info.isDead = true;
 
         return BehaviourTreeStatus.Success;
     }
@@ -260,7 +265,7 @@ public class Player : BaseObject, ICombatable
         // 점프 애니메이션 재생
         anim.Play(AnimHash.JUMP);
 
-        RB.linearVelocityY += playerInfo.jumpPower;
+        RB.linearVelocityY += info.jumpPower;
 
         return BehaviourTreeStatus.Running;
     }
@@ -311,7 +316,7 @@ public class Player : BaseObject, ICombatable
             Vector2 dir = moveAction.ReadValue<Vector2>();
             float newX = dir.x;
 
-            RB.linearVelocityX = newX * playerInfo.speed;
+            RB.linearVelocityX = newX * info.speed;
 
             // 회전 처리
             {
@@ -350,8 +355,40 @@ public class Player : BaseObject, ICombatable
         });
     }
 
-    void ICombatable.TakeHit(float damage)
+    void ICombatable.TakeHit(float damage, Rigidbody2D hitRB)
     {
-        throw new System.NotImplementedException();
+        if (noTakeDamage)
+        {
+            return;
+        }
+
+        info.HP -= damage;
+
+        if (blinkAwaiter != null)
+        {
+            blinkAwaiter.Cancel();
+            render.color = new Color(render.color.r, render.color.g, render.color.b, 1f);
+            noTakeDamage = false;
+        }
+
+        blinkAwaiter = BlinkSpriteRender();
+    }
+
+    private async Awaitable BlinkSpriteRender()
+    {
+        float time = Time.time + blinkTime;
+
+        while (Time.time < time)
+        {
+            noTakeDamage = true;
+
+            render.color = new Color(render.color.r, render.color.g, render.color.b, Mathf.Abs(Mathf.Sin(Time.time * blinkSpeed)));
+
+            await Awaitable.NextFrameAsync();
+        }
+
+        render.color = new Color(render.color.r, render.color.g, render.color.b, 1f);
+
+        noTakeDamage = false;
     }
 }

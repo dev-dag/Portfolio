@@ -79,8 +79,8 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
     /// 피격 범위에 들어온 대상의 체력을 감소시키는 함수.
     /// </summary>
     /// <param name="combatInterface">체력을 감소시키는 함수를 제공하는 인터페이스</param>
-    protected void OnHit(ICombatable combatInterface)
+    protected void OnHit(ICombatable combatInterface, Rigidbody2D hitRB)
     {
-        combatInterface.TakeHit(data.damage);
+        combatInterface.TakeHit(data.damage, hitRB);
     }
 }

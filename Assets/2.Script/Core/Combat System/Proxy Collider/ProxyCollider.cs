@@ -7,15 +7,15 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public abstract class ProxyCollider : PoolingObject
 {
-    public event Action<ICombatable> onHitEventHandler;
+    public event Action<ICombatable, Rigidbody2D> onHitEventHandler;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        ICombatable combatInterface = collision.GetComponentInChildren<ICombatable>();
-
-        if (combatInterface != null)
+        if (collision.attachedRigidbody.GetComponentInChildren<BaseObject>() is ICombatable)
         {
-            onHitEventHandler?.Invoke(combatInterface);
+            ICombatable combatInterface = collision.attachedRigidbody.GetComponentInChildren<BaseObject>() as ICombatable;
+
+            onHitEventHandler?.Invoke(combatInterface, collision.attachedRigidbody);
         }
     }
 

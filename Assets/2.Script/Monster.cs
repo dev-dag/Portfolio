@@ -12,7 +12,7 @@ namespace Monster
             hp = info.hp;
         }
 
-        void ICombatable.TakeHit(float damage)
+        void ICombatable.TakeHit(float damage, Rigidbody2D hitRB)
         {
             hp -= damage;
         }
