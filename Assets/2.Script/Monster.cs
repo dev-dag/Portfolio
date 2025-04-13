@@ -1,17 +1,21 @@
 using UnityEngine;
 
-public class Monster : BaseObject, ICombatable
+namespace Monster
 {
-    [SerializeField] private MonsterInfo info;
-    public float hp;
-
-    public void Init()
+    public class Monster : BaseObject, ICombatable
     {
-        hp = info.hp;
+        [SerializeField] protected MonsterInfo info;
+        public float hp;
+
+        public void Init()
+        {
+            hp = info.hp;
+        }
+
+        void ICombatable.TakeHit(float damage)
+        {
+            hp -= damage;
+        }
     }
 
-    void ICombatable.TakeHit(float damage)
-    {
-        hp -= damage;
-    }
 }
