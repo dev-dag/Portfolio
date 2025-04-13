@@ -37,7 +37,7 @@ namespace Monster
         [SerializeField] private SkillData explosionSkillData;
         [SerializeField] private SkillData rushSkillData;
 
-        private Transform playerTr;
+        [SerializeField] private Transform playerTr;
 
         private IBehaviourTreeNode bt;
         private OverheadUI overheadUI;
@@ -50,7 +50,19 @@ namespace Monster
         {
             base.Awake();
 
+            Init();
+
             bt = GetBehaviourTree();
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (playerTr != null)
+            {
+                bt.Tick(new TimeData(Time.deltaTime));
+            }
         }
 
         void IInteractable.CancelInteraction()
@@ -62,6 +74,7 @@ namespace Monster
         bool IInteractable.IsInteractable()
         {
             // 처음 조우 했을 때 한번 대화 가능.
+            return true;
         }
 
         void IInteractable.SetInteractionGuide(bool isActive)
@@ -76,6 +89,18 @@ namespace Monster
         }
 
         #region Behaviour Tree
+
+        [ContextMenu("BT 초기화 함수")]
+        private void ResetBehaviourTree()
+        {
+            currentSkill = Skill.None;
+            currentPlayingAnim = -1;
+            phase = 1;
+            nextActionTime = -1f;
+            hp = info.hp;
+
+            anim.Play(AnimHash.IDLE);
+        }
 
         // 메인 Behaviour Tree 반환
         private IBehaviourTreeNode GetBehaviourTree()
@@ -193,26 +218,54 @@ namespace Monster
             BehaviourTreeBuilder builder = new BehaviourTreeBuilder();
 
             builder.Sequence(string.Empty)
-                .Condition(string.Empty, t => currentSkill == Skill.Slash)
+                .Do(string.Empty, t =>
+                {
+                    if (currentSkill == Skill.Slash)
+                        return BehaviourTreeStatus.Success;
+                    else
+                        return BehaviourTreeStatus.Failure;
+                })
+                .Do(string.Empty, t => // 애니메이터와 스크립트 간의 싱크 테스트
+                {
+                    if (currentPlayingAnim != AnimHash.SLASH) // Play 메서드를 호출하려는 시점.
+                    {
+                        return BehaviourTreeStatus.Success;
+                    }
+                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.SLASH) // Play 메서드가 호출 되었고, 동기화가 이루어지지 않은 시점.
+                    {
+                        return BehaviourTreeStatus.Failure;
+                    }
+                    else  // Play 메서드가 호출되었고, 애니메이터와 싱크가 일치하는 시점.
+                    {
+                        return BehaviourTreeStatus.Success;
+                    }
+                })
                 .Selector(string.Empty)
-                    .Sequence(string.Empty)
-                        .Condition(string.Empty, t => currentPlayingAnim == AnimHash.SLASH)
-                        .Sequence(string.Empty) // 애니메이션 종료 체크
-                            .Condition(string.Empty, t => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
-                            .Do(string.Empty, t => // 애니메이션이 끝난 경우 후딜레이 설정
-                            {
-                                currentSkill = Skill.None;
-                                nextActionTime = Time.time + afterDelay;
+                    .Do(string.Empty, t =>
+                    {
+                        if (currentPlayingAnim != AnimHash.SLASH) // 현재 재생중인 애니메이션이 폭파가 아닌 경우
+                            return BehaviourTreeStatus.Failure;
 
-                                return BehaviourTreeStatus.Success;
-                            })
-                        .End()
-                    .End()
+                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // 폭파 애니메이션이 끝난 경우
+                        {
+                            currentSkill = Skill.None;
+                            nextActionTime = Time.time + afterDelay;
+
+                            anim.Play(AnimHash.IDLE);
+                            currentPlayingAnim = AnimHash.IDLE;
+
+                            return BehaviourTreeStatus.Success;
+                        }
+                        else
+                        {
+                            return BehaviourTreeStatus.Running;
+                        }
+                    })
 
                     .Selector(string.Empty)
-                        .Sequence(string.Empty)
-                            .Condition(string.Empty, t => playerTr.position.x - transform.position.x < xDistance)
-                            .Do(string.Empty, t => // 공격 동작 실행
+                        .Do(string.Empty, t => // 애니메이션의 시점.
+                        {
+                            if (playerTr.position.x - transform.position.x < xDistance) // 사정거리 조건
                             {
                                 anim.Play(AnimHash.SLASH);
                                 currentPlayingAnim = AnimHash.SLASH;
@@ -222,8 +275,12 @@ namespace Monster
                                 skill.Enable();
 
                                 return BehaviourTreeStatus.Running;
-                            })
-                        .End()
+                            }
+                            else
+                            {
+                                return BehaviourTreeStatus.Failure;
+                            }
+                        })
 
                         .Do(string.Empty, t => // 플레이어쪽으로 이동
                         {
@@ -262,26 +319,54 @@ namespace Monster
             BehaviourTreeBuilder builder = new BehaviourTreeBuilder();
 
             builder.Sequence(string.Empty)
-                .Condition(string.Empty, t => currentSkill == Skill.EjectSlash)
+                .Do(string.Empty, t =>
+                {
+                    if (currentSkill == Skill.EjectSlash)
+                        return BehaviourTreeStatus.Success;
+                    else
+                        return BehaviourTreeStatus.Failure;
+                })
+                .Do(string.Empty, t => // 애니메이터와 스크립트 간의 싱크 테스트
+                {
+                    if (currentPlayingAnim != AnimHash.EJECT_SLASH) // Play 메서드를 호출하려는 시점.
+                    {
+                        return BehaviourTreeStatus.Success;
+                    }
+                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.EJECT_SLASH) // Play 메서드가 호출 되었고, 동기화가 이루어지지 않은 시점.
+                    {
+                        return BehaviourTreeStatus.Failure;
+                    }
+                    else  // Play 메서드가 호출되었고, 애니메이터와 싱크가 일치하는 시점.
+                    {
+                        return BehaviourTreeStatus.Success;
+                    }
+                })
                 .Selector(string.Empty)
-                    .Sequence(string.Empty)
-                        .Condition(string.Empty, t => currentPlayingAnim == AnimHash.EJECT_SLASH)
-                        .Sequence(string.Empty) // 애니메이션 종료 체크
-                            .Condition(string.Empty, t => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
-                            .Do(string.Empty, t => // 애니메이션이 끝난 경우 후딜레이 설정
-                            {
-                                currentSkill = Skill.None;
-                                nextActionTime = Time.time + afterDelay;
+                    .Do(string.Empty, t =>
+                    {
+                        if (currentPlayingAnim != AnimHash.EJECT_SLASH) // 현재 재생중인 애니메이션이 폭파가 아닌 경우
+                            return BehaviourTreeStatus.Failure;
 
-                                return BehaviourTreeStatus.Success;
-                            })
-                        .End()
-                    .End()
+                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // 폭파 애니메이션이 끝난 경우
+                        {
+                            currentSkill = Skill.None;
+                            nextActionTime = Time.time + afterDelay;
+
+                            anim.Play(AnimHash.IDLE);
+                            currentPlayingAnim = AnimHash.IDLE;
+
+                            return BehaviourTreeStatus.Success;
+                        }
+                        else
+                        {
+                            return BehaviourTreeStatus.Running;
+                        }
+                    })
 
                     .Selector(string.Empty)
-                        .Sequence(string.Empty)
-                            .Condition(string.Empty, t => playerTr.position.x - transform.position.x < xDistance)
-                            .Do(string.Empty, t => // 공격 동작 실행
+                        .Do(string.Empty, t => // 애니메이션의 시점.
+                        {
+                            if (playerTr.position.x - transform.position.x < xDistance) // 사정거리 조건
                             {
                                 anim.Play(AnimHash.EJECT_SLASH);
                                 currentPlayingAnim = AnimHash.EJECT_SLASH;
@@ -291,8 +376,12 @@ namespace Monster
                                 skill.Enable();
 
                                 return BehaviourTreeStatus.Running;
-                            })
-                        .End()
+                            }
+                            else
+                            {
+                                return BehaviourTreeStatus.Failure;
+                            }
+                        })
 
                         .Do(string.Empty, t => // 플레이어쪽으로 이동
                         {
@@ -331,26 +420,54 @@ namespace Monster
             BehaviourTreeBuilder builder = new BehaviourTreeBuilder();
 
             builder.Sequence(string.Empty)
-                .Condition(string.Empty, t => currentSkill == Skill.Explosion)
+                .Do(string.Empty, t =>
+                {
+                    if (currentSkill == Skill.Explosion)
+                        return BehaviourTreeStatus.Success;
+                    else
+                        return BehaviourTreeStatus.Failure;
+                })
+                .Do(string.Empty, t => // 애니메이터와 스크립트 간의 싱크 테스트
+                {
+                    if (currentPlayingAnim != AnimHash.EXPLOSION) // Play 메서드를 호출하려는 시점.
+                    {
+                        return BehaviourTreeStatus.Success;
+                    }
+                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.EXPLOSION) // Play 메서드가 호출 되었고, 동기화가 이루어지지 않은 시점.
+                    {
+                        return BehaviourTreeStatus.Failure;
+                    }
+                    else  // Play 메서드가 호출되었고, 애니메이터와 싱크가 일치하는 시점.
+                    {
+                        return BehaviourTreeStatus.Success;
+                    }
+                })
                 .Selector(string.Empty)
-                    .Sequence(string.Empty)
-                        .Condition(string.Empty, t => currentPlayingAnim == AnimHash.EXPLOSION)
-                        .Sequence(string.Empty) // 애니메이션 종료 체크
-                            .Condition(string.Empty, t => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
-                            .Do(string.Empty, t => // 애니메이션이 끝난 경우 후딜레이 설정
-                            {
-                                currentSkill = Skill.None;
-                                nextActionTime = Time.time + afterDelay;
+                    .Do(string.Empty, t =>
+                    {
+                        if (currentPlayingAnim != AnimHash.EXPLOSION) // 현재 재생중인 애니메이션이 폭파가 아닌 경우
+                            return BehaviourTreeStatus.Failure;
 
-                                return BehaviourTreeStatus.Success;
-                            })
-                        .End()
-                    .End()
+                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // 폭파 애니메이션이 끝난 경우
+                        {
+                            currentSkill = Skill.None;
+                            nextActionTime = Time.time + afterDelay;
+
+                            anim.Play(AnimHash.IDLE);
+                            currentPlayingAnim = AnimHash.IDLE;
+
+                            return BehaviourTreeStatus.Success;
+                        }
+                        else
+                        {
+                            return BehaviourTreeStatus.Running;
+                        }
+                    })
 
                     .Selector(string.Empty)
-                        .Sequence(string.Empty)
-                            .Condition(string.Empty, t => playerTr.position.x - transform.position.x < xDistance)
-                            .Do(string.Empty, t => // 공격 동작 실행
+                        .Do(string.Empty, t => // 애니메이션의 시점.
+                        {
+                            if (playerTr.position.x - transform.position.x < xDistance) // 사정거리 조건
                             {
                                 anim.Play(AnimHash.EXPLOSION);
                                 currentPlayingAnim = AnimHash.EXPLOSION;
@@ -360,8 +477,12 @@ namespace Monster
                                 skill.Enable();
 
                                 return BehaviourTreeStatus.Running;
-                            })
-                        .End()
+                            }
+                            else
+                            {
+                                return BehaviourTreeStatus.Failure;
+                            }
+                        })
 
                         .Do(string.Empty, t => // 플레이어쪽으로 이동
                         {
@@ -400,26 +521,54 @@ namespace Monster
             BehaviourTreeBuilder builder = new BehaviourTreeBuilder();
 
             builder.Sequence(string.Empty)
-                .Condition(string.Empty, t => currentSkill == Skill.Rush)
+                .Do(string.Empty, t =>
+                {
+                    if (currentSkill == Skill.Rush)
+                        return BehaviourTreeStatus.Success;
+                    else
+                        return BehaviourTreeStatus.Failure;
+                })
+                .Do(string.Empty, t => // 애니메이터와 스크립트 간의 싱크 테스트
+                {
+                    if (currentPlayingAnim != AnimHash.RUSH) // Play 메서드를 호출하려는 시점.
+                    {
+                        return BehaviourTreeStatus.Success;
+                    }
+                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.RUSH) // Play 메서드가 호출 되었고, 동기화가 이루어지지 않은 시점.
+                    {
+                        return BehaviourTreeStatus.Failure;
+                    }
+                    else  // Play 메서드가 호출되었고, 애니메이터와 싱크가 일치하는 시점.
+                    {
+                        return BehaviourTreeStatus.Success;
+                    }
+                })
                 .Selector(string.Empty)
-                    .Sequence(string.Empty)
-                        .Condition(string.Empty, t => currentPlayingAnim == AnimHash.RUSH)
-                        .Sequence(string.Empty) // 애니메이션 종료 체크
-                            .Condition(string.Empty, t => anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
-                            .Do(string.Empty, t => // 애니메이션이 끝난 경우 후딜레이 설정
-                            {
-                                currentSkill = Skill.None;
-                                nextActionTime = Time.time + afterDelay;
+                    .Do(string.Empty, t =>
+                    {
+                        if (currentPlayingAnim != AnimHash.RUSH) // 현재 재생중인 애니메이션이 폭파가 아닌 경우
+                            return BehaviourTreeStatus.Failure;
 
-                                return BehaviourTreeStatus.Success;
-                            })
-                        .End()
-                    .End()
+                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // 폭파 애니메이션이 끝난 경우
+                        {
+                            currentSkill = Skill.None;
+                            nextActionTime = Time.time + afterDelay;
+
+                            anim.Play(AnimHash.IDLE);
+                            currentPlayingAnim = AnimHash.IDLE;
+
+                            return BehaviourTreeStatus.Success;
+                        }
+                        else
+                        {
+                            return BehaviourTreeStatus.Running;
+                        }
+                    })
 
                     .Selector(string.Empty)
-                        .Sequence(string.Empty)
-                            .Condition(string.Empty, t => playerTr.position.x - transform.position.x < xDistance)
-                            .Do(string.Empty, t => // 공격 동작 실행
+                        .Do(string.Empty, t => // 애니메이션의 시점.
+                        {
+                            if (playerTr.position.x - transform.position.x < xDistance) // 사정거리 조건
                             {
                                 anim.Play(AnimHash.RUSH);
                                 currentPlayingAnim = AnimHash.RUSH;
@@ -429,8 +578,12 @@ namespace Monster
                                 skill.Enable();
 
                                 return BehaviourTreeStatus.Running;
-                            })
-                        .End()
+                            }
+                            else
+                            {
+                                return BehaviourTreeStatus.Failure;
+                            }
+                        })
 
                         .Do(string.Empty, t => // 플레이어쪽으로 이동
                         {

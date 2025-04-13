@@ -9,11 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 633094481879018831}
-  - component: {fileID: 8227966354353499834}
+  - component: {fileID: 560275704886640019}
   - component: {fileID: 9129901342440154282}
   - component: {fileID: 35746634427428628}
   - component: {fileID: 523398254690728710}
   - component: {fileID: 8184703543468271467}
+  - component: {fileID: 9193053999817590394}
   m_Layer: 8
   m_Name: Boss
   m_TagString: Untagged
@@ -36,7 +37,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8227966354353499834
+--- !u!114 &560275704886640019
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -48,6 +49,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d451c32bdc421349b7648efef9dcf6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  info: {fileID: 11400000, guid: 1183146c0abb0764ba0a91684b3cee17, type: 2}
+  anim: {fileID: 35746634427428628}
+  rb: {fileID: 523398254690728710}
+  slashSkillData: {fileID: 11400000, guid: ecdc56c5d9dd0a14b8dd277758746c44, type: 2}
+  ejectSlashSkillData: {fileID: 11400000, guid: 46f1c11a5d0836144a1320c815055250, type: 2}
+  explosionSkillData: {fileID: 11400000, guid: a397604e6d20a404893510372b23c6ee, type: 2}
+  rushSkillData: {fileID: 11400000, guid: 2c440a5106da13544882d9f8f691fa32, type: 2}
 --- !u!212 &9129901342440154282
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -92,15 +100,15 @@ SpriteRenderer:
   m_SortingLayerID: -1408186949
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 0df6bac816910384f98d427c0b4b5b74, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 12.5, y: 10}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &35746634427428628
@@ -113,7 +121,7 @@ Animator:
   m_GameObject: {fileID: 5855453933613243123}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 02cfeca54f1d5424ea3c7188f9577820, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -186,6 +194,19 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -2.7558956, y: -2.1608737}
-  m_Size: {x: 2.6295586, y: 4.602528}
+  m_Offset: {x: -0.17224312, y: -1.8584204}
+  m_Size: {x: 2.2224388, y: 4.06026}
   m_Direction: 0
+--- !u!114 &9193053999817590394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5855453933613243123}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d1207976afd23649ad450f6bc1cc449, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  combatAnimatorEventListener: {fileID: 5855453933613243123}

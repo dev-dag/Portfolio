@@ -5,7 +5,7 @@ namespace Monster
     public class Monster : BaseObject, ICombatable
     {
         [SerializeField] protected MonsterInfo info;
-        public float hp;
+        protected float hp;
 
         public void Init()
         {
