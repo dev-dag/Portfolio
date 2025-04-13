@@ -4,6 +4,10 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : SingleTon<GameManager>
 {
+    public const string INTERACTABLE_OBJECT_LAYER_NAME = "InteractableObject";
+    public const string PLAYER_SIDE_LAYER_NAME = "PlayerSide";
+    public const string MONSTER_SIDE_LAYER_NAME = "MonsterSide";
+
     [Space(20f)]
     public InputActionAsset globalInputActionAsset;
     public QuestSystem questSystem;

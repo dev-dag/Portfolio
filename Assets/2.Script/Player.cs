@@ -7,8 +7,6 @@ using UnityEngine.Rendering;
 
 public class Player : BaseObject, ICombatable
 {
-    private const string INTERACTABLE_OBJECT_LAYER_NAME = "InteractableObject";
-
     public struct AnimHash
     {
         public static readonly int IDLE = Animator.StringToHash("Idle");
@@ -68,7 +66,10 @@ public class Player : BaseObject, ICombatable
 
     private void OnDestroy()
     {
-        Current = null;
+        if (Current == this)
+        {
+            Current = null;
+        }
     }
 
     private void OnEnable()
@@ -99,7 +100,7 @@ public class Player : BaseObject, ICombatable
             return;
         }
 
-        RaycastHit2D[] hitArr = Physics2D.BoxCastAll(transform.position, Vector2.one * interactableDistance, 0f, Vector2.up, 0f, LayerMask.GetMask(INTERACTABLE_OBJECT_LAYER_NAME));
+        RaycastHit2D[] hitArr = Physics2D.BoxCastAll(transform.position, Vector2.one * interactableDistance, 0f, Vector2.up, 0f, LayerMask.GetMask(GameManager.INTERACTABLE_OBJECT_LAYER_NAME));
         if (hitArr == null || hitArr.Length == 0)
         {
             if (interactionCurrent != null)

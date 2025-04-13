@@ -1,7 +1,6 @@
 using UnityEngine;
 using FluentBehaviourTree;
 using System;
-using Unity.Mathematics;
 
 namespace Monster
 {
@@ -45,6 +44,7 @@ namespace Monster
         private float nextActionTime; // 스킬의 후딜레이를 지정하기 위해 사용함. 게임의 시간 값이 할당 됨.
         private Skill currentSkill = Skill.None;
         private int currentPlayingAnim;
+        private bool isInteractable = true;
 
         protected override void Awake()
         {
@@ -52,7 +52,22 @@ namespace Monster
 
             Init();
 
+            this.gameObject.layer = LayerMask.NameToLayer(GameManager.INTERACTABLE_OBJECT_LAYER_NAME);
+            if (this.gameObject.layer == -1)
+            {
+                Debug.LogError("레이어 이름 오류");
+            }
+
             bt = GetBehaviourTree();
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+
+            overheadUI = GameManager.Instance.uiManager.overheadUI_Pool.Burrow<OverheadUI>();
+            overheadUI.Init(this.transform, Vector3.zero);
+            overheadUI.Enable();
         }
 
         protected override void Update()
@@ -69,23 +84,57 @@ namespace Monster
         {
             // IsInteractable == True 일 때만 호출 가능.
             // 대화 취소했을 때 처리. 다시 대화 가능하게 설정.
+            isInteractable = true;
         }
 
         bool IInteractable.IsInteractable()
         {
             // 처음 조우 했을 때 한번 대화 가능.
-            return true;
+            return isInteractable;
         }
 
         void IInteractable.SetInteractionGuide(bool isActive)
         {
             // 상호작용 UI 노출
+            overheadUI.ActiveG_Key(isActive);
         }
 
         void IInteractable.StartInteraction(Action interactionCallback)
         {
             // IsInteractable == true 일 때만 호출 가능.
-            // 다이얼로그 시작.
+            if (isInteractable)
+            {
+                if (GameManager.Instance.data.dialog.TryGetValue(4, out var dialogWrapper)) // 4번 다이얼로그 시작
+                {
+                    LookAt(Player.Current.transform.position);
+
+                    // 다이얼로그 시작.
+                    GameManager.Instance.uiManager.dialog.StartDialog(dialogWrapper.DialogTextList, () =>
+                    {
+                        playerTr = Player.Current.transform;
+                        isInteractable = false;
+                        this.gameObject.layer = LayerMask.NameToLayer(GameManager.MONSTER_SIDE_LAYER_NAME);
+
+                        interactionCallback?.Invoke();
+                    });
+
+                    overheadUI.ActiveG_Key(false);
+                }
+            }
+        }
+
+        private void LookAt(Vector3 targetPos)
+        {
+            Vector3 dir = targetPos - this.transform.position;
+
+            if (dir.x > 0f)
+            {
+                this.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            }
+            else
+            {
+                this.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+            }
         }
 
         #region Behaviour Tree
@@ -150,18 +199,7 @@ namespace Monster
 
                 .Do(string.Empty, t => // 플레이어를 바라보는 동작 처리.
                 {
-                    Vector3 dir = playerTr.position - transform.position;
-
-                    // 좌우 회전
-                    if (dir.x > 0f)
-                    {
-                        transform.rotation = Quaternion.identity;
-                    }
-                    else
-                    {
-                        transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-                    }
-
+                    LookAt(playerTr.position);
 
                     anim.Play(AnimHash.IDLE);
 
@@ -265,7 +303,7 @@ namespace Monster
                     .Selector(string.Empty)
                         .Do(string.Empty, t => // 애니메이션의 시점.
                         {
-                            if (playerTr.position.x - transform.position.x < xDistance) // 사정거리 조건
+                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // 사정거리 조건
                             {
                                 anim.Play(AnimHash.SLASH);
                                 currentPlayingAnim = AnimHash.SLASH;
@@ -366,7 +404,7 @@ namespace Monster
                     .Selector(string.Empty)
                         .Do(string.Empty, t => // 애니메이션의 시점.
                         {
-                            if (playerTr.position.x - transform.position.x < xDistance) // 사정거리 조건
+                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // 사정거리 조건
                             {
                                 anim.Play(AnimHash.EJECT_SLASH);
                                 currentPlayingAnim = AnimHash.EJECT_SLASH;
@@ -387,15 +425,7 @@ namespace Monster
                         {
                             Vector3 dir = playerTr.position - transform.position;
 
-                            // 좌우 회전
-                            if (dir.x > 0f)
-                            {
-                                transform.rotation = Quaternion.identity;
-                            }
-                            else
-                            {
-                                transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-                            }
+                            LookAt(playerTr.position);
 
                             rb.linearVelocityX = Mathf.Sign(dir.x) * info.speed;
 
@@ -467,7 +497,7 @@ namespace Monster
                     .Selector(string.Empty)
                         .Do(string.Empty, t => // 애니메이션의 시점.
                         {
-                            if (playerTr.position.x - transform.position.x < xDistance) // 사정거리 조건
+                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // 사정거리 조건
                             {
                                 anim.Play(AnimHash.EXPLOSION);
                                 currentPlayingAnim = AnimHash.EXPLOSION;
@@ -488,15 +518,7 @@ namespace Monster
                         {
                             Vector3 dir = playerTr.position - transform.position;
 
-                            // 좌우 회전
-                            if (dir.x > 0f)
-                            {
-                                transform.rotation = Quaternion.identity;
-                            }
-                            else
-                            {
-                                transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-                            }
+                            LookAt(playerTr.position);
 
                             rb.linearVelocityX = Mathf.Sign(dir.x) * info.speed;
 
@@ -568,7 +590,7 @@ namespace Monster
                     .Selector(string.Empty)
                         .Do(string.Empty, t => // 애니메이션의 시점.
                         {
-                            if (playerTr.position.x - transform.position.x < xDistance) // 사정거리 조건
+                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // 사정거리 조건
                             {
                                 anim.Play(AnimHash.RUSH);
                                 currentPlayingAnim = AnimHash.RUSH;
@@ -589,15 +611,7 @@ namespace Monster
                         {
                             Vector3 dir = playerTr.position - transform.position;
 
-                            // 좌우 회전
-                            if (dir.x > 0f)
-                            {
-                                transform.rotation = Quaternion.identity;
-                            }
-                            else
-                            {
-                                transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-                            }
+                            LookAt(playerTr.position);
 
                             rb.linearVelocityX = Mathf.Sign(dir.x) * info.speed;
 
