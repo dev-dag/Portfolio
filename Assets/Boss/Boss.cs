@@ -4,7 +4,7 @@ using System;
 
 namespace Monster
 {
-    public class Boss : Monster, IInteractable
+    public class Boss : Monster, IInteractable, ICombatable
     {
         public enum Skill
         {
@@ -29,6 +29,7 @@ namespace Monster
 
         [SerializeField] private Animator anim;
         [SerializeField] private Rigidbody2D rb;
+        [SerializeField] private SpriteRenderer render;
 
         [Space(20f)]
         [SerializeField] private SkillData slashSkillData;
@@ -45,6 +46,8 @@ namespace Monster
         private Skill currentSkill = Skill.None;
         private int currentPlayingAnim;
         private bool isInteractable = true;
+        private Awaitable colorFadeAwaiter = null;
+        private float colorFadeTime = 0.2f;
 
         protected override void Awake()
         {
@@ -78,6 +81,40 @@ namespace Monster
             {
                 bt.Tick(new TimeData(Time.deltaTime));
             }
+        }
+
+        void ICombatable.TakeHit(float damage, BaseObject hitter)
+        {
+            hp -= damage;
+
+            TakeHitVFX vfx = GameManager.Instance.combatSystem.GetTakeHitVFX();
+            vfx.Init(this.transform.position + Vector3.down * 1f);
+            vfx.Enable();
+
+            if (colorFadeAwaiter != null)
+            {
+                colorFadeAwaiter.Cancel();
+                colorFadeAwaiter = null;
+            }
+
+            colorFadeAwaiter = FadeColor();
+        }
+        
+        private async Awaitable FadeColor()
+        {
+            float timer = Time.time + colorFadeTime;
+
+            render.color = new Color(1f, 0f, 0f, 1f);
+
+            while (Time.time < timer)
+            {
+                float color = Mathf.Lerp(0f, 1f, 1 - ((timer - Time.time) / colorFadeTime));
+                render.color = new Color(1f, color, color, 1f);
+
+                await Awaitable.NextFrameAsync();
+            }
+
+            render.color = new Color(1f, 1f, 1f, 1f);
         }
 
         void IInteractable.CancelInteraction()
@@ -309,7 +346,7 @@ namespace Monster
                                 currentPlayingAnim = AnimHash.SLASH;
 
                                 var skill = GameManager.Instance.combatSystem.GetSkill();
-                                skill.Init(transform.position, transform.gameObject.layer, slashSkillData);
+                                skill.Init(transform.position, transform.gameObject.layer, slashSkillData, this);
                                 skill.Enable();
 
                                 return BehaviourTreeStatus.Running;
@@ -410,7 +447,7 @@ namespace Monster
                                 currentPlayingAnim = AnimHash.EJECT_SLASH;
 
                                 var skill = GameManager.Instance.combatSystem.GetSkill();
-                                skill.Init(transform.position, transform.gameObject.layer, ejectSlashSkillData);
+                                skill.Init(transform.position, transform.gameObject.layer, ejectSlashSkillData, this);
                                 skill.Enable();
 
                                 return BehaviourTreeStatus.Running;
@@ -503,7 +540,7 @@ namespace Monster
                                 currentPlayingAnim = AnimHash.EXPLOSION;
 
                                 var skill = GameManager.Instance.combatSystem.GetSkill();
-                                skill.Init(transform.position, transform.gameObject.layer, explosionSkillData);
+                                skill.Init(transform.position, transform.gameObject.layer, explosionSkillData, this);
                                 skill.Enable();
 
                                 return BehaviourTreeStatus.Running;
@@ -596,7 +633,7 @@ namespace Monster
                                 currentPlayingAnim = AnimHash.RUSH;
 
                                 var skill = GameManager.Instance.combatSystem.GetSkill();
-                                skill.Init(transform.position, transform.gameObject.layer, rushSkillData);
+                                skill.Init(transform.position, transform.gameObject.layer, rushSkillData, this);
                                 skill.Enable();
 
                                 return BehaviourTreeStatus.Running;

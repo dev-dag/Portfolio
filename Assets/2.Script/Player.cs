@@ -278,7 +278,7 @@ public class Player : BaseObject, ICombatable
         anim.Play(AnimHash.ATTACK_1);
 
         skill = GameManager.Instance.combatSystem.GetSkill();
-        skill.Init(transform.position, this.gameObject.layer, testSkillData);
+        skill.Init(transform.position, this.gameObject.layer, testSkillData, this);
 
         skill.Enable();
 
@@ -355,12 +355,16 @@ public class Player : BaseObject, ICombatable
         });
     }
 
-    void ICombatable.TakeHit(float damage, Rigidbody2D hitRB)
+    void ICombatable.TakeHit(float damage, BaseObject hitter)
     {
         if (noTakeDamage)
         {
             return;
         }
+
+        TakeHitVFX vfx = GameManager.Instance.combatSystem.GetTakeHitVFX();
+        vfx.Init(this.transform.position + Vector3.up * 2f);
+        vfx.Enable();
 
         info.HP -= damage;
 

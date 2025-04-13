@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Monster
 {
-    public class Monster : BaseObject, ICombatable
+    public class Monster : BaseObject
     {
         [SerializeField] protected MonsterInfo info;
         protected float hp;
@@ -10,11 +10,6 @@ namespace Monster
         public void Init()
         {
             hp = info.hp;
-        }
-
-        void ICombatable.TakeHit(float damage, Rigidbody2D hitRB)
-        {
-            hp -= damage;
         }
     }
 

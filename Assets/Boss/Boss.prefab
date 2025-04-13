@@ -57,6 +57,8 @@ MonoBehaviour:
   explosionSkillData: {fileID: 11400000, guid: a397604e6d20a404893510372b23c6ee, type: 2}
   rushSkillData: {fileID: 11400000, guid: 2c440a5106da13544882d9f8f691fa32, type: 2}
   playerTr: {fileID: 0}
+  render: {fileID: 9129901342440154282}
+  colorChangeTime: 0.5
 --- !u!212 &9129901342440154282
 SpriteRenderer:
   m_ObjectHideFlags: 0
