@@ -2,18 +2,20 @@ using UnityEngine;
 
 public class Skill : PoolingObject, ICombatAnimatorEventListener
 {
-    [SerializeField] private Animator effectAnimator;
+    [SerializeField] protected Animator effectAnimator;
 
-    private ProxyCollider proxyCollider;
+    protected ProxyCollider proxyCollider;
 
-    [SerializeField] private SkillData data;
-    private int layer = 0;
-    BaseObject caller;
+    [SerializeField] protected SkillData data;
+    
+    protected int layer = 0;
+    protected BaseObject caller;
 
-    public void Init(Vector2 worldPosition, int layer, SkillData data, BaseObject caller)
+    public void Init(Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller)
     {
         this.data = data;
-        this.transform.position = worldPosition;
+        this.transform.position = position;
+        this.transform.rotation = rotation;
         this.layer = layer;
         this.caller = caller;
 
@@ -27,7 +29,20 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
     {
         base.Enable();
 
-        Invoke("Return", 3f);
+        Invoke("Return", data.lifeTime);
+    }
+
+    public override void Return()
+    {
+        base.Return();
+
+        (this as ICombatAnimatorEventListener).StopHit();
+        proxyCollider = null;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
     }
 
 #if DEBUG
@@ -52,6 +67,11 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
     /// </summary>
     void ICombatAnimatorEventListener.StartHit()
     {
+        if (proxyCollider != null)
+        {
+            return;
+        }
+
         switch (data.collisionType)
         {
             case SkillData.SkillCollisionType.Box:
@@ -59,7 +79,7 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
                 BoxProxyCollider boxProxyCollider = GameManager.Instance.combatSystem.GetBoxProxyCollider();
                 proxyCollider = boxProxyCollider;
 
-                boxProxyCollider.Init(this.transform.position, data.colliderOffset, data.colliderSize, layer, OnHit);
+                boxProxyCollider.Init(this.transform.position, this.transform.rotation, data.colliderOffset, data.colliderSize, layer, OnHit);
 
                 proxyCollider.Enable();
 
@@ -70,7 +90,7 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
                 CircleProxyCollider circleProxyCollider = GameManager.Instance.combatSystem.GetCircleProxyCollider();
                 proxyCollider = circleProxyCollider;
 
-                circleProxyCollider.Init(this.transform.position, data.colliderOffset, data.radius, layer, OnHit);
+                circleProxyCollider.Init(this.transform.position, this.transform.rotation, data.colliderOffset, data.radius, layer, OnHit);
 
                 proxyCollider.Enable();
 
@@ -90,7 +110,7 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
     /// </summary>
     void ICombatAnimatorEventListener.StopHit()
     {
-        proxyCollider.Return();
+        proxyCollider?.Return();
         proxyCollider = null;
     }
 
@@ -98,8 +118,13 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
     /// 피격 범위에 들어온 대상의 체력을 감소시키는 함수.
     /// </summary>
     /// <param name="combatInterface">체력을 감소시키는 함수를 제공하는 인터페이스</param>
-    protected void OnHit(ICombatable combatInterface)
+    protected virtual void OnHit(Collider2D collision)
     {
-        combatInterface.TakeHit(data.damage, caller);
+        if (collision.attachedRigidbody.GetComponentInChildren<BaseObject>() is ICombatable)
+        {
+            ICombatable combatInterface = collision.attachedRigidbody.GetComponentInChildren<BaseObject>() as ICombatable;
+
+            combatInterface.TakeHit(data.damage, caller);
+        }
     }
 }

@@ -11,6 +11,7 @@ public class CombatSystem : BaseObject
     [SerializeField] private ObjectPool boxProxyColliderPool;
     [SerializeField] private ObjectPool circleProxyColliderPool;
     [SerializeField] private ObjectPool skillPool;
+    [SerializeField] private ObjectPool linearDynamicSkillPool;
     [SerializeField] private ObjectPool takeHitVFX_Pool;
 
     /// <summary>
@@ -35,6 +36,14 @@ public class CombatSystem : BaseObject
     public Skill GetSkill()
     {
         return skillPool.Burrow<Skill>();
+    }
+
+    /// <summary>
+    /// 선형 동적 스킬 인스턴스를 반환하는 함수
+    /// </summary>
+    public LinearDynamicSkill GetLinearDynamicSkill()
+    {
+        return linearDynamicSkillPool.Burrow<LinearDynamicSkill>();
     }
 
     /// <summary>

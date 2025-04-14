@@ -7,6 +7,7 @@ public class GameManager : SingleTon<GameManager>
     public const string INTERACTABLE_OBJECT_LAYER_NAME = "InteractableObject";
     public const string PLAYER_SIDE_LAYER_NAME = "PlayerSide";
     public const string MONSTER_SIDE_LAYER_NAME = "MonsterSide";
+    public const string PLATFORM_LAYER_NAME = "Platform";
 
     [Space(20f)]
     public InputActionAsset globalInputActionAsset;

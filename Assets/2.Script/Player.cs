@@ -278,7 +278,7 @@ public class Player : BaseObject, ICombatable
         anim.Play(AnimHash.ATTACK_1);
 
         skill = GameManager.Instance.combatSystem.GetSkill();
-        skill.Init(transform.position, this.gameObject.layer, testSkillData, this);
+        skill.Init(transform.position, transform.rotation, gameObject.layer, testSkillData, this);
 
         skill.Enable();
 

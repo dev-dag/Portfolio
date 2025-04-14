@@ -23,6 +23,7 @@ public class SkillData : ScriptableObject
     public RuntimeAnimatorController animationController;
     public Vector2 colliderOffset;
     public int castingLayer;
+    public float lifeTime = 3f;
 
     [Space(20f)]
     [Tooltip("when collision type is box only.")] public Vector2 colliderSize;

@@ -3,6 +3,8 @@ using UnityEngine;
 
 public abstract class PoolingObject : BaseObject
 {
+    public bool IsReturned { get; protected set; }
+
     protected ObjectPool pool;
 
     /// <summary>
@@ -18,9 +20,16 @@ public abstract class PoolingObject : BaseObject
     /// </summary>
     public virtual void Return()
     {
+        if (IsReturned)
+        {
+            return;
+        }
+
         Disable();
 
         this.pool.Return(this);
+
+        IsReturned = true;
     }
 
     /// <summary>
