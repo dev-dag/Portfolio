@@ -8,6 +8,7 @@ using UnityEngine;
 public abstract class ProxyCollider : PoolingObject
 {
     public event Action<Collider2D> onHitEventHandler;
+    protected Skill ownerSkill;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -19,5 +20,11 @@ public abstract class ProxyCollider : PoolingObject
         base.Return();
 
         onHitEventHandler = null;
+        ownerSkill = null;
+    }
+
+    public Skill GetSkill()
+    {
+        return ownerSkill;
     }
 }

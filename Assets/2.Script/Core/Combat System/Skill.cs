@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Skill : PoolingObject, ICombatAnimatorEventListener
 {
+    public bool IsParryed { get; protected set; }
+
     [SerializeField] protected Animator effectAnimator;
 
     protected ProxyCollider proxyCollider;
@@ -10,6 +12,8 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
     
     protected int layer = 0;
     protected BaseObject caller;
+
+    protected bool isHitable = false;
 
     public void Init(Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller)
     {
@@ -36,7 +40,10 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
     {
         base.Return();
 
+        IsParryed = false;
+
         (this as ICombatAnimatorEventListener).StopHit();
+        proxyCollider.Return();
         proxyCollider = null;
     }
 
@@ -63,6 +70,28 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
 #endif
 
     /// <summary>
+    /// 스킬 타입 반환
+    /// </summary>
+    public SkillData.SkillType GetSkillType()
+    {
+        return data.skillType;
+    }
+
+    public virtual void TryParry()
+    {
+        if (isHitable)
+        {
+            var vfx = GameManager.Instance.combatSystem.GetTakeHitVFX();
+            vfx.Init(transform.position);
+            vfx.Enable();
+
+            IsParryed = true;
+
+            Return();
+        }
+    }
+
+    /// <summary>
     /// 애니메이터에서 이벤트로 호출되는 피격판정을 시작하는 함수
     /// </summary>
     void ICombatAnimatorEventListener.StartHit()
@@ -72,6 +101,8 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
             return;
         }
 
+        isHitable = true;
+
         switch (data.collisionType)
         {
             case SkillData.SkillCollisionType.Box:
@@ -79,7 +110,7 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
                 BoxProxyCollider boxProxyCollider = GameManager.Instance.combatSystem.GetBoxProxyCollider();
                 proxyCollider = boxProxyCollider;
 
-                boxProxyCollider.Init(this.transform.position, this.transform.rotation, data.colliderOffset, data.colliderSize, layer, OnHit);
+                boxProxyCollider.Init(this.transform.position, this.transform.rotation, data.colliderOffset, data.colliderSize, layer, OnHit, this);
 
                 proxyCollider.Enable();
 
@@ -90,7 +121,7 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
                 CircleProxyCollider circleProxyCollider = GameManager.Instance.combatSystem.GetCircleProxyCollider();
                 proxyCollider = circleProxyCollider;
 
-                circleProxyCollider.Init(this.transform.position, this.transform.rotation, data.colliderOffset, data.radius, layer, OnHit);
+                circleProxyCollider.Init(this.transform.position, this.transform.rotation, data.colliderOffset, data.radius, layer, OnHit, this);
 
                 proxyCollider.Enable();
 
@@ -110,8 +141,7 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
     /// </summary>
     void ICombatAnimatorEventListener.StopHit()
     {
-        proxyCollider?.Return();
-        proxyCollider = null;
+        isHitable = false;
     }
 
     /// <summary>
@@ -120,11 +150,28 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
     /// <param name="combatInterface">체력을 감소시키는 함수를 제공하는 인터페이스</param>
     protected virtual void OnHit(Collider2D collision)
     {
-        if (collision.attachedRigidbody.GetComponentInChildren<BaseObject>() is ICombatable)
+        if (IsParryed || isHitable == false) // 충돌 가능 타이밍이 아닌 경우나, 패리된 스킬은 물리처리 하지 않음.
         {
-            ICombatable combatInterface = collision.attachedRigidbody.GetComponentInChildren<BaseObject>() as ICombatable;
+            return;
+        }
+
+        BaseObject hitObject = collision.attachedRigidbody.GetComponent<BaseObject>();
+
+        if (hitObject is ICombatable)
+        {
+            ICombatable combatInterface = collision.attachedRigidbody.GetComponent<BaseObject>() as ICombatable;
 
             combatInterface.TakeHit(data.damage, caller);
+        }
+        else if (hitObject is ProxyCollider) // 스킬과 충돌 체크된 경우 패리 가능한지 체크
+        {
+            Skill hitSkill = (hitObject as ProxyCollider).GetSkill();
+
+            if (hitSkill.GetSkillType() == SkillData.SkillType.Parried
+                && data.skillType == SkillData.SkillType.Parryable)
+            {
+                hitSkill.TryParry();
+            }
         }
     }
 }
