@@ -43,6 +43,8 @@ public class ObjectPool : BaseObject
             usingList.Add(burrowObject);
         }
 
+        burrowObject.IsReturned = false;
+
         if (burrowObject is T)
         {
             return (T)burrowObject;

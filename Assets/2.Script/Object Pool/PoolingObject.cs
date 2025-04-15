@@ -3,7 +3,7 @@ using UnityEngine;
 
 public abstract class PoolingObject : BaseObject
 {
-    public bool IsReturned { get; protected set; }
+    public bool IsReturned { get; set; }
 
     protected ObjectPool pool;
 
