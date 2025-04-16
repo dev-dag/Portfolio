@@ -25,7 +25,7 @@ public class QuestSystem : SingleTon<QuestSystem>
             
             if ((instance is Quest) == false)
             {
-                Debug.LogError("Quest 타입 오류 발견");
+                EDebug.LogError("Quest 타입 오류 발견");
                 continue;
             }
 

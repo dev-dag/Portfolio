@@ -20,7 +20,7 @@ public class QuestNPC : NPC
         if (QuestSystem.Instance == null
             || QuestSystem.Instance.IsInit == false)
         {
-            Debug.LogError("퀘스트 시스템이 초기화되지 않음.");
+            EDebug.LogError("퀘스트 시스템이 초기화되지 않음.");
             IsInit = false;
             return;
         }

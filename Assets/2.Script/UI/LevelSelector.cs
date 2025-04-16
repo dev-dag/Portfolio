@@ -38,7 +38,7 @@ public class LevelSelector : BaseObject
             || confirmAction == null
             || cancelAction == null)
         {
-            Debug.LogError("인풋 시스템 설정 오류");
+            EDebug.LogError("인풋 시스템 설정 오류");
         }
 
         upAction.performed += OnUp;

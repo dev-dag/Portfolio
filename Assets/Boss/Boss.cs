@@ -58,7 +58,7 @@ namespace Monster
             this.gameObject.layer = LayerMask.NameToLayer(GameManager.INTERACTABLE_OBJECT_LAYER_NAME);
             if (this.gameObject.layer == -1)
             {
-                Debug.LogError("레이어 이름 오류");
+                EDebug.LogError("레이어 이름 오류");
             }
 
             bt = GetBehaviourTree();

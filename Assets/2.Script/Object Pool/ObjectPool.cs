@@ -69,7 +69,7 @@ public class ObjectPool : BaseObject
     {
         if (usingList.Contains(poolingObject) == false)
         {
-            Debug.LogError("잘못된 반환");
+            EDebug.LogError("잘못된 반환");
 
             return;
         }
@@ -107,7 +107,7 @@ public class ObjectPool : BaseObject
         }
         else
         {
-            Debug.LogError("프리팹 오류 발견");
+            EDebug.LogError("프리팹 오류 발견");
         }
 
         objectCreater = null;

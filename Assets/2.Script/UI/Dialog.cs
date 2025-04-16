@@ -25,7 +25,7 @@ public class Dialog : BaseObject
         continueDialogAction = GameManager.Instance.globalInputActionAsset.FindActionMap("UI")?.FindAction("ContinueDialog");
         if (continueDialogAction == null)
         {
-            Debug.LogError("Input Action 참조 오류");
+            EDebug.LogError("Input Action 참조 오류");
         }
 
         this.gameObject.SetActive(false);

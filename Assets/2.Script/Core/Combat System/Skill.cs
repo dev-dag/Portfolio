@@ -129,7 +129,7 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
             }
             default:
             {
-                Debug.LogError("스킬 데이터 오류 발생");
+                EDebug.LogError("스킬 데이터 오류 발생");
 
                 break;
             }

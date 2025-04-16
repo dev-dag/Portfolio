@@ -22,7 +22,7 @@ public class NPC : BaseObject, IInteractable
         startDialogAction = GameManager.Instance.globalInputActionAsset.FindActionMap("UI")?.FindAction("Interact");
         if (startDialogAction == null)
         {
-            Debug.LogError("Input Action 참조 오류");
+            EDebug.LogError("Input Action 참조 오류");
         }
     }
 

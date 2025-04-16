@@ -9,7 +9,7 @@ public class InteractableObject : BaseObject
 
         if (GetComponent<Collider2D>().isTrigger == false)
         {
-            Debug.LogWarning("인자로 설정된 충돌체가 트리거 타입이 아님.");
+            EDebug.LogWarning("인자로 설정된 충돌체가 트리거 타입이 아님.");
             return;
         }
     }
