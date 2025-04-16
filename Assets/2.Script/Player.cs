@@ -59,7 +59,7 @@ public class Player : BaseObject, ICombatable
     {
         base.Start();
     }
-    int f = 1;
+    
     protected override void Update()
     {
         base.Update();

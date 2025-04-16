@@ -286,8 +286,6 @@ namespace Monster
                 }
             }
 
-            result = Skill.EjectSlash;
-
             return result; // None¿Ã∏È æ»âŒ.
         }
 
