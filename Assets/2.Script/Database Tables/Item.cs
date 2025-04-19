@@ -1,11 +1,19 @@
 using UnityEngine;
 using SQLite4Unity3d;
+using System;
+using UnityEngine.AddressableAssets;
 
 namespace Database_Table
 {
     [Table("Item")]
     public class Item
     {
+        public enum ItemType
+        {
+            Potion = 0,
+            Weapon = 1,
+        }
+
         [Column("id"), PrimaryKey]
         public int ID { get; set; }
 
@@ -14,7 +22,6 @@ namespace Database_Table
 
         [Column("type")]
         public int Type { get; set; }
-
         public ItemType TypeEnum
         {
             get
@@ -23,10 +30,20 @@ namespace Database_Table
             }
         }
 
-        public enum ItemType
+        public Sprite IconSprite { get; private set; }
+
+        public void LoadIconSprite()
         {
-            Potion = 0,
-            Weapon = 1,
+            if (IconSprite == null)
+            {
+                Addressables.LoadAssetAsync<Sprite>($"Item Icon/{ID}").Completed += (result) =>
+                {
+                    if (result.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+                    {
+                        IconSprite = result.Result;
+                    }
+                };
+            }
         }
     }
 }

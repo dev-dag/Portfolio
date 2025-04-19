@@ -70,6 +70,7 @@ public class DB_Connecter
             foreach (var table in result)
             {
                 dataContainer.item.Add(table.ID, table);
+                table.LoadIconSprite(); // 아이템 아이콘 이미지 로드
             }
         }
     }
