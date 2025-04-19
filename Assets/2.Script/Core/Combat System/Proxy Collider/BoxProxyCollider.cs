@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 /// <summary>
 /// Skill에서 사용하기 위한 대리 충돌체
