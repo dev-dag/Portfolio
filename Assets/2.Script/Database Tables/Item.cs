@@ -14,5 +14,19 @@ namespace Database_Table
 
         [Column("type")]
         public int Type { get; set; }
+
+        public ItemType TypeEnum
+        {
+            get
+            {
+                return (ItemType)Type;
+            }
+        }
+
+        public enum ItemType
+        {
+            Potion = 0,
+            Weapon = 1,
+        }
     }
 }
