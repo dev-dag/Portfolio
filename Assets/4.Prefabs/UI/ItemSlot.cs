@@ -75,4 +75,9 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
         // 아이템 이미지 불러오기
         amountText.text = amount.ToString();
     }
+
+    public void SetImageAlpha(float alpha)
+    {
+        image.color = new Color(image.color.r, image.color.g, image.color.b, alpha);
+    }
 }
