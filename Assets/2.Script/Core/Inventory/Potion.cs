@@ -14,4 +14,10 @@ public class Potion : ItemContainer
             return false;
         }
     }
+
+    public void Drink()
+    {
+        Amount--;
+        Player.Current.IncreaseHP(10);
+    }
 }

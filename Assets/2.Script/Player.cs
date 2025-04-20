@@ -5,6 +5,10 @@ using System.Timers;
 using Unity.Cinemachine;
 using UnityEngine.Rendering;
 
+/// <summary>
+/// 동시에 2개 이상의 인스턴스가 존재하면 안되는 클래스.
+/// 반드시 필요한 경우, 반드시 하나의 인스턴스는 Disable 된 상태여야 한다.
+/// </summary>
 public class Player : BaseObject, ICombatable
 {
     public struct AnimHash
@@ -34,7 +38,10 @@ public class Player : BaseObject, ICombatable
 
     private InputAction moveAction;
     private InputAction jumpAction;
-    private InputAction skill_1_Action;
+    private InputAction skill_0_Action;
+    private InputAction quickSlot_0_Action;
+    private InputAction quickSlot_1_Action;
+    private InputAction quickSlot_2_Action;
     private InputAction interactAction;
 
     private IInteractable interactionCurrent; // 현재 인터렉션 가능한 대상
@@ -80,11 +87,17 @@ public class Player : BaseObject, ICombatable
     private void OnEnable()
     {
         interactAction.performed += OnInteract;
+        quickSlot_0_Action.performed += OnQuickSlot_0;
+        quickSlot_1_Action.performed += OnQuickSlot_1;
+        quickSlot_2_Action.performed += OnQuickSlot_2;
     }
 
     private void OnDisable()
     {
         interactAction.performed -= OnInteract;
+        quickSlot_0_Action.performed -= OnQuickSlot_0;
+        quickSlot_1_Action.performed -= OnQuickSlot_1;
+        quickSlot_2_Action.performed -= OnQuickSlot_2;
     }
 
     /// <summary>
@@ -93,6 +106,14 @@ public class Player : BaseObject, ICombatable
     public bool IsAlive()
     {
         return info.HP > 0f ? false : true;
+    }
+
+    /// <summary>
+    /// 플레이어의 현재 체력을 올려주는 함수.
+    /// </summary>
+    public void IncreaseHP(float amount)
+    {
+        info.HP += amount;
     }
 
     /// <summary>
@@ -160,7 +181,11 @@ public class Player : BaseObject, ICombatable
 
         moveAction = actionMap.FindAction("Move");
         jumpAction = actionMap.FindAction("Jump");
-        skill_1_Action = actionMap.FindAction("UseSkill_1");
+        skill_0_Action = actionMap.FindAction("UseSkill_0");
+        
+        quickSlot_0_Action = actionMap.FindAction("UseQuickSlot_0");
+        quickSlot_1_Action = actionMap.FindAction("UseQuickSlot_1");
+        quickSlot_2_Action = actionMap.FindAction("UseQuickSlot_2");
 
         // UI 입력 초기화
         InputActionMap UI_ActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("UI");
@@ -205,7 +230,7 @@ public class Player : BaseObject, ICombatable
                                 .End()
 
                                 .Sequence(string.Empty)
-                                    .Condition("공격 버튼을 누른 경우", (t) => skill_1_Action.IsPressed() && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack") == false)
+                                    .Condition("공격 버튼을 누른 경우", (t) => skill_0_Action.IsPressed() && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack") == false)
                                     .Do(string.Empty, DoOnAttack)
                                 .End()
                             .End()
@@ -353,6 +378,42 @@ public class Player : BaseObject, ICombatable
             await Awaitable.WaitForSecondsAsync(0.1f); // 상호작용 딜레이 설정
             onInteration = false;
         });
+    }
+
+    private void OnQuickSlot_0(InputAction.CallbackContext context)
+    {
+        ExclusiveItemSlot quickSlot = GameManager.Instance.uiManager.quickSlot.GetQuickSlotByIndex(0);
+
+        if (quickSlot.ItemID != null)
+        {
+            ItemContainer itemContainer = GameManager.Instance.uiManager.inventory.Items[quickSlot.ItemID.Value];
+
+            (itemContainer as Potion).Drink();
+        }
+    }
+
+    private void OnQuickSlot_1(InputAction.CallbackContext context)
+    {
+        ExclusiveItemSlot quickSlot = GameManager.Instance.uiManager.quickSlot.GetQuickSlotByIndex(1);
+
+        if (quickSlot.ItemID != null)
+        {
+            ItemContainer itemContainer = GameManager.Instance.uiManager.inventory.Items[quickSlot.ItemID.Value];
+
+            (itemContainer as Potion).Drink();
+        }
+    }
+
+    private void OnQuickSlot_2(InputAction.CallbackContext context)
+    {
+        ExclusiveItemSlot quickSlot = GameManager.Instance.uiManager.quickSlot.GetQuickSlotByIndex(2);
+
+        if (quickSlot.ItemID != null)
+        {
+            ItemContainer itemContainer = GameManager.Instance.uiManager.inventory.Items[quickSlot.ItemID.Value];
+
+            (itemContainer as Potion).Drink();
+        }
     }
 
     void ICombatable.TakeHit(float damage, BaseObject hitter)

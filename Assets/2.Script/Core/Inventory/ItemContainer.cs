@@ -1,15 +1,43 @@
 using UnityEngine;
 using Database_Table;
+using System;
 
 public class ItemContainer
 {
-    public Item item;
-    public int amount = 0;
+    public event Action<ItemContainer> OnValueChanged;
+
+    private Item item;
+    public Item Item
+    {
+        get => item;
+        set
+        {
+            if (item != value)
+            {
+                item = value;
+                OnValueChanged?.Invoke(this);
+            }
+        }
+    }
+
+    private int amount = 0;
+    public int Amount
+    {
+        get => amount;
+        set
+        {
+            if (amount != value)
+            {
+                amount = value;
+                OnValueChanged?.Invoke(this);
+            }
+        }
+    }
 
     public virtual bool Init(Item item, int amount)
     {
-        this.item = item;
-        this.amount = amount;
+        this.Item = item;
+        this.Amount = amount;
 
         return true;
     }
@@ -20,7 +48,15 @@ public class ItemContainer
 
         if (GameManager.Instance.data.item.TryGetValue(id, out Item data))
         {
-            newContainer = new ItemContainer();
+            if (data.TypeEnum == Item.ItemType.Weapon)
+            {
+                newContainer = new LongSward();
+            }
+            else if (data.TypeEnum == Item.ItemType.Potion)
+            {
+                newContainer = new Potion();
+            }
+            
             newContainer.Init(data, amount);
         }
 
