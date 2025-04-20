@@ -63,15 +63,18 @@ public class Inventory : BaseObject
     private void OnEnable()
     {
         InputActionMap playerActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("Player");
-        playerActionMap.FindAction("Attack").Disable();
+        playerActionMap.FindAction("UseSkill_1").Disable();
+        playerActionMap.FindAction("UseSkill_2").Disable();
+        playerActionMap.FindAction("UseSkill_3").Disable();
     }
 
     private void OnDisable()
     {
         InputActionMap playerActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("Player");
-        playerActionMap.FindAction("Attack").Enable();
-    }
-
+        playerActionMap.FindAction("UseSkill_1").Enable();
+        playerActionMap.FindAction("UseSkill_2").Enable();
+        playerActionMap.FindAction("UseSkill_3").Enable();
+    }   
     /// <summary>
     /// 아이템을 추가하는 함수
     /// </summary>

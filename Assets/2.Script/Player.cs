@@ -34,7 +34,7 @@ public class Player : BaseObject, ICombatable
 
     private InputAction moveAction;
     private InputAction jumpAction;
-    private InputAction attackAction;
+    private InputAction skill_1_Action;
     private InputAction interactAction;
 
     private IInteractable interactionCurrent; // 현재 인터렉션 가능한 대상
@@ -160,7 +160,7 @@ public class Player : BaseObject, ICombatable
 
         moveAction = actionMap.FindAction("Move");
         jumpAction = actionMap.FindAction("Jump");
-        attackAction = actionMap.FindAction("Attack");
+        skill_1_Action = actionMap.FindAction("UseSkill_1");
 
         // UI 입력 초기화
         InputActionMap UI_ActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("UI");
@@ -205,7 +205,7 @@ public class Player : BaseObject, ICombatable
                                 .End()
 
                                 .Sequence(string.Empty)
-                                    .Condition("공격 버튼을 누른 경우", (t) => attackAction.IsPressed() && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack") == false)
+                                    .Condition("공격 버튼을 누른 경우", (t) => skill_1_Action.IsPressed() && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack") == false)
                                     .Do(string.Empty, DoOnAttack)
                                 .End()
                             .End()
