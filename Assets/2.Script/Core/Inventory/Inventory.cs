@@ -38,11 +38,38 @@ public class Inventory : BaseObject
         {
             quickItemSlot.Init(OnSlotDragging, OnSlotClicked, OnSlotHovering);
         }
+
+        // 인벤토리 단축키 설정
+        InputActionMap UI_ActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("UI");
+        UI_ActionMap.FindAction("Cancel").performed += (arg) => this.gameObject.SetActive(false);
+        UI_ActionMap.FindAction("Inventory").performed += (arg) =>
+        {
+            if (this.gameObject.activeInHierarchy == false)
+            {
+                this.gameObject.SetActive(true);
+            }
+            else
+            {
+                this.gameObject.SetActive(false);
+            }
+        };
     }
 
     protected override void Start()
     {
         base.Start();
+    }
+
+    private void OnEnable()
+    {
+        InputActionMap playerActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("Player");
+        playerActionMap.FindAction("Attack").Disable();
+    }
+
+    private void OnDisable()
+    {
+        InputActionMap playerActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("Player");
+        playerActionMap.FindAction("Attack").Enable();
     }
 
     /// <summary>
