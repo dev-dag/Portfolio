@@ -15,7 +15,7 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     public delegate void ClickEventHandler(ItemSlot trigger, PointerEventData.InputButton button);
     public delegate void HoverEventHandler(ItemSlot trigger, Vector2 position);
 
-    [SerializeField] private Image image;
+    [SerializeField] private Image iconImage;
     [SerializeField] private TMP_Text amountText;
 
     public ItemContainer ItemContainer { get; private set; }
@@ -25,18 +25,21 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     private HoverEventHandler hoverEventHandler;
     private bool onDrag = false;
 
+    protected override void Awake()
+    {
+        base.Awake();
+
+        if (ItemContainer == null)
+        {
+            iconImage.gameObject.SetActive(false);
+        }
+    }
+
     public void Init(DragEventHandler dragEventHandler, ClickEventHandler clickEventHandler, HoverEventHandler hoverEventHandler)
     {
         this.dragEventHandler = dragEventHandler;
         this.clickEventHandler = clickEventHandler;
         this.hoverEventHandler = hoverEventHandler;
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-        onDrag = false;
     }
 
     /// <summary>
@@ -81,6 +84,8 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     {
         if (onDrag)
         {
+            onDrag = false;
+
             dragEventHandler?.Invoke(this, eventData.position, DragStatus.Ended);
 
             EDebug.Log($"End of Drag : {eventData.position}");
@@ -91,13 +96,46 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     {
         this.ItemContainer = itemContainer;
 
-        // 아이템 이미지 불러오기
-        amountText.text = ItemContainer.amount.ToString();
+        if (ItemContainer == null)
+        {
+            iconImage.gameObject.SetActive(false);
+            amountText.text = string.Empty;
+        }
+        else
+        {
+            iconImage.gameObject.SetActive(true);
+            iconImage.sprite = ItemContainer.item.IconSprite;
+
+            if (ItemContainer.amount > 1)
+            {
+                amountText.text = ItemContainer.amount.ToString();
+            }
+            else
+            {
+                amountText.text = string.Empty;
+            }
+        }    }
+
+    /// <summary>
+    /// 아이템의 수량을 증가시키는 함수
+    /// </summary>
+    public void AddAmount(int amount)
+    {
+        ItemContainer.amount += amount;
+        
+        if (ItemContainer.amount > 1)
+        {
+            amountText.text = ItemContainer.amount.ToString();
+        }
+        else
+        {
+            amountText.text = string.Empty;
+        }
     }
 
     public void SetAlpha(float alpha)
     {
-        image.color = new Color(image.color.r, image.color.g, image.color.b, alpha);
+        iconImage.color = new Color(iconImage.color.r, iconImage.color.g, iconImage.color.b, alpha);
         amountText.alpha = alpha;
     }
 }

@@ -12,9 +12,9 @@ public class Inventory : BaseObject
     [SerializeField] private GraphicRaycaster raycaster;
 
     [Space(20f)]
-    [SerializeField] private ItemSlot[] bagItemSlotArr;
+    [SerializeField] private List<ItemSlot> bagItemSlotArr;
     [SerializeField] private ItemSlot weaponSlot;
-    [SerializeField] private ItemSlot[] quickItemSlotArr;
+    [SerializeField] private List<ItemSlot> quickItemSlotArr;
 
     [Space(20f)]
     [SerializeField] private Image holdingItemImage;
@@ -119,7 +119,10 @@ public class Inventory : BaseObject
                 }
 
                 holdingItemImage.sprite = trigger.ItemContainer.item.IconSprite; // holding image 활성화 및 아이템과 같은 이미지로 변경
-                (holdingItemImage.transform as RectTransform).anchoredPosition = position; // holding image position 변경
+
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, position, null, out Vector2 pos);
+
+                (holdingItemImage.transform as RectTransform).anchoredPosition = pos; // holding image position 변경
 
                 onHolding = true;
 
@@ -144,21 +147,19 @@ public class Inventory : BaseObject
 
                     if (dropSlot != null)
                     {
-                        if (dropSlot == weaponSlot) // Weapon Slot 인지 체크
+                        if (dropSlot == weaponSlot // Weapon Slot 인지 체크
+                            && trigger.ItemContainer.item.TypeEnum == Database_Table.Item.ItemType.Weapon) // trigger가 무기 타입인 경우 스왑.
                         {
-                            if (trigger.ItemContainer.item.TypeEnum == Database_Table.Item.ItemType.Weapon) // trigger가 무기 타입인 경우 스왑.
-                            {
-                                SwapSlotItem(trigger, dropSlot);
-                            }
+                            SwapSlotItem(trigger, dropSlot);
                         }
-                        else if (dropSlot == quickItemSlotArr[0] // Quick Slot 인지 체크
-                                || dropSlot == quickItemSlotArr[1]
-                                || dropSlot == quickItemSlotArr[2])
+                        else if (quickItemSlotArr.Contains(trigger) // Quick Slot 인지 체크
+                            && trigger.ItemContainer.item.TypeEnum == Database_Table.Item.ItemType.Potion) // trigger가 포션 타입인 경우 스왑.
                         {
-                            if (trigger.ItemContainer.item.TypeEnum == Database_Table.Item.ItemType.Potion) // trigger가 포션 타입인 경우 스왑.
-                            {
-                                SwapSlotItem(trigger, dropSlot);
-                            }
+                            SwapSlotItem(trigger, dropSlot);
+                        }
+                        else
+                        {
+                            SwapSlotItem(trigger, dropSlot);
                         }
                     }
                 }
@@ -182,7 +183,15 @@ public class Inventory : BaseObject
     {
         if (button == PointerEventData.InputButton.Right) // 우클릭의 경우
         {
-            if (trigger.ItemContainer.item.TypeEnum == Database_Table.Item.ItemType.Weapon)
+            if (trigger == weaponSlot // trigger가 무기 슬롯인 경우
+                || quickItemSlotArr.Contains(trigger)) // trigger가 퀵 슬롯인 경우
+            {
+                if (GetEmptyBagItemSlot(out ItemSlot emptyBagSlot))
+                {
+                    SwapSlotItem(trigger, emptyBagSlot);
+                }
+            }
+            else if (trigger.ItemContainer.item.TypeEnum == Database_Table.Item.ItemType.Weapon) // trigger가 소지품 슬롯이고 무기 타입 아이템인 경우
             {
                 SwapSlotItem(trigger, weaponSlot);
             }
@@ -206,7 +215,59 @@ public class Inventory : BaseObject
     {
         ItemContainer bContainer = b.ItemContainer;
 
-        b.Set(a.ItemContainer);
-        a.Set(bContainer);
+        if (quickItemSlotArr.Contains(b))
+        {
+            SetQuickSlot(quickItemSlotArr.IndexOf(b), a.ItemContainer);
+        }
+        else
+        {
+            b.Set(a.ItemContainer);
+        }
+
+        if (quickItemSlotArr.Contains(a))
+        {
+            SetQuickSlot(quickItemSlotArr.IndexOf(a), bContainer);
+        }
+        else
+        {
+            a.Set(bContainer);
+        }
+    }
+
+    private bool GetEmptyBagItemSlot(out ItemSlot emptyBagSlot)
+    {
+        foreach (var bagItemSlot in bagItemSlotArr)
+        {
+            if (bagItemSlot.ItemContainer == null)
+            {
+                emptyBagSlot = bagItemSlot;
+                return true;
+            }
+        }
+
+        emptyBagSlot = null;
+        return false;
+    }
+
+    /// <summary>
+    /// 인벤토리 내의 퀵슬롯 UI를 설정하면서 글로벌 퀵슬롯 데이터도 갱신해는 함수
+    /// </summary>
+    private void SetQuickSlot(int index, ItemContainer itemContainer)
+    {
+        quickItemSlotArr[index].Set(itemContainer);
+
+        // 퀵슬롯 인스턴스 업데이트
+        if (index == 0)
+        {
+            GameManager.Instance.combatSystem.QuickItemContainer_1 = itemContainer;
+        }
+        else if (index == 1)
+        {
+            GameManager.Instance.combatSystem.QuickItemContainer_2 = itemContainer;
+        }
+        else if (index == 2)
+        {
+            GameManager.Instance.combatSystem.QuickItemContainer_3 = itemContainer;
+        }
     }
 }

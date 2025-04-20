@@ -13,4 +13,17 @@ public class ItemContainer
 
         return true;
     }
+
+    public static ItemContainer CreateItemContainer(int id, int amount)
+    {
+        ItemContainer newContainer = null;
+
+        if (GameManager.Instance.data.item.TryGetValue(id, out Item data))
+        {
+            newContainer = new ItemContainer();
+            newContainer.Init(data, amount);
+        }
+
+        return newContainer;
+    }
 }
