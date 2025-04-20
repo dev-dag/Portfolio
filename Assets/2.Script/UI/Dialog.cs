@@ -27,8 +27,6 @@ public class Dialog : BaseObject
         {
             EDebug.LogError("Input Action 참조 오류");
         }
-
-        this.gameObject.SetActive(false);
     }
 
     private void OnDisable()

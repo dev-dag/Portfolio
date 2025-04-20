@@ -43,11 +43,6 @@ public class Inventory : BaseObject
     protected override void Start()
     {
         base.Start();
-
-        Init();
-
-        AddItem(3, 1);
-        AddItem(0, 1);
     }
 
     /// <summary>

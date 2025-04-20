@@ -56,17 +56,13 @@ public class GameManager : SingleTon<GameManager>
 
         data = dbConnecter.ConnectAndLoadDB();
 
-        questSystem.Init();
-
         globalInputActionAsset.Enable(); // 인풋 활성화
 
-        CreatePrefab();
-    }
+        questSystem.Init(); // 퀘스트 시스템 초기화
 
-    private void CreatePrefab()
-    {
-        uiManager = GameObject.Instantiate(UI_Prefab).GetComponent<UI_Manager>();
+        uiManager = GameObject.Instantiate(UI_Prefab).GetComponent<UI_Manager>(); // UI 인스턴스 생성 및 초기화
+        uiManager.Init();
 
-        GameObject.Instantiate(baseHomeLevelPrefab);
+        GameObject.Instantiate(baseHomeLevelPrefab); // 초기 맵 로드
     }
 }
