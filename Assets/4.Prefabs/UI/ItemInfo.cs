@@ -1,5 +1,6 @@
 using Database_Table;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
@@ -42,6 +43,14 @@ public class ItemInfo : BaseObject
     [SerializeField] private Image image;
 
     private Item current;
+    private Canvas canvas;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        canvas = GetComponentInParent<Canvas>();
+    }
 
     /// <summary>
     /// 커서 위치에 특정 아이템 인포를 출력하는 함수
@@ -82,10 +91,91 @@ public class ItemInfo : BaseObject
                 }
             };
         }
+
+        SetPositionToCursorBased();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        SetPositionToCursorBased();
     }
 
     public void Disable()
     {
         this.gameObject.SetActive(false);
+    }
+
+    private void SetPositionToCursorBased()
+    {
+        RectTransform rtr = this.transform as RectTransform;
+
+        // UI를 우측에 노출 시도
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(transform.parent as RectTransform, Input.mousePosition, null, out Vector2 localAnchoredPos);
+        rtr.pivot = new Vector2(0f, 0f);
+        rtr.anchoredPosition = localAnchoredPos + Vector2.right * 100f;
+
+        if (IsFullyInScreen() == false) // 우측에 스크린 공간이 없으면 왼쪽에 노출
+        {
+            rtr.pivot = new Vector2(1f, 0f);
+            rtr.anchoredPosition = localAnchoredPos + Vector2.left * 100f;
+        }
+    }
+
+    private bool IsFullyInScreen()
+    {
+        RectTransform rtr = this.transform as RectTransform;
+
+        Vector3[] corners = new Vector3[4];
+        rtr.GetWorldCorners(corners);
+
+        // 좌하단, 우상단 코너 월드 좌표 조회
+        Vector2 min = corners[0];
+        Vector2 max = corners[0];
+
+        foreach (Vector2 pos in corners)
+        {
+            if (min.x >= pos.x && min.y >= pos.y)
+            {
+                min = pos;
+            }
+
+            if (max.x <= pos.x && max.y <= pos.y)
+            {
+                max = pos;
+            }
+        }
+
+        // 스크린 기준 좌표로 변환
+        Vector2 minScreenPos = RectTransformUtility.WorldToScreenPoint(null, min);
+        Vector2 maxScreenPos = RectTransformUtility.WorldToScreenPoint(null, max);
+
+        // 유효값의 범위를 0 ~ 1로 리매핑
+        Vector2 normalizedScreenMinPos = new Vector2
+        {
+            x = minScreenPos.x / Screen.width,
+            y = minScreenPos.y / Screen.height
+        };
+
+        Vector2 normalizedScreenMaxPos = new Vector2
+        {
+            x = maxScreenPos.x / Screen.width,
+            y = maxScreenPos.y / Screen.height
+        };
+
+        EDebug.Log("Normalized Screen Pos Min: " + normalizedScreenMinPos);
+        EDebug.Log("Normalized Screen Pos Max: " + normalizedScreenMaxPos);
+
+        // 유효성 체크
+        if (normalizedScreenMinPos.x < 0f
+            || normalizedScreenMaxPos.x > 1f) // 화면 범위를 UI가 벗어나는 경우 (좌우만 계산)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 }
