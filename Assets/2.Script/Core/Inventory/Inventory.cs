@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static ItemSlot;
 
 public class Inventory : BaseObject
 {
@@ -139,7 +140,7 @@ public class Inventory : BaseObject
     /// <summary>
     /// 슬롯 드래그 시 처리
     /// </summary>
-    private void OnSlotDragging(ItemSlot trigger, Vector2 position, ItemSlot.DragStatus dragStatus)
+    private void OnSlotDragging(ItemSlot trigger, Vector2 position, ItemSlot.InputStatus status)
     {
         if (trigger.ItemID == null
              || Items.ContainsKey(trigger.ItemID.Value) == false)
@@ -147,9 +148,9 @@ public class Inventory : BaseObject
             return;
         }
 
-        switch (dragStatus)
+        switch (status)
         {
-            case ItemSlot.DragStatus.OnProcessing: // 드래그 중인 경우
+            case ItemSlot.InputStatus.OnProcessing: // 드래그 중인 경우
             {
                 trigger.SetAlpha(0.5f); // trigger 알파 0.5f
 
@@ -169,7 +170,7 @@ public class Inventory : BaseObject
 
                 break;
             }
-            case ItemSlot.DragStatus.Ended: // 드래그 종료 인 경우
+            case ItemSlot.InputStatus.Ended: // 드래그 종료 인 경우
             {
                 // 레이 캐스팅을 통해 해당 커서 위치에 아이템 슬롯 B 검색
                 PointerEventData pointerEventData = new PointerEventData(EventSystem.current)
@@ -299,14 +300,31 @@ public class Inventory : BaseObject
     /// <summary>
     /// 슬롯 호버링 시 처리
     /// </summary>
-    private void OnSlotHovering(ItemSlot trigger, Vector2 position)
+    private void OnSlotHovering(ItemSlot trigger, Vector2 position, InputStatus status)
     {
         if (onHolding) // 드래그 중이면 작동 안함.
         {
             return;
         }
+        else if (trigger.ItemID == null) // 슬롯에 아이템이 없어도 반환.
+        {
+            return;
+        }
 
-        // 커서 위치를 ItemInfo에 넘김.
+        if (status == InputStatus.OnProcessing)
+        {
+            var itemInfoUI = GameManager.Instance.uiManager.itemInfo;
+
+            if (itemInfoUI.IsActive == false
+                 || itemInfoUI.CurrentID.Value != trigger.ItemID)
+            {
+                GameManager.Instance.uiManager.itemInfo.SetOnCursorBy(trigger.ItemID.Value);
+            }
+        }
+        else
+        {
+            GameManager.Instance.uiManager.itemInfo.Disable();
+        }
     }
     
     /// <summary>

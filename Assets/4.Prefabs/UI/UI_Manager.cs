@@ -7,6 +7,7 @@ public class UI_Manager : BaseObject
     public Dialog dialog;
     public Inventory inventory;
     public QuickSlot quickSlot;
+    public ItemInfo itemInfo;
 
     protected override void Start()
     {
@@ -15,6 +16,7 @@ public class UI_Manager : BaseObject
         dialog.gameObject.SetActive(false);
         inventory.gameObject.SetActive(false);
         quickSlot.gameObject.SetActive(true);
+        itemInfo.gameObject.SetActive(false);
     }
 
     public void Init()

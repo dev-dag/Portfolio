@@ -3,9 +3,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointerMoveHandler, IPointerUpHandler
+public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointerMoveHandler, IPointerUpHandler, IPointerExitHandler
 {
-    public enum DragStatus
+    public enum InputStatus
     {
         OnProcessing = 0,
         Ended = 1,
@@ -56,9 +56,9 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
         }
     }
 
-    public delegate void DragEventHandler(ItemSlot trigger, Vector2 position, DragStatus dragStatus);
+    public delegate void DragEventHandler(ItemSlot trigger, Vector2 position, InputStatus dragStatus);
     public delegate void ClickEventHandler(ItemSlot trigger, PointerEventData.InputButton button);
-    public delegate void HoverEventHandler(ItemSlot trigger, Vector2 position);
+    public delegate void HoverEventHandler(ItemSlot trigger, Vector2 position, InputStatus dragStatus);
 
     [SerializeField] protected Image iconImage;
     [SerializeField] protected TMP_Text amountText;
@@ -116,7 +116,7 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
         {
             onDrag = true;
 
-            dragEventHandler?.Invoke(this, eventData.position, DragStatus.OnProcessing);
+            dragEventHandler?.Invoke(this, eventData.position, InputStatus.OnProcessing);
 
             EDebug.Log($"Drag : {eventData.position}");
         }
@@ -140,9 +140,24 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
             return;
         }
 
-        hoverEventHandler?.Invoke(this, eventData.position);
+        hoverEventHandler?.Invoke(this, eventData.position, InputStatus.OnProcessing);
 
         EDebug.Log($"Hover : {eventData.position}");
+    }
+
+    /// <summary>
+    /// 마우스 호버 종료 이벤트
+    /// </summary>
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (onDrag)
+        {
+            return;
+        }
+
+        hoverEventHandler?.Invoke(this, eventData.position, InputStatus.Ended);
+
+        EDebug.Log($"Hover Exit : {eventData.position}");
     }
 
     /// <summary>
@@ -154,7 +169,7 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
         {
             onDrag = false;
 
-            dragEventHandler?.Invoke(this, eventData.position, DragStatus.Ended);
+            dragEventHandler?.Invoke(this, eventData.position, InputStatus.Ended);
 
             EDebug.Log($"End of Drag : {eventData.position}");
         }
