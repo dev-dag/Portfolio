@@ -1,6 +1,8 @@
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.U2D;
 
 public class GameManager : SingleTon<GameManager>
 {
@@ -22,6 +24,8 @@ public class GameManager : SingleTon<GameManager>
     [SerializeField] private GameObject UI_Prefab;
     [SerializeField] private GameObject baseHomeLevelPrefab;
     [SerializeField] private GameObject dungeonLevelPrefab;
+
+    private SpriteAtlas itemIconAtlas;
 
     /// <summary>
     /// 맵 변경 함수
@@ -46,13 +50,28 @@ public class GameManager : SingleTon<GameManager>
         }
     }
 
+    /// <summary>
+    /// 아이콘 이미지를 반환하는 함수
+    /// </summary>
+    public Sprite GetIconSprite(int id)
+    {
+        return itemIconAtlas.GetSprite(id.ToString());
+    }
+
     protected override void Awake()
     {
         base.Awake();
 
         DontDestroyOnLoad(this.gameObject);
 
+        Init();
+    }
+
+    private async void Init()
+    {
         DB_Connecter dbConnecter = new DB_Connecter();
+
+        await LoadItemIcon();
 
         data = dbConnecter.ConnectAndLoadDB();
 
@@ -64,5 +83,16 @@ public class GameManager : SingleTon<GameManager>
         uiManager.Init();
 
         GameObject.Instantiate(baseHomeLevelPrefab); // 초기 맵 로드
+    }
+
+    private async Awaitable LoadItemIcon()
+    {
+        var handle = Addressables.LoadAssetAsync<SpriteAtlas>("Sprite Atlas/Item Icon");
+        await handle.Task;
+        
+        if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+        {
+            itemIconAtlas = handle.Result;
+        }
     }
 }

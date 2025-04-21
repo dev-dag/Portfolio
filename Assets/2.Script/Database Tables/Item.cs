@@ -30,19 +30,11 @@ namespace Database_Table
             }
         }
 
-        public Sprite IconSprite { get; private set; }
-
-        public void LoadIconSprite()
+        public Sprite IconSprite
         {
-            if (IconSprite == null)
+            get
             {
-                Addressables.LoadAssetAsync<Sprite>($"Item Icon/{ID}").Completed += (result) =>
-                {
-                    if (result.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
-                    {
-                        IconSprite = result.Result;
-                    }
-                };
+                return GameManager.Instance.GetIconSprite(ID);
             }
         }
     }
