@@ -80,11 +80,6 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     {
         if (itemContainer != null)
         {
-            if (iconImage.sprite == null)
-            {
-                iconImage.sprite = itemContainer.Item.IconSprite; // 인벤토리 초기화 타이밍에 이미지가 메모리에 올라오지 못한 경우, Enable에서 이미지 갱신
-            }
-            
             itemContainer.OnValueChanged -= OnContainerValueChange;
             itemContainer.OnValueChanged += OnContainerValueChange;
 
