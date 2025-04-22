@@ -105,18 +105,18 @@ public class Player : BaseObject, ICombatable
     /// </summary>
     public bool IsAlive()
     {
-        return info.HP > 0f ? false : true;
+        return info.HP > 0 ? false : true;
     }
 
     /// <summary>
     /// 플레이어의 현재 체력을 올려주는 함수.
     /// </summary>
-    public void IncreaseHP(float amount)
+    public void IncreaseHP(int amount)
     {
         info.HP += amount;
 
         // HP UI 반영
-        GameManager.Instance.uiManager.playerInfoPreview.Increase((int)amount);
+        GameManager.Instance.uiManager.playerInfoPreview.Increase(amount);
     }
 
     /// <summary>
@@ -195,6 +195,7 @@ public class Player : BaseObject, ICombatable
         interactAction = UI_ActionMap.FindAction("Interact");
 
         info.Init();
+        GameManager.Instance.uiManager.playerInfoPreview.Init(info.HP, null);
 
         BT_Root = MakeBehaviourTree();
     }
@@ -208,7 +209,7 @@ public class Player : BaseObject, ICombatable
                 .Condition(string.Empty, (t) => info.isDead)
 
                 .Sequence(string.Empty)
-                    .Condition("죽은 경우", (t) => info.HP <= 0f)
+                    .Condition("죽은 경우", (t) => info.HP <= 0)
                     .Do(string.Empty, DoOnDead)
                 .End()
 
@@ -419,7 +420,7 @@ public class Player : BaseObject, ICombatable
         }
     }
 
-    void ICombatable.TakeHit(float damage, BaseObject hitter)
+    void ICombatable.TakeHit(int damage, BaseObject hitter)
     {
         if (noTakeDamage)
         {

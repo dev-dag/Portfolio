@@ -5,7 +5,7 @@ namespace Monster
     public class Monster : BaseObject
     {
         [SerializeField] protected MonsterInfo info;
-        protected float hp;
+        protected int hp;
 
         public void Init()
         {

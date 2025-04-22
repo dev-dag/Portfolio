@@ -14,14 +14,16 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
     protected BaseObject caller;
 
     protected bool isHitable = false;
+    protected int weaponDamage = 0;
 
-    public void Init(Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller)
+    public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller)
     {
         this.data = data;
         this.transform.position = position;
         this.transform.rotation = rotation;
         this.layer = layer;
         this.caller = caller;
+        this.weaponDamage = weaponDamage;
 
         effectAnimator.transform.localPosition = data.VFX_Offset;
         effectAnimator.runtimeAnimatorController = data.animationController;
@@ -161,7 +163,7 @@ public class Skill : PoolingObject, ICombatAnimatorEventListener
         {
             ICombatable combatInterface = collision.attachedRigidbody.GetComponent<BaseObject>() as ICombatable;
 
-            combatInterface.TakeHit(data.damage, caller);
+            combatInterface.TakeHit(weaponDamage + data.additionalDamage, caller);
         }
         else if (hitObject is ProxyCollider) // 스킬과 충돌 체크된 경우 패리 가능한지 체크
         {

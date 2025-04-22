@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -6,10 +7,11 @@ public class PlayerInfo : ScriptableObject
 {
     public float speed;
     public float jumpPower;
-    public float maxHP;
-    public float HP;
+    public int maxHP;
+    public int HP;
     public bool isDead;
     public bool freazeMove;
+    public Dictionary<int, int> ownItems;
 
     public void Init()
     {

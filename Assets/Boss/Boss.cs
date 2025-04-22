@@ -83,7 +83,7 @@ namespace Monster
             }
         }
 
-        void ICombatable.TakeHit(float damage, BaseObject hitter)
+        void ICombatable.TakeHit(int damage, BaseObject hitter)
         {
             if (isInteractable)
             {
@@ -201,7 +201,7 @@ namespace Monster
             // BT..
             builder.Selector(string.Empty)
                 .Sequence(string.Empty) // 페이즈 체크
-                    .Condition(string.Empty, t => hp <= 0f) // 체력이 0보다 작거나 같으면 페이즈 변경 시도
+                    .Condition(string.Empty, t => hp <= 0) // 체력이 0보다 작거나 같으면 페이즈 변경 시도
                     .Sequence(string.Empty)
                         .Do(string.Empty, t => // 페이즈 변경 시도
                         {

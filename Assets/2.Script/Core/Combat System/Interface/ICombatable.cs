@@ -6,5 +6,5 @@ public interface ICombatable
     /// 체력을 증감하는 함수
     /// </summary>
     /// <param name="damage">증감 수치</param>
-    public void TakeHit(float damage, BaseObject hitter);
+    public void TakeHit(int damage, BaseObject hitter);
 }

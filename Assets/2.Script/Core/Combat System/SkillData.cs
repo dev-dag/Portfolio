@@ -18,7 +18,7 @@ public class SkillData : ScriptableObject
 
     public SkillCollisionType collisionType;
     public SkillType skillType;
-    public float damage;
+    public int additionalDamage;
     public Vector2 VFX_Offset;
     public RuntimeAnimatorController animationController;
     public Vector2 colliderOffset;
