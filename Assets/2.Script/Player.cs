@@ -114,6 +114,9 @@ public class Player : BaseObject, ICombatable
     public void IncreaseHP(float amount)
     {
         info.HP += amount;
+
+        // HP UI 반영
+        GameManager.Instance.uiManager.playerInfoPreview.Increase((int)amount);
     }
 
     /// <summary>
@@ -437,6 +440,9 @@ public class Player : BaseObject, ICombatable
         }
 
         blinkAwaiter = BlinkSpriteRender();
+
+        // HP UI 반영
+        GameManager.Instance.uiManager.playerInfoPreview.Decrease((int)damage);
     }
 
     private async Awaitable BlinkSpriteRender()

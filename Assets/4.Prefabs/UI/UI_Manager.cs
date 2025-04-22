@@ -8,6 +8,7 @@ public class UI_Manager : BaseObject
     public Inventory inventory;
     public QuickSlot quickSlot;
     public ItemInfo itemInfo;
+    public PlayerInfoPreview playerInfoPreview;
 
     protected override void Start()
     {
@@ -17,11 +18,13 @@ public class UI_Manager : BaseObject
         inventory.gameObject.SetActive(false);
         quickSlot.gameObject.SetActive(true);
         itemInfo.gameObject.SetActive(false);
+        playerInfoPreview.gameObject.SetActive(true);
     }
 
     public void Init()
     {
         inventory.Init();
+        playerInfoPreview.Init(5, null);
 
         inventory.AddItem(0, 1);
         inventory.AddItem(3, 3);
