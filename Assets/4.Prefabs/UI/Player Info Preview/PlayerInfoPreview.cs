@@ -18,7 +18,22 @@ public class PlayerInfoPreview : BaseObject
             newHealth.SetActive(true);
 
             healthInstances.Add(newHealth);
-            
+        }
+
+        SetWeaponSprite(weaponSprite);
+    }
+
+    public void SetWeaponSprite(Sprite sprite)
+    {
+        if (sprite == null)
+        {
+            weaponImage.sprite = null;
+            weaponImage.color = new Color(weaponImage.color.r, weaponImage.color.g, weaponImage.color.b, 0f);
+        }
+        else
+        {
+            weaponImage.sprite = sprite;
+            weaponImage.color = new Color(weaponImage.color.r, weaponImage.color.g, weaponImage.color.b, 1f);
         }
     }
 

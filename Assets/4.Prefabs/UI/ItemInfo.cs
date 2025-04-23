@@ -61,35 +61,25 @@ public class ItemInfo : BaseObject
 
         if (current.TypeEnum == Item.ItemType.Weapon)
         {
-            Addressables.LoadAssetAsync<WeaponInfo>($"Item Info/{itemID}").Completed += result =>
-            {
-                if (result.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
-                {
-                    image.sprite = current.IconSprite;
-                    name.text = current.Name;
-                    type.text = "무기";
-                    effect.text = $"공격력 +{result.Result.damage}";
-                    description.text = result.Result.description;
-                    
-                    this.gameObject.SetActive(true);
-                }
-            };
+            WeaponInfo weaponInfo = await (GameManager.Instance.LoadItemInfo<WeaponInfo>(itemID));
+            image.sprite = current.IconSprite;
+            name.text = current.Name;
+            type.text = "무기";
+            effect.text = $"공격력 +{weaponInfo.damage}";
+            description.text = weaponInfo.description;
+
+            this.gameObject.SetActive(true);
         }
         else if (current.TypeEnum == Item.ItemType.Potion)
         {
-            Addressables.LoadAssetAsync<PotionInfo>($"Item Info/{itemID}").Completed += result =>
-            {
-                if (result.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
-                {
-                    image.sprite = current.IconSprite;
-                    name.text = current.Name;
-                    type.text = "포션";
-                    effect.text = $"회복량 : +{result.Result.healingAmount}";
-                    description.text = result.Result.description;
+            PotionInfo potionInfo = await (GameManager.Instance.LoadItemInfo<PotionInfo>(itemID));
+            image.sprite = current.IconSprite;
+            name.text = current.Name;
+            type.text = "포션";
+            effect.text = $"회복량 : +{potionInfo.healingAmount}";
+            description.text = potionInfo.description;
 
-                    this.gameObject.SetActive(true);
-                }
-            };
+            this.gameObject.SetActive(true);
         }
 
         SetPositionToCursorBased();

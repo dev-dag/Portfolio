@@ -4,9 +4,9 @@ public class LinearDynamicSkill : Skill
 {
     private Vector2 velocity;
 
-    public void Init(Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller, Vector2 velocity)
+    public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller, Vector2 velocity)
     {
-        Init(position, rotation, layer, data, caller);
+        Init(weaponDamage, position, rotation, layer, data, caller);
 
         this.velocity = velocity;
     }

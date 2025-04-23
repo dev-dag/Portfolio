@@ -43,16 +43,16 @@ public class Inventory : BaseObject
 
         // 인벤토리 단축키 설정
         InputActionMap UI_ActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("UI");
-        UI_ActionMap.FindAction("Cancel").performed += (arg) => this.gameObject.SetActive(false);
+        UI_ActionMap.FindAction("Cancel").performed += (arg) => Disable();
         UI_ActionMap.FindAction("Inventory").performed += (arg) =>
         {
             if (this.gameObject.activeInHierarchy == false)
             {
-                this.gameObject.SetActive(true);
+                Enable();
             }
             else
             {
-                this.gameObject.SetActive(false);
+                Disable();
             }
         };
     }
@@ -76,6 +76,8 @@ public class Inventory : BaseObject
         playerActionMap.FindAction("UseSkill_0").Enable();
         playerActionMap.FindAction("UseSkill_1").Enable();
         playerActionMap.FindAction("UseSkill_2").Enable();
+
+        GameManager.Instance.uiManager.itemInfo.Disable();
     }   
 
     [ContextMenu("Add Potion")]
@@ -97,6 +99,8 @@ public class Inventory : BaseObject
         }
         else
         {
+            GameManager.Instance.LoadItemInfo<ItemInfoData>(itemID); // 아이템 정보 로드
+
             if (GetEmptyBagItemSlot(out ItemSlot emptyBagSlot))
             {
                 ItemContainer newContainer = ItemContainer.CreateItemContainer(itemID, amount);
@@ -125,6 +129,28 @@ public class Inventory : BaseObject
             {
                 return false; // 가방 공간 부족
             }
+        }
+    }
+
+    /// <summary>
+    /// 인벤토리 활성화
+    /// </summary>
+    public void Enable()
+    {
+        if (this.gameObject.activeInHierarchy == false)
+        {
+            this.gameObject.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// 인벤토리 비활성화
+    /// </summary>
+    public void Disable()
+    {
+        if (this.gameObject.activeInHierarchy == true)
+        {
+            this.gameObject.SetActive(false);
         }
     }
 
@@ -242,6 +268,8 @@ public class Inventory : BaseObject
                     SetQuickSlot(quickItemSlots.IndexOf(trigger as ExclusiveItemSlot), null); // 퀵슬롯 해제
                 }
 
+                Player.Current.EquipWeapon(weaponSlot.ItemID); // 장착중인 무기가 변경된 경우 처리
+
                 trigger.SetAlpha(1f);
 
                 holdingItemImage.gameObject.SetActive(false);
@@ -251,7 +279,7 @@ public class Inventory : BaseObject
             }
             default:
                 break;
-        }            
+        }
     }
 
     /// <summary>
@@ -294,6 +322,8 @@ public class Inventory : BaseObject
             {
                 (container as Potion).Drink();
             }
+
+            Player.Current.EquipWeapon(weaponSlot.ItemID); // 장착중인 무기가 변경된 경우 처리
         }
     }
 

@@ -351,7 +351,7 @@ namespace Monster
                                 currentPlayingAnim = AnimHash.SLASH;
 
                                 var skill = GameManager.Instance.combatSystem.GetSkill();
-                                skill.Init(transform.position, transform.rotation, transform.gameObject.layer, slashSkillData, this);
+                                skill.Init(0, transform.position, transform.rotation, transform.gameObject.layer, slashSkillData, this);
                                 skill.Enable();
 
                                 return BehaviourTreeStatus.Running;
@@ -456,7 +456,7 @@ namespace Monster
                                 Vector2 dir = new Vector2((playerTr.position - transform.position).x, 0f);
 
                                 var ejectingSkill = GameManager.Instance.combatSystem.GetLinearDynamicSkill();
-                                ejectingSkill.Init(transform.position, transform.rotation, transform.gameObject.layer, ejectSlashSkillData, this, dir.normalized * speed);
+                                ejectingSkill.Init(0, transform.position, transform.rotation, transform.gameObject.layer, ejectSlashSkillData, this, dir.normalized * speed);
                                 ejectingSkill.Enable();
 
                                 return BehaviourTreeStatus.Running;
@@ -549,7 +549,7 @@ namespace Monster
                                 currentPlayingAnim = AnimHash.EXPLOSION;
 
                                 var skill = GameManager.Instance.combatSystem.GetSkill();
-                                skill.Init(transform.position, transform.rotation, transform.gameObject.layer, explosionSkillData, this);
+                                skill.Init(0, transform.position, transform.rotation, transform.gameObject.layer, explosionSkillData, this);
                                 skill.Enable();
 
                                 return BehaviourTreeStatus.Running;
@@ -642,7 +642,7 @@ namespace Monster
                                 currentPlayingAnim = AnimHash.RUSH;
 
                                 var skill = GameManager.Instance.combatSystem.GetSkill();
-                                skill.Init(transform.position, transform.rotation, transform.gameObject.layer, rushSkillData, this);
+                                skill.Init(0, transform.position, transform.rotation, transform.gameObject.layer, rushSkillData, this);
                                 skill.Enable();
 
                                 return BehaviourTreeStatus.Running;

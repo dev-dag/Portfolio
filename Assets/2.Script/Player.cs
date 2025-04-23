@@ -4,6 +4,10 @@ using UnityEngine.InputSystem;
 using System.Timers;
 using Unity.Cinemachine;
 using UnityEngine.Rendering;
+using Database_Table;
+using UnityEngine.AddressableAssets;
+using Unity.VisualScripting;
+using System.Threading.Tasks;
 
 /// <summary>
 /// 동시에 2개 이상의 인스턴스가 존재하면 안되는 클래스.
@@ -21,6 +25,7 @@ public class Player : BaseObject, ICombatable
         public static readonly int DEAD = Animator.StringToHash("Die");
     }
 
+    public int? EquipedWeaponID { get; private set; }
     public static Player Current { get; private set; }
 
     public SkillData testSkillData;
@@ -49,7 +54,9 @@ public class Player : BaseObject, ICombatable
     private bool noTakeDamage = false;
     private float blinkSpeed = 30f;
     private float blinkTime = 0.5f;
-    Awaitable blinkAwaiter = null;
+    private Awaitable blinkAwaiter = null;
+    private Item weaponCache = null;
+    private WeaponInfo weaponInfoCache = null;
 
     protected override void Awake()
     {
@@ -117,6 +124,26 @@ public class Player : BaseObject, ICombatable
 
         // HP UI 반영
         GameManager.Instance.uiManager.playerInfoPreview.Increase(amount);
+    }
+
+    public async Task EquipWeapon(int? weaponID)
+    {
+        EquipedWeaponID = weaponID;
+
+        if (weaponID == null)
+        {
+            weaponCache = null;
+            weaponInfoCache = null;
+
+            GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(null); // Info Preview UI 변경
+        }
+        else
+        {
+            weaponCache = GameManager.Instance.data.item[weaponID.Value];
+            weaponInfoCache = await GameManager.Instance.LoadItemInfo<WeaponInfo>(weaponID.Value);
+
+            GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(weaponCache.IconSprite); // Info Preview UI 변경
+        }
     }
 
     /// <summary>
@@ -195,7 +222,7 @@ public class Player : BaseObject, ICombatable
         interactAction = UI_ActionMap.FindAction("Interact");
 
         info.Init();
-        GameManager.Instance.uiManager.playerInfoPreview.Init(info.HP, null);
+        GameManager.Instance.uiManager.playerInfoPreview.Init(info.HP, null); // 체력 UI 설정
 
         BT_Root = MakeBehaviourTree();
     }
@@ -307,7 +334,14 @@ public class Player : BaseObject, ICombatable
         anim.Play(AnimHash.ATTACK_1);
 
         skill = GameManager.Instance.combatSystem.GetSkill();
-        skill.Init(transform.position, transform.rotation, gameObject.layer, testSkillData, this);
+        int weaponDamage = 0;
+
+        if (weaponCache != null && weaponInfoCache != null)
+        {
+            weaponDamage = weaponInfoCache.damage;
+        }
+
+        skill.Init(weaponDamage, transform.position, transform.rotation, gameObject.layer, testSkillData, this);
 
         skill.Enable();
 

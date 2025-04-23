@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem;
@@ -26,6 +27,8 @@ public class GameManager : SingleTon<GameManager>
     [SerializeField] private GameObject dungeonLevelPrefab;
 
     private SpriteAtlas itemIconAtlas;
+
+    private Dictionary<int, ItemInfoData> itemInfoDataCache = new Dictionary<int, ItemInfoData>();
 
     /// <summary>
     /// ¸Ê º¯°æ ÇÔ¼ö
@@ -56,6 +59,29 @@ public class GameManager : SingleTon<GameManager>
     public Sprite GetIconSprite(int id)
     {
         return itemIconAtlas.GetSprite(id.ToString());
+    }
+
+    public async Awaitable<T> LoadItemInfo<T>(int itemID) where T : ItemInfoData
+    {
+        if (itemInfoDataCache.ContainsKey(itemID))
+        {
+            return (T)itemInfoDataCache[itemID];
+        }
+        else
+        {
+            var handle = Addressables.LoadAssetAsync<T>($"Item Info/{itemID}");
+            await handle.Task;
+
+            if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+            {
+                itemInfoDataCache.Add(itemID, handle.Result);
+                return handle.Result;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 
     protected override void Awake()

@@ -24,7 +24,6 @@ public class UI_Manager : BaseObject
     public void Init()
     {
         inventory.Init();
-        playerInfoPreview.Init(5, null);
 
         inventory.AddItem(0, 1);
         inventory.AddItem(3, 3);
