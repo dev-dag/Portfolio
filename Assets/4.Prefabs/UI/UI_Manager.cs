@@ -9,6 +9,7 @@ public class UI_Manager : BaseObject
     public QuickSlot quickSlot;
     public ItemInfo itemInfo;
     public PlayerInfoPreview playerInfoPreview;
+    public SkillView skillView;
 
     protected override void Start()
     {
@@ -19,6 +20,7 @@ public class UI_Manager : BaseObject
         quickSlot.gameObject.SetActive(true);
         itemInfo.gameObject.SetActive(false);
         playerInfoPreview.gameObject.SetActive(true);
+        skillView.gameObject.SetActive(true);
     }
 
     public void Init()

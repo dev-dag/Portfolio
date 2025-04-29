@@ -148,12 +148,14 @@ public class Player : BaseObject, ICombatable
             weaponCache = null;
 
             GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(null); // Info Preview UI 변경
+            GameManager.Instance.uiManager.skillView.SetSkill(null); // 스킬 View UI 설정
         }
         else
         {
             weaponCache = weapon;
 
             GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(weaponCache.Item.IconSprite); // Info Preview UI 변경
+            GameManager.Instance.uiManager.skillView.SetSkill(weaponCache); // 스킬 View UI 설정
         }
     }
 
