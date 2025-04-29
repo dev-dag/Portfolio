@@ -154,9 +154,6 @@ public class ItemInfo : BaseObject
             y = maxScreenPos.y / Screen.height
         };
 
-        EDebug.Log("Normalized Screen Pos Min: " + normalizedScreenMinPos);
-        EDebug.Log("Normalized Screen Pos Max: " + normalizedScreenMaxPos);
-
         // 유효성 체크
         if (normalizedScreenMinPos.x < 0f
             || normalizedScreenMaxPos.x > 1f) // 화면 범위를 UI가 벗어나는 경우 (좌우만 계산)

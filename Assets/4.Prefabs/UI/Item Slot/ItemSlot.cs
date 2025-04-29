@@ -112,8 +112,6 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
             onDrag = true;
 
             dragEventHandler?.Invoke(this, eventData.position, InputStatus.OnProcessing);
-
-            EDebug.Log($"Drag : {eventData.position}");
         }
     }
 
@@ -136,8 +134,6 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
         }
 
         hoverEventHandler?.Invoke(this, eventData.position, InputStatus.OnProcessing);
-
-        EDebug.Log($"Hover : {eventData.position}");
     }
 
     /// <summary>
@@ -151,8 +147,6 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
         }
 
         hoverEventHandler?.Invoke(this, eventData.position, InputStatus.Ended);
-
-        EDebug.Log($"Hover Exit : {eventData.position}");
     }
 
     /// <summary>
@@ -165,8 +159,6 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
             onDrag = false;
 
             dragEventHandler?.Invoke(this, eventData.position, InputStatus.Ended);
-
-            EDebug.Log($"End of Drag : {eventData.position}");
         }
     }
 
