@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.InputSystem;
@@ -61,7 +62,48 @@ public class GameManager : SingleTon<GameManager>
         return itemIconAtlas.GetSprite(id.ToString());
     }
 
-    public async Awaitable<T> LoadItemInfo<T>(int itemID) where T : ItemInfoData
+    public async Awaitable MakeCache()
+    {
+        // 아이템 인포 캐시
+        Task itemInfoTask = null;
+        {
+            itemInfoDataCache.Clear();
+
+            var handle = Addressables.LoadAssetsAsync<ItemInfoData>("Item Info Data");
+            itemInfoTask = handle.Task;
+
+            handle.Completed += (result) =>
+            {
+                if (result.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+                {
+                    foreach (ItemInfoData infoData in result.Result)
+                    {
+                        itemInfoDataCache.Add(infoData.id, infoData);
+                    }
+                }
+            };
+        }
+
+        // 아이콘 스프라이트 아틀라스 캐시
+        Task iconSpriteAtlasTask = null;
+        {
+            var handle = Addressables.LoadAssetAsync<SpriteAtlas>("Sprite Atlas/Item Icon");
+            iconSpriteAtlasTask = handle.Task;
+
+            handle.Completed += (result) =>
+            {
+                if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+                {
+                    itemIconAtlas = handle.Result;
+                }
+            };
+        }
+
+        await itemInfoTask;
+        await iconSpriteAtlasTask;
+    }
+
+    public T LoadItemInfo<T>(int itemID) where T : ItemInfoData
     {
         if (itemInfoDataCache.ContainsKey(itemID))
         {
@@ -69,18 +111,8 @@ public class GameManager : SingleTon<GameManager>
         }
         else
         {
-            var handle = Addressables.LoadAssetAsync<T>($"Item Info/{itemID}");
-            await handle.Task;
-
-            if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
-            {
-                itemInfoDataCache.Add(itemID, handle.Result);
-                return handle.Result;
-            }
-            else
-            {
-                return null;
-            }
+            EDebug.LogError("데이터를 찾지 못함.");
+            return null;
         }
     }
 
@@ -97,7 +129,7 @@ public class GameManager : SingleTon<GameManager>
     {
         DB_Connecter dbConnecter = new DB_Connecter();
 
-        await LoadItemIcon();
+        await MakeCache();
 
         data = dbConnecter.ConnectAndLoadDB();
 
@@ -109,16 +141,5 @@ public class GameManager : SingleTon<GameManager>
         uiManager.Init();
 
         GameObject.Instantiate(baseHomeLevelPrefab); // 초기 맵 로드
-    }
-
-    private async Awaitable LoadItemIcon()
-    {
-        var handle = Addressables.LoadAssetAsync<SpriteAtlas>("Sprite Atlas/Item Icon");
-        await handle.Task;
-        
-        if (handle.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
-        {
-            itemIconAtlas = handle.Result;
-        }
     }
 }

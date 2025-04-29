@@ -32,17 +32,17 @@ public class CombatSystem : BaseObject
     }
 
     /// <summary>
-    /// 스킬 인스턴스를 반환하는 함수
+    /// 스킬 액션 인스턴스를 반환하는 함수
     /// </summary>
-    public Skill GetSkill()
+    public SkillAction GetSkillAction()
     {
-        return skillPool.Burrow<Skill>();
+        return skillPool.Burrow<SkillAction>();
     }
 
     /// <summary>
-    /// 선형 동적 스킬 인스턴스를 반환하는 함수
+    /// 선형 동적 스킬 액션 인스턴스를 반환하는 함수
     /// </summary>
-    public LinearDynamicSkill GetLinearDynamicSkill()
+    public LinearDynamicSkill GetLinearDynamicSkillAction()
     {
         return linearDynamicSkillPool.Burrow<LinearDynamicSkill>();
     }

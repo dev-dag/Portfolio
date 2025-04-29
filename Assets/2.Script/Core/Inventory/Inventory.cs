@@ -268,7 +268,14 @@ public class Inventory : BaseObject
                     SetQuickSlot(quickItemSlots.IndexOf(trigger as ExclusiveItemSlot), null); // 퀵슬롯 해제
                 }
 
-                Player.Current.EquipWeapon(weaponSlot.ItemID); // 장착중인 무기가 변경된 경우 처리
+                if (weaponSlot.ItemID == null) // 무기 장착 처리
+                {
+                    Player.Current.EquipWeapon(null);
+                }
+                else
+                {
+                    Player.Current.EquipWeapon(Items[weaponSlot.ItemID.Value] as Weapon);
+                }
 
                 trigger.SetAlpha(1f);
 
@@ -323,7 +330,14 @@ public class Inventory : BaseObject
                 (container as Potion).Drink();
             }
 
-            Player.Current.EquipWeapon(weaponSlot.ItemID); // 장착중인 무기가 변경된 경우 처리
+            if (weaponSlot.ItemID == null) // 무기 장착 처리
+            {
+                Player.Current.EquipWeapon(null);
+            }
+            else
+            {
+                Player.Current.EquipWeapon(Items[weaponSlot.ItemID.Value] as Weapon);
+            }
         }
     }
 

@@ -22,6 +22,10 @@ namespace Database_Table
 
         [Column("type")]
         public int Type { get; set; }
+
+        [Column("class_type")]
+        public string ClassTypeString { get; set; }
+
         public ItemType TypeEnum
         {
             get

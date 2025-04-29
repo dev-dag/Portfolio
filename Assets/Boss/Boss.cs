@@ -6,7 +6,7 @@ namespace Monster
 {
     public class Boss : Monster, IInteractable, ICombatable
     {
-        public enum Skill
+        public enum SkillState
         {
             None = 0,
             Slash,
@@ -43,11 +43,16 @@ namespace Monster
         private OverheadUI overheadUI;
         private int phase = 1;
         private float nextActionTime; // 스킬의 후딜레이를 지정하기 위해 사용함. 게임의 시간 값이 할당 됨.
-        private Skill currentSkill = Skill.None;
+        private SkillState currentSkill = SkillState.None;
         private int currentPlayingAnim;
         private bool isInteractable = true;
         private Awaitable colorFadeAwaiter = null;
         private float colorFadeTime = 0.2f;
+
+        private Skill slashSkill;
+        private Skill ejectSlashSkill;
+        private Skill explosionSkill;
+        private Skill rushSkill;
 
         protected override void Awake()
         {
@@ -184,7 +189,7 @@ namespace Monster
         [ContextMenu("BT 초기화 함수")]
         private void ResetBehaviourTree()
         {
-            currentSkill = Skill.None;
+            currentSkill = SkillState.None;
             currentPlayingAnim = -1;
             phase = 1;
             nextActionTime = -1f;
@@ -222,7 +227,7 @@ namespace Monster
                     .Sequence(string.Empty) // 준비중인 스킬이 없는 경우 랜덤하게 스킬 지정
                         .Do(string.Empty, t =>
                         {
-                            if (currentSkill == Skill.None)
+                            if (currentSkill == SkillState.None)
                             {
                                 currentSkill = GetSkillRandomly();
                             }
@@ -255,33 +260,33 @@ namespace Monster
         /// <summary>
         /// 랜덤한 스킬을 반환하는 함수
         /// </summary>
-        private Skill GetSkillRandomly()
+        private SkillState GetSkillRandomly()
         {
             System.Random random = new System.Random();
 
             int value = random.Next(0, 3);
-            Skill result = Skill.None;
+            SkillState result = SkillState.None;
 
             switch (value)
             {
                 case 0:
                 {
-                    result = Skill.Slash;
+                    result = SkillState.Slash;
                     break;
                 }
                 case 1:
                 {
-                    result = Skill.EjectSlash;
+                    result = SkillState.EjectSlash;
                     break;
                 }
                 case 2:
                 {
-                    result = Skill.Explosion;
+                    result = SkillState.Explosion;
                     break;
                 }
                 case 3:
                 {
-                    result = Skill.Rush;
+                    result = SkillState.Rush;
                     break;
                 }
             }
@@ -300,7 +305,7 @@ namespace Monster
             builder.Sequence(string.Empty)
                 .Do(string.Empty, t =>
                 {
-                    if (currentSkill == Skill.Slash)
+                    if (currentSkill == SkillState.Slash)
                         return BehaviourTreeStatus.Success;
                     else
                         return BehaviourTreeStatus.Failure;
@@ -328,7 +333,7 @@ namespace Monster
 
                         if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // 폭파 애니메이션이 끝난 경우
                         {
-                            currentSkill = Skill.None;
+                            currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
 
                             anim.Play(AnimHash.IDLE);
@@ -350,11 +355,19 @@ namespace Monster
                                 anim.Play(AnimHash.SLASH);
                                 currentPlayingAnim = AnimHash.SLASH;
 
-                                var skill = GameManager.Instance.combatSystem.GetSkill();
-                                skill.Init(0, transform.position, transform.rotation, transform.gameObject.layer, slashSkillData, this);
-                                skill.Enable();
+                                if (slashSkill == null)
+                                {
+                                    slashSkill = new Skill(slashSkillData, 0);
+                                }
 
-                                return BehaviourTreeStatus.Running;
+                                if (slashSkill.TryOperate(transform.position, transform.rotation, transform.gameObject.layer, this))
+                                {
+                                    return BehaviourTreeStatus.Running;
+                                }
+                                else
+                                {
+                                    return BehaviourTreeStatus.Failure;
+                                }
                             }
                             else
                             {
@@ -403,7 +416,7 @@ namespace Monster
             builder.Sequence(string.Empty)
                 .Do(string.Empty, t =>
                 {
-                    if (currentSkill == Skill.EjectSlash)
+                    if (currentSkill == SkillState.EjectSlash)
                         return BehaviourTreeStatus.Success;
                     else
                         return BehaviourTreeStatus.Failure;
@@ -431,7 +444,7 @@ namespace Monster
 
                         if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // 폭파 애니메이션이 끝난 경우
                         {
-                            currentSkill = Skill.None;
+                            currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
 
                             anim.Play(AnimHash.IDLE);
@@ -455,11 +468,19 @@ namespace Monster
 
                                 Vector2 dir = new Vector2((playerTr.position - transform.position).x, 0f);
 
-                                var ejectingSkill = GameManager.Instance.combatSystem.GetLinearDynamicSkill();
-                                ejectingSkill.Init(0, transform.position, transform.rotation, transform.gameObject.layer, ejectSlashSkillData, this, dir.normalized * speed);
-                                ejectingSkill.Enable();
+                                if (ejectSlashSkill == null)
+                                {
+                                    explosionSkill = new Skill(ejectSlashSkillData, 0);
+                                }
 
-                                return BehaviourTreeStatus.Running;
+                                if (ejectSlashSkill.TryOperate(transform.position, transform.rotation, transform.gameObject.layer, this))
+                                {
+                                    return BehaviourTreeStatus.Running;
+                                }
+                                else
+                                {
+                                    return BehaviourTreeStatus.Failure;
+                                }
                             }
                             else
                             {
@@ -498,7 +519,7 @@ namespace Monster
             builder.Sequence(string.Empty)
                 .Do(string.Empty, t =>
                 {
-                    if (currentSkill == Skill.Explosion)
+                    if (currentSkill == SkillState.Explosion)
                         return BehaviourTreeStatus.Success;
                     else
                         return BehaviourTreeStatus.Failure;
@@ -526,7 +547,7 @@ namespace Monster
 
                         if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // 폭파 애니메이션이 끝난 경우
                         {
-                            currentSkill = Skill.None;
+                            currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
 
                             anim.Play(AnimHash.IDLE);
@@ -548,11 +569,19 @@ namespace Monster
                                 anim.Play(AnimHash.EXPLOSION);
                                 currentPlayingAnim = AnimHash.EXPLOSION;
 
-                                var skill = GameManager.Instance.combatSystem.GetSkill();
-                                skill.Init(0, transform.position, transform.rotation, transform.gameObject.layer, explosionSkillData, this);
-                                skill.Enable();
+                                if (explosionSkill == null)
+                                {
+                                    explosionSkill = new Skill(explosionSkillData, 0);
+                                }
 
-                                return BehaviourTreeStatus.Running;
+                                if (explosionSkill.TryOperate(transform.position, transform.rotation, transform.gameObject.layer, this))
+                                {
+                                    return BehaviourTreeStatus.Running;
+                                }
+                                else
+                                {
+                                    return BehaviourTreeStatus.Failure;
+                                }
                             }
                             else
                             {
@@ -591,7 +620,7 @@ namespace Monster
             builder.Sequence(string.Empty)
                 .Do(string.Empty, t =>
                 {
-                    if (currentSkill == Skill.Rush)
+                    if (currentSkill == SkillState.Rush)
                         return BehaviourTreeStatus.Success;
                     else
                         return BehaviourTreeStatus.Failure;
@@ -619,7 +648,7 @@ namespace Monster
 
                         if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // 폭파 애니메이션이 끝난 경우
                         {
-                            currentSkill = Skill.None;
+                            currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
 
                             anim.Play(AnimHash.IDLE);
@@ -641,11 +670,19 @@ namespace Monster
                                 anim.Play(AnimHash.RUSH);
                                 currentPlayingAnim = AnimHash.RUSH;
 
-                                var skill = GameManager.Instance.combatSystem.GetSkill();
-                                skill.Init(0, transform.position, transform.rotation, transform.gameObject.layer, rushSkillData, this);
-                                skill.Enable();
+                                if (rushSkill == null)
+                                {
+                                    rushSkill = new Skill(rushSkillData, 0);
+                                }
 
-                                return BehaviourTreeStatus.Running;
+                                if (rushSkill.TryOperate(transform.position, transform.rotation, transform.gameObject.layer, this))
+                                {
+                                    return BehaviourTreeStatus.Running;
+                                }
+                                else
+                                {
+                                    return BehaviourTreeStatus.Failure;
+                                }
                             }
                             else
                             {

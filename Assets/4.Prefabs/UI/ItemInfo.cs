@@ -61,7 +61,7 @@ public class ItemInfo : BaseObject
 
         if (current.TypeEnum == Item.ItemType.Weapon)
         {
-            WeaponInfo weaponInfo = await (GameManager.Instance.LoadItemInfo<WeaponInfo>(itemID));
+            WeaponInfo weaponInfo = GameManager.Instance.LoadItemInfo<WeaponInfo>(itemID);
             image.sprite = current.IconSprite;
             name.text = current.Name;
             type.text = "무기";
@@ -72,7 +72,7 @@ public class ItemInfo : BaseObject
         }
         else if (current.TypeEnum == Item.ItemType.Potion)
         {
-            PotionInfo potionInfo = await (GameManager.Instance.LoadItemInfo<PotionInfo>(itemID));
+            PotionInfo potionInfo = GameManager.Instance.LoadItemInfo<PotionInfo>(itemID);
             image.sprite = current.IconSprite;
             name.text = current.Name;
             type.text = "포션";

@@ -15,26 +15,41 @@ using System.Threading.Tasks;
 /// </summary>
 public class Player : BaseObject, ICombatable
 {
+    public static Player Current { get; private set; }
+
     public struct AnimHash
     {
         public static readonly int IDLE = Animator.StringToHash("Idle");
         public static readonly int RUN = Animator.StringToHash("Run");
-        public static readonly int ATTACK_1 = Animator.StringToHash("SwordAttack");
         public static readonly int JUMP = Animator.StringToHash("Jump");
         public static readonly int FALL = Animator.StringToHash("JumpFall");
         public static readonly int DEAD = Animator.StringToHash("Die");
     }
 
-    public int? EquipedWeaponID { get; private set; }
-    public static Player Current { get; private set; }
+    public enum AnimationState
+    {
+        Idle = 0,
+        Run,
+        Jump,
+        Fall,
+        Dead,
+        Attack_0,
+        Attack_1,
+        Attack_2,
+    }
 
-    public SkillData testSkillData;
+    public Weapon EquipedWeapon { get; private set; }
+    public Rigidbody2D RigidBody { get => rigidBody; }
+    public Animator Animator { get => animator; }
+    public AnimationState CurrentAnimationState { get; set; }
+    public InputAction MoveAction { get => moveAction; }
+    public InputAction JumpAction { get => jumpAction; }
 
     [Space(20f)]
     [SerializeField] private SpriteRenderer render;
     [SerializeField] private PlayerInfo info;
-    [SerializeField] private Rigidbody2D RB;
-    [SerializeField] private Animator anim;
+    [SerializeField] private Rigidbody2D rigidBody;
+    [SerializeField] private Animator animator;
 
     [Space(20f)]
     [SerializeField] private float interactableDistance = 2f;
@@ -43,7 +58,6 @@ public class Player : BaseObject, ICombatable
 
     private InputAction moveAction;
     private InputAction jumpAction;
-    private InputAction skill_0_Action;
     private InputAction quickSlot_0_Action;
     private InputAction quickSlot_1_Action;
     private InputAction quickSlot_2_Action;
@@ -55,8 +69,7 @@ public class Player : BaseObject, ICombatable
     private float blinkSpeed = 30f;
     private float blinkTime = 0.5f;
     private Awaitable blinkAwaiter = null;
-    private Item weaponCache = null;
-    private WeaponInfo weaponInfoCache = null;
+    private Weapon weaponCache = null;
 
     protected override void Awake()
     {
@@ -126,23 +139,21 @@ public class Player : BaseObject, ICombatable
         GameManager.Instance.uiManager.playerInfoPreview.Increase(amount);
     }
 
-    public async Task EquipWeapon(int? weaponID)
+    public async Task EquipWeapon(Weapon weapon)
     {
-        EquipedWeaponID = weaponID;
+        EquipedWeapon = weapon;
 
-        if (weaponID == null)
+        if (weapon == null)
         {
             weaponCache = null;
-            weaponInfoCache = null;
 
             GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(null); // Info Preview UI 변경
         }
         else
         {
-            weaponCache = GameManager.Instance.data.item[weaponID.Value];
-            weaponInfoCache = await GameManager.Instance.LoadItemInfo<WeaponInfo>(weaponID.Value);
+            weaponCache = weapon;
 
-            GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(weaponCache.IconSprite); // Info Preview UI 변경
+            GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(weaponCache.Item.IconSprite); // Info Preview UI 변경
         }
     }
 
@@ -211,7 +222,6 @@ public class Player : BaseObject, ICombatable
 
         moveAction = actionMap.FindAction("Move");
         jumpAction = actionMap.FindAction("Jump");
-        skill_0_Action = actionMap.FindAction("UseSkill_0");
         
         quickSlot_0_Action = actionMap.FindAction("UseQuickSlot_0");
         quickSlot_1_Action = actionMap.FindAction("UseQuickSlot_1");
@@ -233,153 +243,146 @@ public class Player : BaseObject, ICombatable
 
         builder = builder
             .Selector("플레이어 BT")
-                .Condition(string.Empty, (t) => info.isDead)
+                .Do(string.Empty, (t) => // 사망 체크 및 처리
+                {
+                    if (info.isDead == true)
+                    {
+                        return BehaviourTreeStatus.Success;
+                    }
+                    else if (info.HP <= 0)
+                    {
+                        animator.Play(AnimHash.DEAD); // 사망 애니메이션 재생
+                        CurrentAnimationState = AnimationState.Dead;
 
-                .Sequence(string.Empty)
-                    .Condition("죽은 경우", (t) => info.HP <= 0)
-                    .Do(string.Empty, DoOnDead)
-                .End()
+                        info.isDead = true; // 생존 여부 필드 설정
 
-                .Sequence(string.Empty)
-                    .Do("좌/우 이동 입력 처리", DoDefaultInputProc)
+                        return BehaviourTreeStatus.Success;
+                    }
+                    else
+                    {
+                        return BehaviourTreeStatus.Failure;
+                    }
+                })
+
+                .Sequence(string.Empty) // 무기가 장착된 상태에서 공격 처리
+                    .Condition(string.Empty, (t) => weaponCache != null)
                     .Selector(string.Empty)
-                        .Selector(string.Empty)
-                            .Selector("공격 입력 처리")
-                                .Sequence(string.Empty)
-                                    .Condition("공격 중인 경우", (t) => anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack"))
-                                    .Do(string.Empty, (t) =>
-                                        {
-                                            if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
-                                            {
-                                                return BehaviourTreeStatus.Failure;
-                                            }
-                                            else
-                                            {
-                                                return BehaviourTreeStatus.Running;
-                                            }
-                                        })
-                                .End()
+                        .Do(string.Empty, (t) =>
+                        {
+                            if (weaponCache == null)
+                            {
+                                return BehaviourTreeStatus.Failure;
+                            }
 
-                                .Sequence(string.Empty)
-                                    .Condition("공격 버튼을 누른 경우", (t) => skill_0_Action.IsPressed() && anim.GetCurrentAnimatorStateInfo(0).IsTag("Attack") == false)
-                                    .Do(string.Empty, DoOnAttack)
-                                .End()
-                            .End()
+                            return weaponCache.GetSkill_0_BehaviourTree(this).Tick(t);
+                        })
 
-                            .Selector("점프 및 추락 처리")
-                                .Sequence(string.Empty)
-                                    .Condition("점프 버튼이 눌린 경우", (t) => jumpAction.IsPressed() && jumpAction.IsInProgress())
-                                    .Sequence(string.Empty)
-                                        .Condition(string.Empty, (t) => RB.linearVelocityY.IsAlmostEqaul(0f))
-                                        .Do(string.Empty, DoOnJump)
-                                    .End()
-                                .End()
+                        .Do(string.Empty, (t) =>
+                        {
+                            if (weaponCache == null)
+                            {
+                                return BehaviourTreeStatus.Failure;
+                            }
 
-                                .Sequence(string.Empty)
-                                    .Condition("추락 중인 경우", (t) => RB.linearVelocityY < -0.1f)
-                                    .Do(string.Empty, DoOnFall)
-                                .End()
+                            return weaponCache.GetSkill_1_BehaviourTree(this).Tick(t);
+                        })
 
-                                .Condition("점프 중인 경우", (t) => anim.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimHash.JUMP)
-                            .End()
+                        .Do(string.Empty, (t) =>
+                        {
+                            if (weaponCache == null)
+                            {
+                                return BehaviourTreeStatus.Failure;
+                            }
 
-                            .Do("Run/Idle 애니메이션", DoOnIdleAndRun)
-                        .End()
+                            return weaponCache.GetSkill_2_BehaviourTree(this).Tick(t);
+                        })
                     .End()
                 .End()
 
-                .Do("Run/Idle 애니메이션", DoOnIdleAndRun)
+                .Sequence(string.Empty)
+                    .Condition(string.Empty, (t) => onInteration == false)
+                    .Do(string.Empty, (t) =>
+                    {
+                        if (moveAction.IsPressed() && moveAction.IsInProgress()) // 좌우 이동 처리
+                        {
+                            Vector2 dir = moveAction.ReadValue<Vector2>();
+                            float newX = dir.x;
+
+                            rigidBody.linearVelocityX = newX * info.speed;
+
+                            // 회전 처리
+                            {
+                                float newRotY;
+
+                                if (dir.x < 0f)
+                                {
+                                    newRotY = 180f;
+                                }
+                                else
+                                {
+                                    newRotY = 0f;
+                                }
+
+                                rigidBody.transform.rotation = Quaternion.Euler(rigidBody.transform.rotation.x, newRotY, rigidBody.transform.rotation.z);
+                            }
+                        }
+
+                        if (jumpAction.IsPressed() && jumpAction.IsInProgress() && rigidBody.linearVelocityY.IsAlmostEqaul(0f)) // 점프 키가 눌린 경우
+                        {
+                            rigidBody.linearVelocityY += info.jumpPower;
+                        }
+
+                        return BehaviourTreeStatus.Success;
+                    })
+                    .Do(string.Empty, (t) =>
+                    {
+                        if (RigidBody.linearVelocityY > 0.01f)
+                        {
+                            animator.Play(AnimHash.JUMP);
+                            CurrentAnimationState = AnimationState.Jump;
+                        }
+                        else if (RigidBody.linearVelocityY < -0.01f)
+                        {
+                            animator.Play(AnimHash.FALL);
+                            CurrentAnimationState = AnimationState.Fall;
+                        }
+                        else if (RigidBody.linearVelocityX.IsAlmostEqaul(0f) == false)
+                        {
+                            animator.Play(AnimHash.RUN);
+                            CurrentAnimationState = AnimationState.Run;
+                        }
+                        else
+                        {
+                            animator.Play(AnimHash.IDLE);
+                            CurrentAnimationState = AnimationState.Idle;
+                        }
+
+                        return BehaviourTreeStatus.Success;
+                    })
+                .End()
             .End();
 
             return builder.Build();
     }
 
-    private BehaviourTreeStatus DoOnDead(TimeData t)
-    {
-        // 사망 애니메이션 재생
-        anim.Play(AnimHash.DEAD);
-
-        // 생존 여부 필드 설정
-        info.isDead = true;
-
-        return BehaviourTreeStatus.Success;
-    }
-
-    private BehaviourTreeStatus DoOnFall(TimeData t)
-    {
-        if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.FALL)
-        {
-            // 추락 애니메이션 재생
-            anim.Play(AnimHash.FALL);
-        }
-
-        return BehaviourTreeStatus.Running;
-    }
-
-    private BehaviourTreeStatus DoOnJump(TimeData t)
-    {
-        // 점프 애니메이션 재생
-        anim.Play(AnimHash.JUMP);
-
-        RB.linearVelocityY += info.jumpPower;
-
-        return BehaviourTreeStatus.Running;
-    }
-
-    Skill skill;
-
-    private BehaviourTreeStatus DoOnAttack(TimeData t)
-    {
-        // 공격 애니메이션 재생
-        anim.Play(AnimHash.ATTACK_1);
-
-        skill = GameManager.Instance.combatSystem.GetSkill();
-        int weaponDamage = 0;
-
-        if (weaponCache != null && weaponInfoCache != null)
-        {
-            weaponDamage = weaponInfoCache.damage;
-        }
-
-        skill.Init(weaponDamage, transform.position, transform.rotation, gameObject.layer, testSkillData, this);
-
-        skill.Enable();
-
-        return BehaviourTreeStatus.Running;
-    }
-
-    private BehaviourTreeStatus DoOnIdleAndRun(TimeData t)
-    {
-        if (RB.linearVelocityX.Abs() < 0.05f) 
-        {
-            // Velocity X의 절댓값이 0.05보다 작은 경우 Idle 애니메이션 재생
-            anim.Play(AnimHash.IDLE);
-        }
-        else 
-        {
-            // Run 애니메이션 재생
-            anim.Play(AnimHash.RUN);
-        }
-
-        return BehaviourTreeStatus.Success;
-    }
-
     /// <summary>
-    /// 좌, 우 이동 입력 처리
+    /// 좌, 우 이동 및 점프 처리
     /// </summary>
     private BehaviourTreeStatus DoDefaultInputProc(TimeData t)
     {
-        if (onInteration)
+        if (onInteration) // 상호작용 중에 작동하지 않음.
         {
             return BehaviourTreeStatus.Failure;
         }
 
-        if (moveAction.IsPressed() && moveAction.IsInProgress())
+        if (moveAction.IsPressed() && moveAction.IsInProgress()) // 좌우 이동 처리
         {
             Vector2 dir = moveAction.ReadValue<Vector2>();
             float newX = dir.x;
 
-            RB.linearVelocityX = newX * info.speed;
+            rigidBody.linearVelocityX = newX * info.speed;
+            animator.Play(AnimHash.RUN); // Run 애니메이션 재생
+            CurrentAnimationState = AnimationState.Run;
 
             // 회전 처리
             {
@@ -394,8 +397,29 @@ public class Player : BaseObject, ICombatable
                     newRotY = 0f;
                 }
 
-                RB.transform.rotation = Quaternion.Euler(RB.transform.rotation.x, newRotY, RB.transform.rotation.z);
+                rigidBody.transform.rotation = Quaternion.Euler(rigidBody.transform.rotation.x, newRotY, rigidBody.transform.rotation.z);
             }
+        }
+
+        if (jumpAction.IsPressed() && jumpAction.IsInProgress() && rigidBody.linearVelocityY.IsAlmostEqaul(0f)) // 점프 키가 눌린 경우
+        {
+            animator.Play(AnimHash.JUMP); // 점프 애니메이션 재생
+            CurrentAnimationState = AnimationState.Jump;
+
+            rigidBody.linearVelocityY += info.jumpPower;
+        }
+        else if (rigidBody.linearVelocityY < -0.1f) // 추락 중인 경우
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.FALL)
+            {
+                animator.Play(AnimHash.FALL); // 추락 애니메이션 재생
+                CurrentAnimationState = AnimationState.Fall;
+            }
+        }
+        else if (RigidBody.linearVelocityX.IsAlmostEqaul(0f))
+        {
+            animator.Play(AnimHash.IDLE);
+            CurrentAnimationState = AnimationState.Idle;
         }
 
         return BehaviourTreeStatus.Success;

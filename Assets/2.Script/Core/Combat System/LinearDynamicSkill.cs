@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class LinearDynamicSkill : Skill
+public class LinearDynamicSkill : SkillAction
 {
     private Vector2 velocity;
 

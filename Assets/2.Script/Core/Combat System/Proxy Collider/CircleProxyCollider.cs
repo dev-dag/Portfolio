@@ -15,7 +15,7 @@ public class CircleProxyCollider : ProxyCollider
         collider = GetComponent<CircleCollider2D>();
     }
 
-    public void Init(Vector2 position, Quaternion rotation, Vector2 offset, float radius, int layer, Action<Collider2D> onHitCallback, Skill owner)
+    public void Init(Vector2 position, Quaternion rotation, Vector2 offset, float radius, int layer, Action<Collider2D> onHitCallback, SkillAction owner)
     {
         base.ownerSkill = owner;
 

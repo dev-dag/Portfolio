@@ -50,7 +50,9 @@ public class ItemContainer
         {
             if (data.TypeEnum == Item.ItemType.Weapon)
             {
-                newContainer = new LongSward();
+                Type type = Type.GetType(data.ClassTypeString);
+
+                newContainer = Activator.CreateInstance(type) as Weapon;
             }
             else if (data.TypeEnum == Item.ItemType.Potion)
             {

@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6099623383329757058}
-  - component: {fileID: 4581399880957687365}
+  - component: {fileID: 7247897760415304039}
   m_Layer: 0
-  m_Name: Linear Dynamic Skill
+  m_Name: Skill Action
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 3294906344829452064}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4581399880957687365
+--- !u!114 &7247897760415304039
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,11 +42,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 740318091522289163}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76728405a544f15448c93fa4f2dfaffc, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b87a03de0661c74dadd2f2caed95eda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   effectAnimator: {fileID: 1365590911509729932}
-  data: {fileID: 0}
 --- !u!1 &2668044024620395906
 GameObject:
   m_ObjectHideFlags: 0
