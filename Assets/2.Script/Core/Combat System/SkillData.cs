@@ -22,6 +22,9 @@ public class SkillData : ScriptableObject
         Circle,
     }
 
+    public Sprite icon;
+
+    [Space(30f)]
     public SkillType skillType;
     public SkillCollisionType collisionType;
     public ParryType parryType;

@@ -3,6 +3,7 @@ using UnityEngine;
 public class Skill
 {
     public float NextCoolDownTime { get; private set; }
+    public SkillData Data { get => data; }
 
     private SkillData data;
     private int weaponDamage;
