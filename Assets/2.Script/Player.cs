@@ -367,66 +367,6 @@ public class Player : BaseObject, ICombatable
             return builder.Build();
     }
 
-    /// <summary>
-    /// 좌, 우 이동 및 점프 처리
-    /// </summary>
-    private BehaviourTreeStatus DoDefaultInputProc(TimeData t)
-    {
-        if (onInteration) // 상호작용 중에 작동하지 않음.
-        {
-            return BehaviourTreeStatus.Failure;
-        }
-
-        if (moveAction.IsPressed() && moveAction.IsInProgress()) // 좌우 이동 처리
-        {
-            Vector2 dir = moveAction.ReadValue<Vector2>();
-            float newX = dir.x;
-
-            rigidBody.linearVelocityX = newX * info.speed;
-            animator.Play(AnimHash.RUN); // Run 애니메이션 재생
-            CurrentAnimationState = AnimationState.Run;
-
-            // 회전 처리
-            {
-                float newRotY;
-
-                if (dir.x < 0f)
-                {
-                    newRotY = 180f;
-                }
-                else
-                {
-                    newRotY = 0f;
-                }
-
-                rigidBody.transform.rotation = Quaternion.Euler(rigidBody.transform.rotation.x, newRotY, rigidBody.transform.rotation.z);
-            }
-        }
-
-        if (jumpAction.IsPressed() && jumpAction.IsInProgress() && rigidBody.linearVelocityY.IsAlmostEqaul(0f)) // 점프 키가 눌린 경우
-        {
-            animator.Play(AnimHash.JUMP); // 점프 애니메이션 재생
-            CurrentAnimationState = AnimationState.Jump;
-
-            rigidBody.linearVelocityY += info.jumpPower;
-        }
-        else if (rigidBody.linearVelocityY < -0.1f) // 추락 중인 경우
-        {
-            if (animator.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.FALL)
-            {
-                animator.Play(AnimHash.FALL); // 추락 애니메이션 재생
-                CurrentAnimationState = AnimationState.Fall;
-            }
-        }
-        else if (RigidBody.linearVelocityX.IsAlmostEqaul(0f))
-        {
-            animator.Play(AnimHash.IDLE);
-            CurrentAnimationState = AnimationState.Idle;
-        }
-
-        return BehaviourTreeStatus.Success;
-    }
-
     private void OnInteract(InputAction.CallbackContext context)
     {
         if (interactionCurrent == null
