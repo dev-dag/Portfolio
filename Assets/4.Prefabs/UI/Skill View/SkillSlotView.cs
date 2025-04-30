@@ -54,7 +54,5 @@ public class SkillSlotView : BaseObject
         {
             coolTimeImage.fillAmount = 0f;
         }
-
-        EDebug.Log(coolTimeImage.fillAmount.ToString());
     }
 }
