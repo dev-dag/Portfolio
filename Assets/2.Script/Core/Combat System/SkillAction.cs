@@ -56,6 +56,7 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
+
         if (data.collisionType == SkillData.SkillCollisionType.Box)
         {
             Gizmos.DrawWireCube((Vector2)transform.position + data.colliderOffset, data.colliderSize);
@@ -104,6 +105,10 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
 
         switch (data.collisionType)
         {
+            case SkillData.SkillCollisionType.None:
+            {
+                break;
+            }
             case SkillData.SkillCollisionType.Box:
             {
                 BoxProxyCollider boxProxyCollider = GameManager.Instance.combatSystem.GetBoxProxyCollider();

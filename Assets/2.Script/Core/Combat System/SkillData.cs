@@ -18,7 +18,8 @@ public class SkillData : ScriptableObject
 
     public enum SkillCollisionType
     {
-        Box = 0,
+        None = 0,
+        Box,
         Circle,
     }
 
