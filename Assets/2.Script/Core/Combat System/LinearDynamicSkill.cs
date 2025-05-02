@@ -37,7 +37,8 @@ public class LinearDynamicSkill : SkillAction
     {
         base.OnHit(collision);
 
-        if (collision.attachedRigidbody.gameObject.layer == LayerMask.NameToLayer(GameManager.PLATFORM_LAYER_NAME))
+        if (collision.attachedRigidbody.gameObject.layer == LayerMask.NameToLayer(GameManager.PLATFORM_LAYER_NAME)
+            && IsReturned == false)
         {
             Return();
         }

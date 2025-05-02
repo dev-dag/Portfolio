@@ -1,3 +1,4 @@
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 public class SkillAction : PoolingObject, ICombatAnimatorEventListener
@@ -32,7 +33,10 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     {
         base.Enable();
 
-        Invoke("Return", data.lifeTime);
+        if (data.useLifeTime)
+        {
+            Invoke("Return", data.lifeTime);
+        }
     }
 
     public override void Return()
@@ -42,6 +46,9 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
         IsParryed = false;
 
         (this as ICombatAnimatorEventListener).StopHit();
+
+        CancelInvoke();
+
         proxyCollider.Return();
         proxyCollider = null;
     }
