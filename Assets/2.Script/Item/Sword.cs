@@ -75,7 +75,8 @@ public class Sword : Weapon
                     if (player.CurrentAnimationState != Player.AnimationState.Attack_1
                         && player.CurrentAnimationState != Player.AnimationState.Attack_2)
                     {
-                        player.Animator.Play(WeaponInfo.AnimationStateName_0); // 애니메이션 재생
+                        player.RigidBody.linearVelocityX = 0f;
+                        player.Animator.Play(WeaponInfo.AnimationStateName_0[0]); // 애니메이션 재생
                         player.CurrentAnimationState = Player.AnimationState.Attack_0; // 상태머신 갱신
 
                         skill_0.TryOperate(player.transform.position, player.transform.rotation, player.gameObject.layer, player); // 스킬 시전 시도
@@ -142,7 +143,8 @@ public class Sword : Weapon
                     if (player.CurrentAnimationState != Player.AnimationState.Attack_0
                         && player.CurrentAnimationState != Player.AnimationState.Attack_2)
                     {
-                        player.Animator.Play(WeaponInfo.AnimationStateName_1); // 애니메이션 재생
+                        player.RigidBody.linearVelocityX = 0f;
+                        player.Animator.Play(WeaponInfo.AnimationStateName_1[0]); // 애니메이션 재생
                         player.CurrentAnimationState = Player.AnimationState.Attack_1; // 상태머신 갱신
                         player.RigidBody.linearVelocityY = JUMP_POWER;
 
@@ -217,7 +219,8 @@ public class Sword : Weapon
                     if (player.CurrentAnimationState != Player.AnimationState.Attack_0
                         && player.CurrentAnimationState != Player.AnimationState.Attack_1)
                     {
-                        player.Animator.Play(WeaponInfo.AnimationStateName_2); // 애니메이션 재생
+                        player.RigidBody.linearVelocityX = 0f;
+                        player.Animator.Play(WeaponInfo.AnimationStateName_2[0]); // 애니메이션 재생
                         player.CurrentAnimationState = Player.AnimationState.Attack_2; // 상태머신 갱신
                         player.RigidBody.linearVelocityY = 0f;
 
