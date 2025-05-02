@@ -44,12 +44,15 @@ public class Player : BaseObject, ICombatable
     public AnimationState CurrentAnimationState { get; set; }
     public InputAction MoveAction { get => moveAction; }
     public InputAction JumpAction { get => jumpAction; }
+    public bool IsOnGround { get; private set; }
+    public Transform FootTr { get => footTr; }
 
     [Space(20f)]
     [SerializeField] private SpriteRenderer render;
     [SerializeField] private PlayerInfo info;
     [SerializeField] private Rigidbody2D rigidBody;
     [SerializeField] private Animator animator;
+    [SerializeField] private Transform footTr;
 
     [Space(20f)]
     [SerializeField] private float interactableDistance = 2f;
@@ -94,6 +97,8 @@ public class Player : BaseObject, ICombatable
         BT_Root.Tick(new TimeData(Time.deltaTime));
 
         CheckInteraction();
+
+        GroundCheck();
     }
 
     private void OnDestroy()
@@ -157,6 +162,22 @@ public class Player : BaseObject, ICombatable
             GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(weaponCache.Item.IconSprite); // Info Preview UI 변경
             GameManager.Instance.uiManager.skillView.SetSkill(weaponCache); // 스킬 View UI 설정
         }
+    }
+
+    private void GroundCheck()
+    {
+        var hit = Physics2D.Raycast(footTr.position, Vector2.down, 1f, LayerMask.GetMask(GameManager.PLATFORM_LAYER_NAME));
+
+        if (hit.collider != null)
+        {
+            IsOnGround = true;
+        }
+        else
+        {
+            IsOnGround = false;
+        }
+
+        return;
     }
 
     /// <summary>

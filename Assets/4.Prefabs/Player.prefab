@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2963309573307363932
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4259155674246106138}
+  m_Layer: 9
+  m_Name: Foot Tr
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4259155674246106138
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2963309573307363932}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.09, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 498709105608993498}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3775632376026301802
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,7 +61,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4259155674246106138}
   m_Father: {fileID: 9127234093057214309}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1002364023983658795
@@ -157,12 +189,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d00f724f67a51004f8d0a4c550187b4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  upperSlashPow: 3
-  dashPow: 3
+  dashPow: 60
+  axe_jump_y_pow: 120
+  axe_jump_x_pow: 30
+  axe_drop_y_pow: -20
   render: {fileID: 1002364023983658795}
   info: {fileID: 11400000, guid: 3d159c8ce19c9254ba4309b893e06256, type: 2}
   rigidBody: {fileID: 1227313422299097224}
   animator: {fileID: 2584992744505221506}
+  footTr: {fileID: 4259155674246106138}
   interactableDistance: 2
 --- !u!50 &1227313422299097224
 Rigidbody2D:
