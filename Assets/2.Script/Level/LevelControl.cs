@@ -6,10 +6,11 @@ public abstract class LevelControl : BaseObject
 
     public static LevelControl Current { get; protected set; }
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
 
         Current = this;
+        Player.Current.transform.position = startPoint;
     }
 }

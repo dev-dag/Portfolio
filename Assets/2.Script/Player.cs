@@ -78,7 +78,15 @@ public class Player : BaseObject, ICombatable
     {
         base.Awake();
 
-        Current = this;
+        if (Current == null)
+        {
+            Current = this;
+            DontDestroyOnLoad(this);
+        }
+        else
+        {
+            Destroy(this);
+        }
 
         Init();
 
@@ -99,14 +107,6 @@ public class Player : BaseObject, ICombatable
         CheckInteraction();
 
         GroundCheck();
-    }
-
-    private void OnDestroy()
-    {
-        if (Current == this)
-        {
-            Current = null;
-        }
     }
 
     private void OnEnable()

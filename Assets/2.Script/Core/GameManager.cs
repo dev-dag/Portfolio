@@ -23,6 +23,7 @@ public class GameManager : SingleTon<GameManager>
     [HideInInspector] public UI_Manager uiManager;
 
     [Space(20f), Header("Level Prefabs")]
+    [SerializeField] private GameObject Player_Prefab;
     [SerializeField] private GameObject UI_Prefab;
     [SerializeField] private GameObject baseHomeLevelPrefab;
     [SerializeField] private GameObject dungeonLevelPrefab;
@@ -140,6 +141,7 @@ public class GameManager : SingleTon<GameManager>
         uiManager = GameObject.Instantiate(UI_Prefab).GetComponent<UI_Manager>(); // UI 인스턴스 생성 및 초기화
         uiManager.Init();
 
+        GameObject.Instantiate(Player_Prefab); // 플레이어 생성
         GameObject.Instantiate(baseHomeLevelPrefab); // 초기 맵 로드
     }
 }
