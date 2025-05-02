@@ -27,17 +27,40 @@ public class Skill
                 var skillAction = GameManager.Instance.combatSystem.GetSkillAction();
                 skillAction.Init(weaponDamage, position, rotation, layer, data, caller);
                 skillAction.Enable();
+
+                NextCoolDownTime = Time.time + data.coolTime;
+
+                return true;
             }
             else
             {
-                var skillAction = GameManager.Instance.combatSystem.GetLinearDynamicSkillAction();
-                skillAction.Init(weaponDamage, position, rotation, layer, data, caller);
-                skillAction.Enable();
+                return false;
             }
+        }
+    }
 
-            NextCoolDownTime = Time.time + data.coolTime;
+    public bool TryOperateLinearDynamic(Vector2 position, Quaternion rotation, int layer, BaseObject caller, Vector2 direction, float speed)
+    {
+        if (Time.time < NextCoolDownTime) // 쿨타임이 아직 지나지 않은 경우
+        {
+            return false;
+        }
+        else
+        {
+            if (data.skillType == SkillData.SkillType.LinearDynamic)
+            {
+                var skillAction = GameManager.Instance.combatSystem.GetLinearDynamicSkillAction();
+                skillAction.Init(weaponDamage, position, rotation, layer, data, caller, direction, speed);
+                skillAction.Enable();
 
-            return true;
+                NextCoolDownTime = Time.time + data.coolTime;
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 

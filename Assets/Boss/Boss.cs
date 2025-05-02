@@ -470,10 +470,10 @@ namespace Monster
 
                                 if (ejectSlashSkill == null)
                                 {
-                                    explosionSkill = new Skill(ejectSlashSkillData, 0);
+                                    ejectSlashSkill = new Skill(ejectSlashSkillData, 0);
                                 }
 
-                                if (ejectSlashSkill.TryOperate(transform.position, transform.rotation, transform.gameObject.layer, this))
+                                if (ejectSlashSkill.TryOperateLinearDynamic(transform.position, transform.rotation, transform.gameObject.layer, this, dir, 2f))
                                 {
                                     return BehaviourTreeStatus.Running;
                                 }
@@ -507,7 +507,7 @@ namespace Monster
 
             return builder.Build();
         }
-
+        
         // 공격 스킬 서브 트리 반환
         private IBehaviourTreeNode GetExplosionBehaviourTree()
         {

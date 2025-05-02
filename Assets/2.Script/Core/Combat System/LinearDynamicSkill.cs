@@ -2,13 +2,15 @@ using UnityEngine;
 
 public class LinearDynamicSkill : SkillAction
 {
-    private Vector2 velocity;
+    private Vector2 dir;
+    private float speed;
 
-    public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller, Vector2 velocity)
+    public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller, Vector2 dir, float speed)
     {
         Init(weaponDamage, position, rotation, layer, data, caller);
 
-        this.velocity = velocity;
+        this.dir = dir;
+        this.speed = speed;
     }
 
     public override void Enable()
@@ -20,9 +22,9 @@ public class LinearDynamicSkill : SkillAction
     {
         base.Update();
 
-        if (velocity != Vector2.zero)
+        if (dir != Vector2.zero)
         {
-            this.transform.position += new Vector3(velocity.x * Time.deltaTime, velocity.y * Time.deltaTime, 0f);
+            this.transform.position += new Vector3(dir.x * speed * Time.deltaTime, dir.y * speed * Time.deltaTime, 0f);
 
             if (proxyCollider != null) // 물리 처리로 인해 Return함수가 호출된 경우 proxyCollider 인스턴스가 null일 수 있음.
             {
