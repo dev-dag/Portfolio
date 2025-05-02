@@ -6,14 +6,32 @@ using UnityEngine;
 /// </summary>
 public class BoxProxyCollider : ProxyCollider
 {
-    private BoxCollider2D collider;
+    private BoxCollider2D boxCollider;
 
     protected override void Awake()
     {
         base.Awake();
 
-        collider = GetComponent<BoxCollider2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
     }
+
+#if DEBUG
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+
+        if (this.transform.rotation.eulerAngles.y == 0f)
+        {
+            Gizmos.DrawWireCube((Vector2)transform.position + boxCollider.offset * new Vector2(1f, 1f), boxCollider.size);
+        }
+        else if (this.transform.rotation.eulerAngles.y == 180f)
+        {
+            Gizmos.DrawWireCube((Vector2)transform.position + boxCollider.offset * new Vector2(-1f, 1f), boxCollider.size);
+        }
+    }
+
+#endif
 
     public void Init(Vector2 position, Quaternion rotation, Vector2 offset, Vector2 size, int layer, Action<Collider2D> onHitCallback, SkillAction owner)
     {
@@ -23,8 +41,8 @@ public class BoxProxyCollider : ProxyCollider
         this.transform.rotation = rotation;
         this.gameObject.layer = layer;
 
-        collider.size = size;
-        collider.offset = offset;
+        boxCollider.size = size;
+        boxCollider.offset = offset;
 
         onHitEventHandler += onHitCallback;
     }

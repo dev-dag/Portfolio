@@ -51,24 +51,6 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
         base.Update();
     }
 
-#if DEBUG
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-
-        if (data.collisionType == SkillData.SkillCollisionType.Box)
-        {
-            Gizmos.DrawWireCube((Vector2)transform.position + data.colliderOffset, data.colliderSize);
-        }
-        else if (data.collisionType == SkillData.SkillCollisionType.Circle)
-        {
-            Gizmos.DrawWireSphere((Vector2)transform.position + data.colliderOffset, data.radius);
-        }
-    }
-
-#endif
-
     /// <summary>
     /// 스킬 타입 반환
     /// </summary>
@@ -159,7 +141,7 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
             return;
         }
 
-        BaseObject hitObject = collision.attachedRigidbody.GetComponent<BaseObject>();
+        BaseObject hitObject = collision.attachedRigidbody?.GetComponent<BaseObject>();
 
         if (hitObject is ICombatable)
         {
