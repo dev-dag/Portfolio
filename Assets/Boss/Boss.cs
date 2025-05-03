@@ -302,7 +302,7 @@ namespace Monster
         private IBehaviourTreeNode GetSlashBehaviourTree()
         {
             float afterDelay = 2f;
-            float xDistance = 6f;
+            float xDistance = 7.5f;
 
             BehaviourTreeBuilder builder = new BehaviourTreeBuilder();
 
@@ -516,7 +516,7 @@ namespace Monster
         private IBehaviourTreeNode GetExplosionBehaviourTree()
         {
             float afterDelay = 2f;
-            float xDistance = 10f;
+            float xDistance = 7f;
 
             BehaviourTreeBuilder builder = new BehaviourTreeBuilder();
 
