@@ -681,7 +681,7 @@ namespace Monster
                                     rushSkill = new Skill(rushSkillData, 0);
                                 }
 
-                                if (rushSkill.TryOperate(transform.position, transform.rotation, LayerMask.NameToLayer(GameManager.MONSTER_EXCLUSIVE_LAYER_NAME), this))
+                                if (rushSkill.TryOperateWithFollow(transform, transform.rotation, LayerMask.NameToLayer(GameManager.MONSTER_EXCLUSIVE_LAYER_NAME), this))
                                 {
                                     anim.Play(AnimHash.RUSH);
                                     currentPlayingAnim = AnimHash.RUSH;
