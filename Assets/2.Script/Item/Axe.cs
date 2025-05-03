@@ -65,7 +65,7 @@ public class Axe : Weapon
                     {
                         if (skillActivated == false)
                         {
-                            skill_0.TryOperate(player.transform.position, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
+                            skill_0.TryOperateWithFollow(player.transform, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
                             skillActivated = true;
                         }
 
