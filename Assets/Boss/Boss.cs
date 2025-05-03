@@ -35,6 +35,7 @@ namespace Monster
         [SerializeField] private SkillData slashSkillData;
         [SerializeField] private SkillData ejectSlashSkillData;
         [SerializeField] private SkillData explosionSkillData;
+        [SerializeField] private SkillData rushSkillData;
 
         [SerializeField] private Transform playerTr;
 
@@ -51,6 +52,7 @@ namespace Monster
         private Skill slashSkill;
         private Skill ejectSlashSkill;
         private Skill explosionSkill;
+        private Skill rushSkill;
 
         protected override void Awake()
         {
@@ -674,13 +676,25 @@ namespace Monster
                         {
                             if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // 사정거리 조건
                             {
-                                anim.Play(AnimHash.RUSH);
-                                currentPlayingAnim = AnimHash.RUSH;
+                                if (rushSkill == null)
+                                {
+                                    rushSkill = new Skill(rushSkillData, 0);
+                                }
 
-                                rushDir = (playerTr.position - transform.position) * Vector2.right; // 플레이어를 향한 x축 방향벡터 산출
-                                rushDir.Normalize();
+                                if (rushSkill.TryOperate(transform.position, transform.rotation, LayerMask.NameToLayer(GameManager.MONSTER_EXCLUSIVE_LAYER_NAME), this))
+                                {
+                                    anim.Play(AnimHash.RUSH);
+                                    currentPlayingAnim = AnimHash.RUSH;
 
-                                return BehaviourTreeStatus.Running;
+                                    rushDir = (playerTr.position - transform.position) * Vector2.right; // 플레이어를 향한 x축 방향벡터 산출
+                                    rushDir.Normalize();
+
+                                    return BehaviourTreeStatus.Running;
+                                }
+                                else
+                                {
+                                    return BehaviourTreeStatus.Failure;
+                                }
                             }
                             else
                             {
