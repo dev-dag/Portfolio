@@ -264,7 +264,7 @@ namespace Monster
         {
             System.Random random = new System.Random();
 
-            int value = random.Next(0, 3);
+            int value = random.Next(0, 4);
             SkillState result = SkillState.None;
 
             switch (value)
