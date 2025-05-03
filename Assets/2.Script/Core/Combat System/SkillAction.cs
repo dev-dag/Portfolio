@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
@@ -85,12 +86,13 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     /// </summary>
     void ICombatAnimatorEventListener.StartHit()
     {
+        isHitable = true;
+
         if (proxyCollider != null)
         {
+            proxyCollider.Enable();
             return;
         }
-
-        isHitable = true;
 
         switch (data.collisionType)
         {
@@ -135,6 +137,7 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     void ICombatAnimatorEventListener.StopHit()
     {
         isHitable = false;
+        proxyCollider.Disable();
     }
 
     /// <summary>
