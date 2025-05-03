@@ -9,9 +9,11 @@ using UnityEngine.U2D;
 public class GameManager : SingleTon<GameManager>
 {
     public const string INTERACTABLE_OBJECT_LAYER_NAME = "InteractableObject";
-    public const string PLAYER_SIDE_LAYER_NAME = "PlayerSide";
-    public const string MONSTER_SIDE_LAYER_NAME = "MonsterSide";
+    public const string PLAYER_LAYER_NAME = "Player";
+    public const string MONSTER_LAYER_NAME = "Monster";
     public const string PLATFORM_LAYER_NAME = "Platform";
+    public const string PLAYER_EXCLUSIVE_LAYER_NAME = "PlayerExclusive";
+    public const string MONSTER_EXCLUSIVE_LAYER_NAME = "MonsterExclusive";
 
     [Space(20f)]
     public InputActionAsset globalInputActionAsset;

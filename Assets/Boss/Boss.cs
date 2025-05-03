@@ -35,7 +35,6 @@ namespace Monster
         [SerializeField] private SkillData slashSkillData;
         [SerializeField] private SkillData ejectSlashSkillData;
         [SerializeField] private SkillData explosionSkillData;
-        [SerializeField] private SkillData rushSkillData;
 
         [SerializeField] private Transform playerTr;
 
@@ -52,7 +51,6 @@ namespace Monster
         private Skill slashSkill;
         private Skill ejectSlashSkill;
         private Skill explosionSkill;
-        private Skill rushSkill;
 
         protected override void Awake()
         {
@@ -76,6 +74,8 @@ namespace Monster
             overheadUI = GameManager.Instance.uiManager.overheadUI_Pool.Burrow<OverheadUI>();
             overheadUI.Init(this.transform, Vector3.zero);
             overheadUI.Enable();
+
+            rb.bodyType = RigidbodyType2D.Kinematic; // 첫 조우 시 상호작용 전에 원 위치에서 이탈 방지
         }
 
         protected override void Update()
@@ -160,7 +160,9 @@ namespace Monster
                     {
                         playerTr = Player.Current.transform;
                         isInteractable = false;
-                        this.gameObject.layer = LayerMask.NameToLayer(GameManager.MONSTER_SIDE_LAYER_NAME);
+                        this.gameObject.layer = LayerMask.NameToLayer(GameManager.MONSTER_LAYER_NAME);
+
+                        rb.bodyType = RigidbodyType2D.Dynamic;
 
                         interactionCallback?.Invoke();
                     });
@@ -360,7 +362,7 @@ namespace Monster
                                     slashSkill = new Skill(slashSkillData, 0);
                                 }
 
-                                if (slashSkill.TryOperate(transform.position, transform.rotation, transform.gameObject.layer, this))
+                                if (slashSkill.TryOperate(transform.position, transform.rotation, LayerMask.NameToLayer(GameManager.MONSTER_EXCLUSIVE_LAYER_NAME), this))
                                 {
                                     return BehaviourTreeStatus.Running;
                                 }
@@ -473,7 +475,7 @@ namespace Monster
                                     ejectSlashSkill = new Skill(ejectSlashSkillData, 0);
                                 }
 
-                                if (ejectSlashSkill.TryOperateLinearDynamic(transform.position, transform.rotation, transform.gameObject.layer, this, dir, 2f))
+                                if (ejectSlashSkill.TryOperateLinearDynamic(transform.position, transform.rotation, LayerMask.NameToLayer(GameManager.MONSTER_EXCLUSIVE_LAYER_NAME), this, dir, 2f))
                                 {
                                     return BehaviourTreeStatus.Running;
                                 }
@@ -574,7 +576,7 @@ namespace Monster
                                     explosionSkill = new Skill(explosionSkillData, 0);
                                 }
 
-                                if (explosionSkill.TryOperate(transform.position, transform.rotation, transform.gameObject.layer, this))
+                                if (explosionSkill.TryOperate(transform.position, transform.rotation, LayerMask.NameToLayer(GameManager.MONSTER_EXCLUSIVE_LAYER_NAME), this))
                                 {
                                     return BehaviourTreeStatus.Running;
                                 }
@@ -608,7 +610,7 @@ namespace Monster
 
             return builder.Build();
         }
-
+        public float rushSpeed = 4f;
         // 공격 스킬 서브 트리 반환
         private IBehaviourTreeNode GetRushBehaviourTree()
         {
@@ -616,6 +618,7 @@ namespace Monster
             float xDistance = 60f;
 
             BehaviourTreeBuilder builder = new BehaviourTreeBuilder();
+            Vector2 rushDir = Vector2.zero;
 
             builder.Sequence(string.Empty)
                 .Do(string.Empty, t =>
@@ -643,10 +646,10 @@ namespace Monster
                 .Selector(string.Empty)
                     .Do(string.Empty, t =>
                     {
-                        if (currentPlayingAnim != AnimHash.RUSH) // 현재 재생중인 애니메이션이 폭파가 아닌 경우
+                        if (currentPlayingAnim != AnimHash.RUSH) // 현재 재생중인 애니메이션이 돌진이 아닌 경우
                             return BehaviourTreeStatus.Failure;
 
-                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // 폭파 애니메이션이 끝난 경우
+                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // 돌진 애니메이션이 끝난 경우
                         {
                             currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
@@ -654,10 +657,14 @@ namespace Monster
                             anim.Play(AnimHash.IDLE);
                             currentPlayingAnim = AnimHash.IDLE;
 
+                            rushDir = Vector2.zero; // 람다 외부 변수 수동 초기화
+
                             return BehaviourTreeStatus.Success;
                         }
                         else
                         {
+                            rb.linearVelocity = rushDir * rushSpeed;
+
                             return BehaviourTreeStatus.Running;
                         }
                     })
@@ -670,19 +677,10 @@ namespace Monster
                                 anim.Play(AnimHash.RUSH);
                                 currentPlayingAnim = AnimHash.RUSH;
 
-                                if (rushSkill == null)
-                                {
-                                    rushSkill = new Skill(rushSkillData, 0);
-                                }
+                                rushDir = (playerTr.position - transform.position) * Vector2.right; // 플레이어를 향한 x축 방향벡터 산출
+                                rushDir.Normalize();
 
-                                if (rushSkill.TryOperate(transform.position, transform.rotation, transform.gameObject.layer, this))
-                                {
-                                    return BehaviourTreeStatus.Running;
-                                }
-                                else
-                                {
-                                    return BehaviourTreeStatus.Failure;
-                                }
+                                return BehaviourTreeStatus.Running;
                             }
                             else
                             {

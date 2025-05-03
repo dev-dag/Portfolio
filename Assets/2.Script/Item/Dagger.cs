@@ -1,5 +1,6 @@
 ﻿using Database_Table;
 using FluentBehaviourTree;
+using UnityEngine;
 
 public class Dagger : Weapon
 {
@@ -88,7 +89,7 @@ public class Dagger : Weapon
 
                         }
 
-                        skill_0.TryOperate(player.transform.position, player.transform.rotation, player.gameObject.layer, player); // 스킬 시전 시도
+                        skill_0.TryOperate(player.transform.position, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
                         return BehaviourTreeStatus.Success;
                     }
                     else
@@ -165,7 +166,7 @@ public class Dagger : Weapon
 
                         }
 
-                        skill_1.TryOperate(player.transform.position, player.transform.rotation, player.gameObject.layer, player); // 스킬 시전 시도
+                        skill_1.TryOperate(player.transform.position, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
                         return BehaviourTreeStatus.Success;
                     }
                     else
@@ -249,7 +250,7 @@ public class Dagger : Weapon
                             }
                         }
 
-                        skill_2.TryOperate(player.transform.position, player.transform.rotation, player.gameObject.layer, player); // 스킬 시전 시도
+                        skill_2.TryOperate(player.transform.position, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
                         return BehaviourTreeStatus.Success;
                     }
                     else
