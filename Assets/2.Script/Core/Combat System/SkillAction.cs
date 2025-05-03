@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class SkillAction : PoolingObject, ICombatAnimatorEventListener
 {
+    public struct Option
+    {
+        public bool applyFollow;
+        public Transform followTarget;
+
+        public Option(Transform followTarget) { applyFollow = true; this.followTarget = followTarget; }
+    }
+
     public bool IsParryed { get; protected set; }
 
     [SerializeField] protected Animator effectAnimator;
@@ -14,8 +22,9 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     protected int layer = 0;
     protected bool isHitable = false;
     protected int weaponDamage = 0;
+    protected Option option;
 
-    public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller)
+    public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller, Option option)
     {
         this.data = data;
         this.transform.position = position;
@@ -23,6 +32,7 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
         this.layer = layer;
         this.caller = caller;
         this.weaponDamage = weaponDamage;
+        this.option = option;
 
         effectAnimator.transform.localPosition = data.VFX_Offset;
         effectAnimator.runtimeAnimatorController = data.animationController;
@@ -57,6 +67,21 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     protected override void Update()
     {
         base.Update();
+
+        if (IsReturned)
+        {
+            return;
+        }
+
+        if (option.applyFollow && isHitable)
+        {
+            transform.position = option.followTarget.position;
+
+            if (data.collisionType != SkillData.SkillCollisionType.None)
+            {
+                proxyCollider.transform.position = transform.position;
+            }
+        }
     }
 
     /// <summary>
@@ -137,7 +162,11 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     void ICombatAnimatorEventListener.StopHit()
     {
         isHitable = false;
-        proxyCollider.Disable();
+
+        if (data.collisionType != SkillData.SkillCollisionType.None)
+        {
+            proxyCollider.Disable();
+        }
     }
 
     /// <summary>

@@ -7,7 +7,7 @@ public class LinearDynamicSkill : SkillAction
 
     public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller, Vector2 dir, float speed)
     {
-        Init(weaponDamage, position, rotation, layer, data, caller);
+        Init(weaponDamage, position, rotation, layer, data, caller, new Option());
 
         this.dir = dir;
         this.speed = speed;
