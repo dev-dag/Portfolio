@@ -1,12 +1,16 @@
-using Database_Table;
+﻿using Database_Table;
 using UnityEngine;
 
 public class Potion : ItemContainer
 {
+    private PotionInfo info;
+
     public override bool Init(Item item, int amount)
     {
         if (item.Type == 0)
         {
+            info = GameManager.Instance.LoadItemInfo<PotionInfo>(item.ID);
+
             return base.Init(item, amount);
         }
         else
@@ -18,6 +22,6 @@ public class Potion : ItemContainer
     public void Drink()
     {
         Amount--;
-        Player.Current.IncreaseHP(10);
+        Player.Current.IncreaseHP(info.healingAmount);
     }
 }
