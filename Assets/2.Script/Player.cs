@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using FluentBehaviourTree;
 using UnityEngine.InputSystem;
 using System.Timers;
@@ -10,8 +10,8 @@ using Unity.VisualScripting;
 using System.Threading.Tasks;
 
 /// <summary>
-/// µ¿½Ã¿¡ 2°³ ÀÌ»óÀÇ ÀÎ½ºÅÏ½º°¡ Á¸ÀçÇÏ¸é ¾ÈµÇ´Â Å¬·¡½º.
-/// ¹İµå½Ã ÇÊ¿äÇÑ °æ¿ì, ¹İµå½Ã ÇÏ³ªÀÇ ÀÎ½ºÅÏ½º´Â Disable µÈ »óÅÂ¿©¾ß ÇÑ´Ù.
+/// ë™ì‹œì— 2ê°œ ì´ìƒì˜ ì¸ìŠ¤í„´ìŠ¤ê°€ ì¡´ì¬í•˜ë©´ ì•ˆë˜ëŠ” í´ë˜ìŠ¤.
+/// ë°˜ë“œì‹œ í•„ìš”í•œ ê²½ìš°, ë°˜ë“œì‹œ í•˜ë‚˜ì˜ ì¸ìŠ¤í„´ìŠ¤ëŠ” Disable ëœ ìƒíƒœì—¬ì•¼ í•œë‹¤.
 /// </summary>
 public class Player : BaseObject, ICombatable
 {
@@ -46,6 +46,7 @@ public class Player : BaseObject, ICombatable
     public InputAction JumpAction { get => jumpAction; }
     public bool IsOnGround { get; private set; }
     public Transform FootTr { get => footTr; }
+    public bool BlockInput { get; set; }
 
     [Space(20f)]
     [SerializeField] private SpriteRenderer render;
@@ -66,7 +67,7 @@ public class Player : BaseObject, ICombatable
     private InputAction quickSlot_2_Action;
     private InputAction interactAction;
 
-    private IInteractable interactionCurrent; // ÇöÀç ÀÎÅÍ·º¼Ç °¡´ÉÇÑ ´ë»ó
+    private IInteractable interactionCurrent; // í˜„ì¬ ì¸í„°ë ‰ì…˜ ê°€ëŠ¥í•œ ëŒ€ìƒ
     private bool onInteration = false;
     private bool noTakeDamage = false;
     private float blinkSpeed = 30f;
@@ -126,7 +127,7 @@ public class Player : BaseObject, ICombatable
     }
 
     /// <summary>
-    /// »ıÁ¸ ¿©ºÎ ¹İÈ¯
+    /// ìƒì¡´ ì—¬ë¶€ ë°˜í™˜
     /// </summary>
     public bool IsAlive()
     {
@@ -134,13 +135,13 @@ public class Player : BaseObject, ICombatable
     }
 
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾îÀÇ ÇöÀç Ã¼·ÂÀ» ¿Ã·ÁÁÖ´Â ÇÔ¼ö.
+    /// í”Œë ˆì´ì–´ì˜ í˜„ì¬ ì²´ë ¥ì„ ì˜¬ë ¤ì£¼ëŠ” í•¨ìˆ˜.
     /// </summary>
     public void IncreaseHP(int amount)
     {
         info.HP += amount;
 
-        // HP UI ¹İ¿µ
+        // HP UI ë°˜ì˜
         GameManager.Instance.uiManager.playerInfoPreview.Increase(amount);
     }
 
@@ -152,15 +153,15 @@ public class Player : BaseObject, ICombatable
         {
             weaponCache = null;
 
-            GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(null); // Info Preview UI º¯°æ
-            GameManager.Instance.uiManager.skillView.SetSkill(null); // ½ºÅ³ View UI ¼³Á¤
+            GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(null); // Info Preview UI ë³€ê²½
+            GameManager.Instance.uiManager.skillView.SetSkill(null); // ìŠ¤í‚¬ View UI ì„¤ì •
         }
         else
         {
             weaponCache = weapon;
 
-            GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(weaponCache.Item.IconSprite); // Info Preview UI º¯°æ
-            GameManager.Instance.uiManager.skillView.SetSkill(weaponCache); // ½ºÅ³ View UI ¼³Á¤
+            GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(weaponCache.Item.IconSprite); // Info Preview UI ë³€ê²½
+            GameManager.Instance.uiManager.skillView.SetSkill(weaponCache); // ìŠ¤í‚¬ View UI ì„¤ì •
         }
     }
 
@@ -181,11 +182,11 @@ public class Player : BaseObject, ICombatable
     }
 
     /// <summary>
-    /// »óÈ£ÀÛ¿ë UI »ç¿ë °¡´É ¿©ºÎ Ã¼Å©
+    /// ìƒí˜¸ì‘ìš© UI ì‚¬ìš© ê°€ëŠ¥ ì—¬ë¶€ ì²´í¬
     /// </summary>
     private void CheckInteraction()
     {
-        if (onInteration) // »óÈ£ÀÛ¿ë ÁßÀÎ°æ¿ì ¹İÈ¯
+        if (onInteration) // ìƒí˜¸ì‘ìš© ì¤‘ì¸ê²½ìš° ë°˜í™˜
         {
             return;
         }
@@ -206,7 +207,7 @@ public class Player : BaseObject, ICombatable
         {
             IInteractable interactableHit = hit.collider.GetComponent<IInteractable>();
 
-            if (interactableHit.IsInteractable() == false) // »óÈ£ÀÛ¿ë ºÒ°¡´ÉÇÑ ´ë»ó Á¦¿Ü
+            if (interactableHit.IsInteractable() == false) // ìƒí˜¸ì‘ìš© ë¶ˆê°€ëŠ¥í•œ ëŒ€ìƒ ì œì™¸
             {
                 continue;
             }
@@ -217,7 +218,7 @@ public class Player : BaseObject, ICombatable
 
                 interactionCurrent.SetInteractionGuide(true);
             }
-            else if (interactableHit != interactionCurrent) // ÇöÀç »óÈ£ÀÛ¿ë °¡´ÉÇÑ ´ë»ó °»½Å ÈÄ ¹İÈ¯
+            else if (interactableHit != interactionCurrent) // í˜„ì¬ ìƒí˜¸ì‘ìš© ê°€ëŠ¥í•œ ëŒ€ìƒ ê°±ì‹  í›„ ë°˜í™˜
             {
                 interactionCurrent.SetInteractionGuide(false);
                 interactionCurrent = interactableHit;
@@ -250,12 +251,12 @@ public class Player : BaseObject, ICombatable
         quickSlot_1_Action = actionMap.FindAction("UseQuickSlot_1");
         quickSlot_2_Action = actionMap.FindAction("UseQuickSlot_2");
 
-        // UI ÀÔ·Â ÃÊ±âÈ­
+        // UI ì…ë ¥ ì´ˆê¸°í™”
         InputActionMap UI_ActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("UI");
         interactAction = UI_ActionMap.FindAction("Interact");
 
         info.Init();
-        GameManager.Instance.uiManager.playerInfoPreview.Init(info.HP, null); // Ã¼·Â UI ¼³Á¤
+        GameManager.Instance.uiManager.playerInfoPreview.Init(info.HP, null); // ì²´ë ¥ UI ì„¤ì •
 
         BT_Root = MakeBehaviourTree();
     }
@@ -265,8 +266,8 @@ public class Player : BaseObject, ICombatable
         BehaviourTreeBuilder builder = new BehaviourTreeBuilder();
 
         builder = builder
-            .Selector("ÇÃ·¹ÀÌ¾î BT")
-                .Do(string.Empty, (t) => // »ç¸Á Ã¼Å© ¹× Ã³¸®
+            .Selector("í”Œë ˆì´ì–´ BT")
+                .Do(string.Empty, (t) => // ì‚¬ë§ ì²´í¬ ë° ì²˜ë¦¬
                 {
                     if (info.isDead == true)
                     {
@@ -274,10 +275,10 @@ public class Player : BaseObject, ICombatable
                     }
                     else if (info.HP <= 0)
                     {
-                        animator.Play(AnimHash.DEAD); // »ç¸Á ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı
+                        animator.Play(AnimHash.DEAD); // ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ
                         CurrentAnimationState = AnimationState.Dead;
 
-                        info.isDead = true; // »ıÁ¸ ¿©ºÎ ÇÊµå ¼³Á¤
+                        info.isDead = true; // ìƒì¡´ ì—¬ë¶€ í•„ë“œ ì„¤ì •
 
                         return BehaviourTreeStatus.Success;
                     }
@@ -287,7 +288,7 @@ public class Player : BaseObject, ICombatable
                     }
                 })
 
-                .Sequence(string.Empty) // ¹«±â°¡ ÀåÂøµÈ »óÅÂ¿¡¼­ °ø°İ Ã³¸®
+                .Sequence(string.Empty) // ë¬´ê¸°ê°€ ì¥ì°©ëœ ìƒíƒœì—ì„œ ê³µê²© ì²˜ë¦¬
                     .Condition(string.Empty, (t) => weaponCache != null)
                     .Selector(string.Empty)
                         .Do(string.Empty, (t) =>
@@ -324,16 +325,17 @@ public class Player : BaseObject, ICombatable
 
                 .Sequence(string.Empty)
                     .Condition(string.Empty, (t) => onInteration == false)
+                    .Condition(string.Empty, (t) => BlockInput == false)
                     .Do(string.Empty, (t) =>
                     {
-                        if (moveAction.IsPressed() && moveAction.IsInProgress()) // ÁÂ¿ì ÀÌµ¿ Ã³¸®
+                        if (moveAction.IsPressed() && moveAction.IsInProgress()) // ì¢Œìš° ì´ë™ ì²˜ë¦¬
                         {
                             Vector2 dir = moveAction.ReadValue<Vector2>();
                             float newX = dir.x;
 
                             rigidBody.linearVelocityX = newX * info.speed;
 
-                            // È¸Àü Ã³¸®
+                            // íšŒì „ ì²˜ë¦¬
                             {
                                 float newRotY;
 
@@ -350,7 +352,7 @@ public class Player : BaseObject, ICombatable
                             }
                         }
 
-                        if (jumpAction.IsPressed() && jumpAction.IsInProgress() && rigidBody.linearVelocityY.IsAlmostEqaul(0f)) // Á¡ÇÁ Å°°¡ ´­¸° °æ¿ì
+                        if (jumpAction.IsPressed() && jumpAction.IsInProgress() && rigidBody.linearVelocityY.IsAlmostEqaul(0f)) // ì í”„ í‚¤ê°€ ëˆŒë¦° ê²½ìš°
                         {
                             rigidBody.linearVelocityY += info.jumpPower;
                         }
@@ -400,7 +402,7 @@ public class Player : BaseObject, ICombatable
         interactionCurrent.StartInteraction(async () =>
         {
             interactionCurrent = null;
-            await Awaitable.WaitForSecondsAsync(0.1f); // »óÈ£ÀÛ¿ë µô·¹ÀÌ ¼³Á¤
+            await Awaitable.WaitForSecondsAsync(0.1f); // ìƒí˜¸ì‘ìš© ë”œë ˆì´ ì„¤ì •
             onInteration = false;
         });
     }
@@ -463,7 +465,7 @@ public class Player : BaseObject, ICombatable
 
         blinkAwaiter = BlinkSpriteRender();
 
-        // HP UI ¹İ¿µ
+        // HP UI ë°˜ì˜
         GameManager.Instance.uiManager.playerInfoPreview.Decrease((int)damage);
     }
 
