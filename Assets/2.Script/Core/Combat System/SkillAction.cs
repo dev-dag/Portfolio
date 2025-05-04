@@ -27,14 +27,22 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller, Option option)
     {
         this.data = data;
-        this.transform.position = position;
         this.transform.rotation = rotation;
         this.layer = layer;
         this.caller = caller;
         this.weaponDamage = weaponDamage;
         this.option = option;
 
-        effectAnimator.transform.localPosition = data.VFX_Offset;
+        if (option.applyFollow)
+        {
+            this.transform.position = option.followTarget.position;
+        }
+        else
+        {
+            this.transform.position = position;
+        }
+
+            effectAnimator.transform.localPosition = data.VFX_Offset;
         effectAnimator.runtimeAnimatorController = data.animationController;
 
         this.gameObject.SetActive(false);
