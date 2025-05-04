@@ -76,11 +76,11 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
             return;
         }
 
-        if (option.applyFollow && isHitable)
+        if (option.applyFollow)
         {
             transform.position = option.followTarget.position;
 
-            if (data.collisionType != SkillData.SkillCollisionType.None)
+            if (isHitable && data.collisionType != SkillData.SkillCollisionType.None)
             {
                 proxyCollider.transform.position = transform.position;
             }
