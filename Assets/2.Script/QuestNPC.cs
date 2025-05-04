@@ -1,3 +1,4 @@
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -20,7 +21,7 @@ public class QuestNPC : NPC
         if (QuestSystem.Instance == null
             || QuestSystem.Instance.IsInit == false)
         {
-            EDebug.LogError("Äù½ºÆ® ½Ã½ºÅÛÀÌ ÃÊ±âÈ­µÇÁö ¾ÊÀ½.");
+            EDebug.LogError("í€˜ìŠ¤íŠ¸ ì‹œìŠ¤í…œì´ ì´ˆê¸°í™”ë˜ì§€ ì•ŠìŒ.");
             IsInit = false;
             return;
         }
@@ -74,7 +75,7 @@ public class QuestNPC : NPC
         return result;
     }
 
-    protected override void StartDialog()
+    protected override void StartDialog(Action callback = null)
     {
         if (GameManager.Instance.uiManager.dialog.IsActing)
         {

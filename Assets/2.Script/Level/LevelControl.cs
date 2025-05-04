@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public abstract class LevelControl : BaseObject
 {
@@ -12,5 +12,13 @@ public abstract class LevelControl : BaseObject
 
         Current = this;
         Player.Current.transform.position = startPoint;
+        Player.Current.AttachCamera();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+
+        GameManager.Instance.uiManager.ShowUI_ForCinematic(true);
     }
 }

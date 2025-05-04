@@ -1110,6 +1110,7 @@ GameObject:
   - component: {fileID: 6595107233976671045}
   - component: {fileID: 8917606299461666095}
   - component: {fileID: 6667826063893730542}
+  - component: {fileID: 2981096369945436119}
   m_Layer: 5
   m_Name: Item Info
   m_TagString: Untagged
@@ -1232,6 +1233,29 @@ MonoBehaviour:
   effect: {fileID: 3362239596990498216}
   description: {fileID: 8849815094738038241}
   image: {fileID: 4680615873650698347}
+--- !u!223 &2981096369945436119
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7759588496291155460}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 1
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 5
+  m_TargetDisplay: 0
 --- !u!1 &8085318701837665517
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -22,7 +22,7 @@ public class NPC : BaseObject, IInteractable
         startDialogAction = GameManager.Instance.globalInputActionAsset.FindActionMap("UI")?.FindAction("Interact");
         if (startDialogAction == null)
         {
-            EDebug.LogError("Input Action ÂüÁ¶ ¿À·ù");
+            EDebug.LogError("Input Action ì°¸ì¡° ì˜¤ë¥˜");
         }
     }
 
@@ -46,11 +46,14 @@ public class NPC : BaseObject, IInteractable
 
     private void OnDestroy()
     {
-        overheadUI.Return();
+        if (HasOverheadDialog())
+        {
+            overheadUI.Return();
+        }
     }
 
     /// <summary>
-    /// ´ÙÀÌ¾ó·Î±× ÀÎ½ºÅÏ½º »ı¼º
+    /// ë‹¤ì´ì–¼ë¡œê·¸ ì¸ìŠ¤í„´ìŠ¤ ìƒì„±
     /// </summary>
     private void MakeOverheadUI()
     {
@@ -58,18 +61,21 @@ public class NPC : BaseObject, IInteractable
     }
 
     /// <summary>
-    /// ´ÙÀÌ¾ó·Î±× ¹× ¸â¹öÇÊµå º¯¼ö ÃÊ±âÈ­
+    /// ë‹¤ì´ì–¼ë¡œê·¸ ë° ë©¤ë²„í•„ë“œ ë³€ìˆ˜ ì´ˆê¸°í™”
     /// </summary>
     protected virtual void Init()
     {
-        MakeOverheadUI();
+        if (HasOverheadDialog())
+        {
+            MakeOverheadUI();
 
-        RectTransform overheadUI_RTR = overheadUI.GetComponent<RectTransform>();
-        overheadUI_RTR.anchoredPosition = (Vector2)transform.position + NPC_Data.overheadUI_Offset;
+            RectTransform overheadUI_RTR = overheadUI.GetComponent<RectTransform>();
+            overheadUI_RTR.anchoredPosition = (Vector2)transform.position + NPC_Data.overheadUI_Offset;
 
-        overheadUI.Enable();
-        SetOverheadDialog();
-
+            overheadUI.Enable();
+            SetOverheadDialog();
+        }
+        
         if (HasOverheadDialog())
         {
             CheckDistanceWithPlayer();
@@ -79,7 +85,7 @@ public class NPC : BaseObject, IInteractable
     }
 
     /// <summary>
-    /// ÇÃ·¹ÀÌ¾î¿Í °Å¸®¸¦ Ã¼Å©ÇØ¼­ ´ÙÀÌ¾ó·Î±×¸¦ Ãâ·ÂÇÏ°Å³ª Å°º¸µå ÀÔ·Â µµ¿ì¹Ì UI¸¦ Ãâ·ÂÇÏ´Â ÇÔ¼ö
+    /// í”Œë ˆì´ì–´ì™€ ê±°ë¦¬ë¥¼ ì²´í¬í•´ì„œ ë‹¤ì´ì–¼ë¡œê·¸ë¥¼ ì¶œë ¥í•˜ê±°ë‚˜ í‚¤ë³´ë“œ ì…ë ¥ ë„ìš°ë¯¸ UIë¥¼ ì¶œë ¥í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     private async Awaitable CheckDistanceWithPlayer()
     {
@@ -89,7 +95,7 @@ public class NPC : BaseObject, IInteractable
 
             if (HasOverheadDialog())
             {
-                // ¿À¹öÇìµå ´ÙÀÌ¾ó·Î±× ¹ß»ı Á¶°Ç Ã¼Å©
+                // ì˜¤ë²„í—¤ë“œ ë‹¤ì´ì–¼ë¡œê·¸ ë°œìƒ ì¡°ê±´ ì²´í¬
                 if (Math.Abs(distance.x) < NPC_Data.overheadUI_Distance && Math.Abs(distance.y) < NPC_Data.overheadUI_Distance)
                 {
                     SetOverheadDialog();
@@ -113,7 +119,7 @@ public class NPC : BaseObject, IInteractable
     }
 
     /// <summary>
-    /// Ãâ·Â °¡´ÉÇÑ ´ÙÀÌ¾ó·Î±×°¡ ÀÖ´Â °æ¿ì True ¹İÈ¯
+    /// ì¶œë ¥ ê°€ëŠ¥í•œ ë‹¤ì´ì–¼ë¡œê·¸ê°€ ìˆëŠ” ê²½ìš° True ë°˜í™˜
     /// </summary>
     protected virtual bool HasDialog()
     {
@@ -128,7 +134,7 @@ public class NPC : BaseObject, IInteractable
     }
 
     /// <summary>
-    /// Ãâ·Â °¡´ÉÇÑ ¿À¹öÇìµå ´ÙÀÌ¾ó·Î±×°¡ ÀÖ´Â °æ¿ì True ¹İÈ¯
+    /// ì¶œë ¥ ê°€ëŠ¥í•œ ì˜¤ë²„í—¤ë“œ ë‹¤ì´ì–¼ë¡œê·¸ê°€ ìˆëŠ” ê²½ìš° True ë°˜í™˜
     /// </summary>
     protected virtual bool HasOverheadDialog()
     {
@@ -143,9 +149,9 @@ public class NPC : BaseObject, IInteractable
     }
 
     /// <summary>
-    /// ´ÙÀÌ¾ó·Î±× ÀÎ½ºÅÏ½º¸¦ »ç¿ëÇØ ´ëÈ­ ½ÃÀÛ
+    /// ë‹¤ì´ì–¼ë¡œê·¸ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ì‚¬ìš©í•´ ëŒ€í™” ì‹œì‘
     /// </summary>
-    protected virtual void StartDialog()
+    protected virtual void StartDialog(Action callback = null)
     {
         if (GameManager.Instance.uiManager.dialog.IsActing || HasDialog() == false)
         {
@@ -154,7 +160,7 @@ public class NPC : BaseObject, IInteractable
 
         List<string> stringList = GameManager.Instance.data.dialog[NPC_Data.dialogID].DialogTextList;
 
-        GameManager.Instance.uiManager.dialog.StartDialog(stringList);
+        GameManager.Instance.uiManager.dialog.StartDialog(stringList, callback);
     }
 
     protected virtual void SetOverheadDialog()

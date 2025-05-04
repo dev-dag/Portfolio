@@ -47,6 +47,7 @@ public class Player : BaseObject, ICombatable
     public bool IsOnGround { get; private set; }
     public Transform FootTr { get => footTr; }
     public bool BlockInput { get; set; }
+    public bool OnInteration { get => onInteration; }
 
     [Space(20f)]
     [SerializeField] private SpriteRenderer render;
@@ -230,7 +231,7 @@ public class Player : BaseObject, ICombatable
         }
     }
 
-    private void AttachCamera()
+    public void AttachCamera()
     {
         var cam = GameObject.FindWithTag("MainCamera");
         var cineCam = cam.GetComponent<CinemachineCamera>();
@@ -287,6 +288,8 @@ public class Player : BaseObject, ICombatable
                         return BehaviourTreeStatus.Failure;
                     }
                 })
+
+                .Condition(string.Empty, (t) => BlockInput)
 
                 .Sequence(string.Empty) // 무기가 장착된 상태에서 공격 처리
                     .Condition(string.Empty, (t) => weaponCache != null)
@@ -397,6 +400,8 @@ public class Player : BaseObject, ICombatable
         {
             return;
         }
+
+        GameManager.Instance.uiManager.inventory.Disable();
 
         onInteration = true;
         interactionCurrent.StartInteraction(async () =>

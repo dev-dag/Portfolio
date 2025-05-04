@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -8,6 +8,7 @@ using UnityEngine.U2D;
 
 public class GameManager : SingleTon<GameManager>
 {
+    public const float FOLLOW_CAM_ORIGIN_LENS = 8f; // ì¹´ë©”ë¼ ê¸°ë³¸ ë Œì¦ˆ ê°’
     public const string INTERACTABLE_OBJECT_LAYER_NAME = "InteractableObject";
     public const string PLAYER_LAYER_NAME = "Player";
     public const string MONSTER_LAYER_NAME = "Monster";
@@ -35,9 +36,9 @@ public class GameManager : SingleTon<GameManager>
     private Dictionary<int, ItemInfoData> itemInfoDataCache = new Dictionary<int, ItemInfoData>();
 
     /// <summary>
-    /// ¸Ê º¯°æ ÇÔ¼ö
+    /// ë§µ ë³€ê²½ í•¨ìˆ˜
     /// </summary>
-    /// <param name="ID">¸Ê ID</param>
+    /// <param name="ID">ë§µ ID</param>
     public void ChangeMap(int ID)
     {
         switch (ID)
@@ -58,7 +59,7 @@ public class GameManager : SingleTon<GameManager>
     }
 
     /// <summary>
-    /// ¾ÆÀÌÄÜ ÀÌ¹ÌÁö¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    /// ì•„ì´ì½˜ ì´ë¯¸ì§€ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public Sprite GetIconSprite(int id)
     {
@@ -67,7 +68,7 @@ public class GameManager : SingleTon<GameManager>
 
     public async Awaitable MakeCache()
     {
-        // ¾ÆÀÌÅÛ ÀÎÆ÷ Ä³½Ã
+        // ì•„ì´í…œ ì¸í¬ ìºì‹œ
         Task itemInfoTask = null;
         {
             itemInfoDataCache.Clear();
@@ -87,7 +88,7 @@ public class GameManager : SingleTon<GameManager>
             };
         }
 
-        // ¾ÆÀÌÄÜ ½ºÇÁ¶óÀÌÆ® ¾ÆÆ²¶ó½º Ä³½Ã
+        // ì•„ì´ì½˜ ìŠ¤í”„ë¼ì´íŠ¸ ì•„í‹€ë¼ìŠ¤ ìºì‹œ
         Task iconSpriteAtlasTask = null;
         {
             var handle = Addressables.LoadAssetAsync<SpriteAtlas>("Sprite Atlas/Item Icon");
@@ -114,7 +115,7 @@ public class GameManager : SingleTon<GameManager>
         }
         else
         {
-            EDebug.LogError("µ¥ÀÌÅÍ¸¦ Ã£Áö ¸øÇÔ.");
+            EDebug.LogError("ë°ì´í„°ë¥¼ ì°¾ì§€ ëª»í•¨.");
             return null;
         }
     }
@@ -136,14 +137,14 @@ public class GameManager : SingleTon<GameManager>
 
         data = dbConnecter.ConnectAndLoadDB();
 
-        globalInputActionAsset.Enable(); // ÀÎÇ² È°¼ºÈ­
+        globalInputActionAsset.Enable(); // ì¸í’‹ í™œì„±í™”
 
-        questSystem.Init(); // Äù½ºÆ® ½Ã½ºÅÛ ÃÊ±âÈ­
+        questSystem.Init(); // í€˜ìŠ¤íŠ¸ ì‹œìŠ¤í…œ ì´ˆê¸°í™”
 
-        uiManager = GameObject.Instantiate(UI_Prefab).GetComponent<UI_Manager>(); // UI ÀÎ½ºÅÏ½º »ı¼º ¹× ÃÊ±âÈ­
+        uiManager = GameObject.Instantiate(UI_Prefab).GetComponent<UI_Manager>(); // UI ì¸ìŠ¤í„´ìŠ¤ ìƒì„± ë° ì´ˆê¸°í™”
         uiManager.Init();
 
-        GameObject.Instantiate(Player_Prefab); // ÇÃ·¹ÀÌ¾î »ı¼º
-        GameObject.Instantiate(baseHomeLevelPrefab); // ÃÊ±â ¸Ê ·Îµå
+        GameObject.Instantiate(Player_Prefab); // í”Œë ˆì´ì–´ ìƒì„±
+        GameObject.Instantiate(baseHomeLevelPrefab); // ì´ˆê¸° ë§µ ë¡œë“œ
     }
 }

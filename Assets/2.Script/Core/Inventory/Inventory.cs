@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -21,32 +21,36 @@ public class Inventory : BaseObject
     private bool onHolding = false;
 
     /// <summary>
-    /// ÀÎº¥Åä¸® »ç¿ë Àü È£ÃâµÇ¾î¾ß ÇÏ´Â ÇÔ¼ö
+    /// ì¸ë²¤í† ë¦¬ ì‚¬ìš© ì „ í˜¸ì¶œë˜ì–´ì•¼ í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public void Init()
     {
         raycaster = GetComponentInParent<GraphicRaycaster>();
 
-        // °¡¹æ ¾ÆÀÌÅÛ ½½·Ô ÃÊ±âÈ­
+        // ê°€ë°© ì•„ì´í…œ ìŠ¬ë¡¯ ì´ˆê¸°í™”
         foreach (ItemSlot bagItemSlot in bagItemSlots)
         {
             bagItemSlot.Init(OnSlotDragging, OnSlotClicked, OnSlotHovering);
         }
 
-        weaponSlot.Init(OnSlotDragging, OnSlotClicked, OnSlotHovering); // ¹«±â ½½·Ô ÃÊ±âÈ­
+        weaponSlot.Init(OnSlotDragging, OnSlotClicked, OnSlotHovering); // ë¬´ê¸° ìŠ¬ë¡¯ ì´ˆê¸°í™”
 
-        // Äü½½·Ô ÃÊ±âÈ­
+        // í€µìŠ¬ë¡¯ ì´ˆê¸°í™”
         foreach (ItemSlot quickItemSlot in quickItemSlots)
         {
             quickItemSlot.Init(OnSlotDragging, OnSlotClicked, OnSlotHovering);
         }
 
-        // ÀÎº¥Åä¸® ´ÜÃàÅ° ¼³Á¤
+        // ì¸ë²¤í† ë¦¬ ë‹¨ì¶•í‚¤ ì„¤ì •
         InputActionMap UI_ActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("UI");
         UI_ActionMap.FindAction("Cancel").performed += (arg) => Disable();
         UI_ActionMap.FindAction("Inventory").performed += (arg) =>
         {
-            if (this.gameObject.activeInHierarchy == false)
+            if (Player.Current.OnInteration)
+            {
+                Disable();
+            }
+            else if (this.gameObject.activeInHierarchy == false)
             {
                 Enable();
             }
@@ -87,7 +91,7 @@ public class Inventory : BaseObject
     }
 
     /// <summary>
-    /// ¾ÆÀÌÅÛÀ» Ãß°¡ÇÏ´Â ÇÔ¼ö
+    /// ì•„ì´í…œì„ ì¶”ê°€í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public bool AddItem(int itemID, int amount)
     {
@@ -99,7 +103,7 @@ public class Inventory : BaseObject
         }
         else
         {
-            GameManager.Instance.LoadItemInfo<ItemInfoData>(itemID); // ¾ÆÀÌÅÛ Á¤º¸ ·Îµå
+            GameManager.Instance.LoadItemInfo<ItemInfoData>(itemID); // ì•„ì´í…œ ì •ë³´ ë¡œë“œ
 
             if (GetEmptyBagItemSlot(out ItemSlot emptyBagSlot))
             {
@@ -115,7 +119,7 @@ public class Inventory : BaseObject
 
                     if (quickItemSlot.ItemID != null && quickItemSlot.ItemID == itemID)
                     {
-                        if (quickItemSlot.ItemAmount == 0) // ¼ÒÁøµÈ ¾ÆÀÌÅÛÀÌ ÀÖ´Â °æ¿ì ÄÁÅ×ÀÌ³Ê ·¹ÆÛ·±½º¸¦ ´Ù½Ã ¼³Á¤ÇØÁà¾ß ÇÔ.
+                        if (quickItemSlot.ItemAmount == 0) // ì†Œì§„ëœ ì•„ì´í…œì´ ìˆëŠ” ê²½ìš° ì»¨í…Œì´ë„ˆ ë ˆí¼ëŸ°ìŠ¤ë¥¼ ë‹¤ì‹œ ì„¤ì •í•´ì¤˜ì•¼ í•¨.
                         {
                             SetQuickSlot(index, newContainer);
                             break;
@@ -127,13 +131,13 @@ public class Inventory : BaseObject
             }
             else
             {
-                return false; // °¡¹æ °ø°£ ºÎÁ·
+                return false; // ê°€ë°© ê³µê°„ ë¶€ì¡±
             }
         }
     }
 
     /// <summary>
-    /// ÀÎº¥Åä¸® È°¼ºÈ­
+    /// ì¸ë²¤í† ë¦¬ í™œì„±í™”
     /// </summary>
     public void Enable()
     {
@@ -144,7 +148,7 @@ public class Inventory : BaseObject
     }
 
     /// <summary>
-    /// ÀÎº¥Åä¸® ºñÈ°¼ºÈ­
+    /// ì¸ë²¤í† ë¦¬ ë¹„í™œì„±í™”
     /// </summary>
     public void Disable()
     {
@@ -164,7 +168,7 @@ public class Inventory : BaseObject
     }
 
     /// <summary>
-    /// ½½·Ô µå·¡±× ½Ã Ã³¸®
+    /// ìŠ¬ë¡¯ ë“œë˜ê·¸ ì‹œ ì²˜ë¦¬
     /// </summary>
     private void OnSlotDragging(ItemSlot trigger, Vector2 position, ItemSlot.InputStatus status)
     {
@@ -176,29 +180,29 @@ public class Inventory : BaseObject
 
         switch (status)
         {
-            case ItemSlot.InputStatus.OnProcessing: // µå·¡±× ÁßÀÎ °æ¿ì
+            case ItemSlot.InputStatus.OnProcessing: // ë“œë˜ê·¸ ì¤‘ì¸ ê²½ìš°
             {
-                trigger.SetAlpha(0.5f); // trigger ¾ËÆÄ 0.5f
+                trigger.SetAlpha(0.5f); // trigger ì•ŒíŒŒ 0.5f
 
-                // È¦µù ÀÌ¹ÌÁö Ã³¸®
+                // í™€ë”© ì´ë¯¸ì§€ ì²˜ë¦¬
                 if (holdingItemImage.gameObject.activeInHierarchy == false)
                 {
                     holdingItemImage.gameObject.SetActive(true);
                 }
 
-                holdingItemImage.sprite = trigger.ItemIconSprite; // holding image È°¼ºÈ­ ¹× ¾ÆÀÌÅÛ°ú °°Àº ÀÌ¹ÌÁö·Î º¯°æ
+                holdingItemImage.sprite = trigger.ItemIconSprite; // holding image í™œì„±í™” ë° ì•„ì´í…œê³¼ ê°™ì€ ì´ë¯¸ì§€ë¡œ ë³€ê²½
 
                 RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, position, null, out Vector2 pos);
 
-                (holdingItemImage.transform as RectTransform).anchoredPosition = pos; // holding image position º¯°æ
+                (holdingItemImage.transform as RectTransform).anchoredPosition = pos; // holding image position ë³€ê²½
 
                 onHolding = true;
 
                 break;
             }
-            case ItemSlot.InputStatus.Ended: // µå·¡±× Á¾·á ÀÎ °æ¿ì
+            case ItemSlot.InputStatus.Ended: // ë“œë˜ê·¸ ì¢…ë£Œ ì¸ ê²½ìš°
             {
-                // ·¹ÀÌ Ä³½ºÆÃÀ» ÅëÇØ ÇØ´ç Ä¿¼­ À§Ä¡¿¡ ¾ÆÀÌÅÛ ½½·Ô B °Ë»ö
+                // ë ˆì´ ìºìŠ¤íŒ…ì„ í†µí•´ í•´ë‹¹ ì»¤ì„œ ìœ„ì¹˜ì— ì•„ì´í…œ ìŠ¬ë¡¯ B ê²€ìƒ‰
                 PointerEventData pointerEventData = new PointerEventData(EventSystem.current)
                 {
                     position = Input.mousePosition
@@ -211,19 +215,19 @@ public class Inventory : BaseObject
                 if (resultList.Count >= 1)
                 {
                     ItemSlot dropSlot = resultList[0].gameObject.GetComponent<ItemSlot>();
-                    // B ½½·ÔÀÌ BagÀÇ ¾ÆÀÌÅÛ ½½·ÔÀÎÁö Ã¼Å©
+                    // B ìŠ¬ë¡¯ì´ Bagì˜ ì•„ì´í…œ ìŠ¬ë¡¯ì¸ì§€ ì²´í¬
 
                     if (dropSlot != null)
                     {
-                        if (dropSlot == weaponSlot // Weapon Slot ÀÎÁö Ã¼Å©
-                            && Items[trigger.ItemID.Value].Item.TypeEnum == Database_Table.Item.ItemType.Weapon) // trigger°¡ ¹«±â Å¸ÀÔÀÎ °æ¿ì ½º¿Ò.
+                        if (dropSlot == weaponSlot // Weapon Slot ì¸ì§€ ì²´í¬
+                            && Items[trigger.ItemID.Value].Item.TypeEnum == Database_Table.Item.ItemType.Weapon) // triggerê°€ ë¬´ê¸° íƒ€ì…ì¸ ê²½ìš° ìŠ¤ì™‘.
                         {
                             SwapSlotItem(trigger, dropSlot);
                         }
-                        else if (dropSlot is ExclusiveItemSlot // Quick Slot ÀÎÁö Ã¼Å©
-                            && Items[trigger.ItemID.Value].Item.TypeEnum == Database_Table.Item.ItemType.Potion) // trigger°¡ Æ÷¼Ç Å¸ÀÔÀÎ °æ¿ì
+                        else if (dropSlot is ExclusiveItemSlot // Quick Slot ì¸ì§€ ì²´í¬
+                            && Items[trigger.ItemID.Value].Item.TypeEnum == Database_Table.Item.ItemType.Potion) // triggerê°€ í¬ì…˜ íƒ€ì…ì¸ ê²½ìš°
                         {
-                            if (trigger is ExclusiveItemSlot) // triggerµµ Äü½½·ÔÀÌº¯ Äü½½·Ô °£ º¯°æ
+                            if (trigger is ExclusiveItemSlot) // triggerë„ í€µìŠ¬ë¡¯ì´ë³€ í€µìŠ¬ë¡¯ ê°„ ë³€ê²½
                             {
                                 ItemContainer dropContainer = null;
                                 if (dropSlot.ItemID != null)
@@ -242,11 +246,11 @@ public class Inventory : BaseObject
                             }
                             else
                             {
-                                for (int index = 0; index < quickItemSlots.Count; index++) // ÇØ´ç ¾ÆÀÌÅÛÀÌ Äü ½½·Ô¿¡ ÀÖ´ÂÁö Áßº¹ Ã¼Å©
+                                for (int index = 0; index < quickItemSlots.Count; index++) // í•´ë‹¹ ì•„ì´í…œì´ í€µ ìŠ¬ë¡¯ì— ìˆëŠ”ì§€ ì¤‘ë³µ ì²´í¬
                                 {
                                     ExclusiveItemSlot quickItemSlot = quickItemSlots[index];
 
-                                    if (dropSlot != quickItemSlot // ¿Å±â·Á´Â ½½·ÔÀº ¼­Ä¡ ´ë»ó¿¡¼­ Á¦¿Ü
+                                    if (dropSlot != quickItemSlot // ì˜®ê¸°ë ¤ëŠ” ìŠ¬ë¡¯ì€ ì„œì¹˜ ëŒ€ìƒì—ì„œ ì œì™¸
                                         && quickItemSlot.ItemID != null && quickItemSlot.ItemID.Value == trigger.ItemID.Value)
                                     {
                                         SetQuickSlot(index, null);
@@ -254,7 +258,7 @@ public class Inventory : BaseObject
                                     }
                                 }
 
-                                SetQuickSlot(quickItemSlots.IndexOf(dropSlot as ExclusiveItemSlot), Items[trigger.ItemID.Value]); // ½º¿Ò ¾øÀÌ Äü½½·Ô ¼³Á¤
+                                SetQuickSlot(quickItemSlots.IndexOf(dropSlot as ExclusiveItemSlot), Items[trigger.ItemID.Value]); // ìŠ¤ì™‘ ì—†ì´ í€µìŠ¬ë¡¯ ì„¤ì •
                             }
                         }
                         else
@@ -263,12 +267,12 @@ public class Inventory : BaseObject
                         }
                     }
                 }
-                else if (trigger is ExclusiveItemSlot) // Äü½½·ÔÀ» µå·¡±×ÇØ¼­ Çã°ø¿¡ ¹ö¸®´Â Á¦½ºÃÄ¸¦ ÃëÇÏ´Â °æ¿ì
+                else if (trigger is ExclusiveItemSlot) // í€µìŠ¬ë¡¯ì„ ë“œë˜ê·¸í•´ì„œ í—ˆê³µì— ë²„ë¦¬ëŠ” ì œìŠ¤ì³ë¥¼ ì·¨í•˜ëŠ” ê²½ìš°
                 {
-                    SetQuickSlot(quickItemSlots.IndexOf(trigger as ExclusiveItemSlot), null); // Äü½½·Ô ÇØÁ¦
+                    SetQuickSlot(quickItemSlots.IndexOf(trigger as ExclusiveItemSlot), null); // í€µìŠ¬ë¡¯ í•´ì œ
                 }
 
-                if (weaponSlot.ItemID == null) // ¹«±â ÀåÂø Ã³¸®
+                if (weaponSlot.ItemID == null) // ë¬´ê¸° ì¥ì°© ì²˜ë¦¬
                 {
                     Player.Current.EquipWeapon(null);
                 }
@@ -290,7 +294,7 @@ public class Inventory : BaseObject
     }
 
     /// <summary>
-    /// ½½·Ô Å¬¸¯ ½Ã Ã³¸®
+    /// ìŠ¬ë¡¯ í´ë¦­ ì‹œ ì²˜ë¦¬
     /// </summary>
     private void OnSlotClicked(ItemSlot trigger, PointerEventData.InputButton button)
     {
@@ -299,38 +303,38 @@ public class Inventory : BaseObject
             return;
         }
         else if (trigger is ExclusiveItemSlot
-                    && trigger.ItemAmount.Value <= 0) // Äü ½½·ÔÀÇ °æ¿ì ¼ö·®ÀÌ 0°³ÀÏ ¶§ »óÈ£ÀÛ¿ë ºÒ°¡´ÉÇÑ »óÅÂ°¡ ÀÖÀ½.
+                    && trigger.ItemAmount.Value <= 0) // í€µ ìŠ¬ë¡¯ì˜ ê²½ìš° ìˆ˜ëŸ‰ì´ 0ê°œì¼ ë•Œ ìƒí˜¸ì‘ìš© ë¶ˆê°€ëŠ¥í•œ ìƒíƒœê°€ ìˆìŒ.
         {
-            SetQuickSlot(quickItemSlots.IndexOf(trigger as ExclusiveItemSlot), null); // ÇØ´ç »óÅÂ¿¡¼­ ¿ìÅ¬¸¯ ½Ã ½½·Ô Ä³½Ì±îÁö Á¦°Å
+            SetQuickSlot(quickItemSlots.IndexOf(trigger as ExclusiveItemSlot), null); // í•´ë‹¹ ìƒíƒœì—ì„œ ìš°í´ë¦­ ì‹œ ìŠ¬ë¡¯ ìºì‹±ê¹Œì§€ ì œê±°
 
             return;
         }
 
         ItemContainer container = Items[trigger.ItemID.Value];
 
-        if (button == PointerEventData.InputButton.Right) // ¿ìÅ¬¸¯ÀÇ °æ¿ì
+        if (button == PointerEventData.InputButton.Right) // ìš°í´ë¦­ì˜ ê²½ìš°
         {
-            if (trigger == weaponSlot) // trigger°¡ ¹«±â ½½·ÔÀÎ °æ¿ì
+            if (trigger == weaponSlot) // triggerê°€ ë¬´ê¸° ìŠ¬ë¡¯ì¸ ê²½ìš°
             {
                 if (GetEmptyBagItemSlot(out ItemSlot emptyBagSlot))
                 {
                     SwapSlotItem(trigger, emptyBagSlot);
                 }
             }
-            else if (trigger is ExclusiveItemSlot) // trigger°¡ Äü ½½·ÔÀÎ °æ¿ì)
+            else if (trigger is ExclusiveItemSlot) // triggerê°€ í€µ ìŠ¬ë¡¯ì¸ ê²½ìš°)
             {
                 SetQuickSlot(quickItemSlots.IndexOf(trigger as ExclusiveItemSlot), null);
             }
-            else if (container.Item.TypeEnum == Database_Table.Item.ItemType.Weapon) // trigger°¡ ¼ÒÁöÇ° ½½·ÔÀÌ°í ¹«±â Å¸ÀÔ ¾ÆÀÌÅÛÀÎ °æ¿ì
+            else if (container.Item.TypeEnum == Database_Table.Item.ItemType.Weapon) // triggerê°€ ì†Œì§€í’ˆ ìŠ¬ë¡¯ì´ê³  ë¬´ê¸° íƒ€ì… ì•„ì´í…œì¸ ê²½ìš°
             {
                 SwapSlotItem(trigger, weaponSlot);
             }
-            else if (container.Item.TypeEnum == Database_Table.Item.ItemType.Potion) // trigger°¡ ¼ÒÁöÇ° ½½·ÔÀÌ°í Æ÷¼Ç Å¸ÀÔ ¾ÆÀÌÅÛÀÎ °æ¿ì
+            else if (container.Item.TypeEnum == Database_Table.Item.ItemType.Potion) // triggerê°€ ì†Œì§€í’ˆ ìŠ¬ë¡¯ì´ê³  í¬ì…˜ íƒ€ì… ì•„ì´í…œì¸ ê²½ìš°
             {
                 (container as Potion).Drink();
             }
 
-            if (weaponSlot.ItemID == null) // ¹«±â ÀåÂø Ã³¸®
+            if (weaponSlot.ItemID == null) // ë¬´ê¸° ì¥ì°© ì²˜ë¦¬
             {
                 Player.Current.EquipWeapon(null);
             }
@@ -342,15 +346,15 @@ public class Inventory : BaseObject
     }
 
     /// <summary>
-    /// ½½·Ô È£¹ö¸µ ½Ã Ã³¸®
+    /// ìŠ¬ë¡¯ í˜¸ë²„ë§ ì‹œ ì²˜ë¦¬
     /// </summary>
     private void OnSlotHovering(ItemSlot trigger, Vector2 position, InputStatus status)
     {
-        if (onHolding) // µå·¡±× ÁßÀÌ¸é ÀÛµ¿ ¾ÈÇÔ.
+        if (onHolding) // ë“œë˜ê·¸ ì¤‘ì´ë©´ ì‘ë™ ì•ˆí•¨.
         {
             return;
         }
-        else if (trigger.ItemID == null) // ½½·Ô¿¡ ¾ÆÀÌÅÛÀÌ ¾ø¾îµµ ¹İÈ¯.
+        else if (trigger.ItemID == null) // ìŠ¬ë¡¯ì— ì•„ì´í…œì´ ì—†ì–´ë„ ë°˜í™˜.
         {
             return;
         }
@@ -372,7 +376,7 @@ public class Inventory : BaseObject
     }
     
     /// <summary>
-    /// µÎ °³ÀÇ ½½·ÔÀÇ µ¥ÀÌÅÍ¸¦ º¯°æÇÏ´Â ÇÔ¼ö
+    /// ë‘ ê°œì˜ ìŠ¬ë¡¯ì˜ ë°ì´í„°ë¥¼ ë³€ê²½í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     private void SwapSlotItem(ItemSlot a, ItemSlot b)
     {
@@ -411,7 +415,7 @@ public class Inventory : BaseObject
     }
 
     /// <summary>
-    /// ÀÎº¥Åä¸® ³»ÀÇ Äü½½·Ô UI¸¦ ¼³Á¤ÇÏ¸é¼­ ±Û·Î¹ú Äü½½·Ô µ¥ÀÌÅÍµµ °»½ÅÇØ´Â ÇÔ¼ö
+    /// ì¸ë²¤í† ë¦¬ ë‚´ì˜ í€µìŠ¬ë¡¯ UIë¥¼ ì„¤ì •í•˜ë©´ì„œ ê¸€ë¡œë²Œ í€µìŠ¬ë¡¯ ë°ì´í„°ë„ ê°±ì‹ í•´ëŠ” í•¨ìˆ˜
     /// </summary>
     private void SetQuickSlot(int index, ItemContainer itemContainer)
     {
@@ -420,7 +424,7 @@ public class Inventory : BaseObject
         ExclusiveItemSlot quickSlot = GameManager.Instance.uiManager.quickSlot.GetQuickSlotByIndex(index);
         if (quickSlot != null)
         {
-            quickSlot.Set(itemContainer); // Äü½½·Ô UI ¾÷µ¥ÀÌÆ®
+            quickSlot.Set(itemContainer); // í€µìŠ¬ë¡¯ UI ì—…ë°ì´íŠ¸
         }
     }
 }

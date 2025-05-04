@@ -215,18 +215,34 @@ namespace Monster
 
             // BT..
             builder.Selector(string.Empty)
-                .Condition(string.Empty, (t) => IsDead)
+                .Sequence(string.Empty)
+                    .Condition(string.Empty, (t) => IsDead)
+                    .Do(string.Empty, (t) =>
+                    {
+                        if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimHash.DIE
+                            && anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+                        {
+                            Time.timeScale = 1f;
+                        }
 
-                .Sequence(string.Empty) // 페이즈 체크
-                    .Condition(string.Empty, t => hp <= 0) // 체력이 0보다 작거나 같으면 페이즈 변경 시도
+                        return BehaviourTreeStatus.Success;
+                    })
+                .End()
+
+                .Sequence(string.Empty) // 사망 체크
+                    .Condition(string.Empty, t => hp <= 0) // 체력이 0보다 작거나 같으면 사망처리
                     .Sequence(string.Empty)
-                        .Do(string.Empty, t => // 페이즈 변경 시도
+                        .Do(string.Empty, t =>
                         {
                             if (IsDead == false)
                             {
                                 IsDead = true;
                                 anim.Play(AnimHash.DIE);
                                 currentPlayingAnim = AnimHash.DIE;
+
+                                Time.timeScale = 0.2f;
+
+                                (LevelControl.Current as DungeonLevelControl).DungeonClear();
                             }
 
                             return BehaviourTreeStatus.Success;
