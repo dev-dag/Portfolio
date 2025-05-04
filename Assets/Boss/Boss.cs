@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using FluentBehaviourTree;
 using System;
 
@@ -24,8 +24,9 @@ namespace Monster
             public static readonly int EJECT_SLASH = Animator.StringToHash("Eject Slash");
             public static readonly int EXPLOSION = Animator.StringToHash("Explosion");
             public static readonly int RUSH = Animator.StringToHash("Rush");
-            public static readonly int PHASE_EXIT_1 = Animator.StringToHash("Exit Phase 1");
         }
+
+        public bool IsDead { get; private set; } = false;
 
         [SerializeField] private Animator anim;
         [SerializeField] private Rigidbody2D rb;
@@ -41,8 +42,7 @@ namespace Monster
 
         private IBehaviourTreeNode bt;
         private OverheadUI overheadUI;
-        private int phase = 1;
-        private float nextActionTime; // ½ºÅ³ÀÇ ÈÄµô·¹ÀÌ¸¦ ÁöÁ¤ÇÏ±â À§ÇØ »ç¿ëÇÔ. °ÔÀÓÀÇ ½Ã°£ °ªÀÌ ÇÒ´ç µÊ.
+        private float nextActionTime; // ìŠ¤í‚¬ì˜ í›„ë”œë ˆì´ë¥¼ ì§€ì •í•˜ê¸° ìœ„í•´ ì‚¬ìš©í•¨. ê²Œì„ì˜ ì‹œê°„ ê°’ì´ í• ë‹¹ ë¨.
         private SkillState currentSkill = SkillState.None;
         private int currentPlayingAnim;
         private bool isInteractable = true;
@@ -63,7 +63,7 @@ namespace Monster
             this.gameObject.layer = LayerMask.NameToLayer(GameManager.INTERACTABLE_OBJECT_LAYER_NAME);
             if (this.gameObject.layer == -1)
             {
-                EDebug.LogError("·¹ÀÌ¾î ÀÌ¸§ ¿À·ù");
+                EDebug.LogError("ë ˆì´ì–´ ì´ë¦„ ì˜¤ë¥˜");
             }
 
             bt = GetBehaviourTree();
@@ -77,7 +77,7 @@ namespace Monster
             overheadUI.Init(this.transform, Vector3.zero);
             overheadUI.Enable();
 
-            rb.bodyType = RigidbodyType2D.Kinematic; // Ã¹ Á¶¿ì ½Ã »óÈ£ÀÛ¿ë Àü¿¡ ¿ø À§Ä¡¿¡¼­ ÀÌÅ» ¹æÁö
+            rb.bodyType = RigidbodyType2D.Kinematic; // ì²« ì¡°ìš° ì‹œ ìƒí˜¸ì‘ìš© ì „ì— ì› ìœ„ì¹˜ì—ì„œ ì´íƒˆ ë°©ì§€
         }
 
         protected override void Update()
@@ -131,33 +131,33 @@ namespace Monster
 
         void IInteractable.CancelInteraction()
         {
-            // IsInteractable == True ÀÏ ¶§¸¸ È£Ãâ °¡´É.
-            // ´ëÈ­ Ãë¼ÒÇßÀ» ¶§ Ã³¸®. ´Ù½Ã ´ëÈ­ °¡´ÉÇÏ°Ô ¼³Á¤.
+            // IsInteractable == True ì¼ ë•Œë§Œ í˜¸ì¶œ ê°€ëŠ¥.
+            // ëŒ€í™” ì·¨ì†Œí–ˆì„ ë•Œ ì²˜ë¦¬. ë‹¤ì‹œ ëŒ€í™” ê°€ëŠ¥í•˜ê²Œ ì„¤ì •.
             isInteractable = true;
         }
 
         bool IInteractable.IsInteractable()
         {
-            // Ã³À½ Á¶¿ì ÇßÀ» ¶§ ÇÑ¹ø ´ëÈ­ °¡´É.
+            // ì²˜ìŒ ì¡°ìš° í–ˆì„ ë•Œ í•œë²ˆ ëŒ€í™” ê°€ëŠ¥.
             return isInteractable;
         }
 
         void IInteractable.SetInteractionGuide(bool isActive)
         {
-            // »óÈ£ÀÛ¿ë UI ³ëÃâ
+            // ìƒí˜¸ì‘ìš© UI ë…¸ì¶œ
             overheadUI.ActiveG_Key(isActive);
         }
 
         void IInteractable.StartInteraction(Action interactionCallback)
         {
-            // IsInteractable == true ÀÏ ¶§¸¸ È£Ãâ °¡´É.
+            // IsInteractable == true ì¼ ë•Œë§Œ í˜¸ì¶œ ê°€ëŠ¥.
             if (isInteractable)
             {
-                if (GameManager.Instance.data.dialog.TryGetValue(4, out var dialogWrapper)) // 4¹ø ´ÙÀÌ¾ó·Î±× ½ÃÀÛ
+                if (GameManager.Instance.data.dialog.TryGetValue(4, out var dialogWrapper)) // 4ë²ˆ ë‹¤ì´ì–¼ë¡œê·¸ ì‹œì‘
                 {
                     LookAt(Player.Current.transform.position);
 
-                    // ´ÙÀÌ¾ó·Î±× ½ÃÀÛ.
+                    // ë‹¤ì´ì–¼ë¡œê·¸ ì‹œì‘.
                     GameManager.Instance.uiManager.dialog.StartDialog(dialogWrapper.DialogTextList, () =>
                     {
                         playerTr = Player.Current.transform;
@@ -190,35 +190,34 @@ namespace Monster
 
         #region Behaviour Tree
 
-        [ContextMenu("BT ÃÊ±âÈ­ ÇÔ¼ö")]
+        [ContextMenu("BT ì´ˆê¸°í™” í•¨ìˆ˜")]
         private void ResetBehaviourTree()
         {
             currentSkill = SkillState.None;
             currentPlayingAnim = -1;
-            phase = 1;
             nextActionTime = -1f;
             hp = info.hp;
 
             anim.Play(AnimHash.IDLE);
         }
 
-        // ¸ŞÀÎ Behaviour Tree ¹İÈ¯
+        // ë©”ì¸ Behaviour Tree ë°˜í™˜
         private IBehaviourTreeNode GetBehaviourTree()
         {
             var builder = new BehaviourTreeBuilder();
 
             // BT..
             builder.Selector(string.Empty)
-                .Sequence(string.Empty) // ÆäÀÌÁî Ã¼Å©
-                    .Condition(string.Empty, t => hp <= 0) // Ã¼·ÂÀÌ 0º¸´Ù ÀÛ°Å³ª °°À¸¸é ÆäÀÌÁî º¯°æ ½Ãµµ
+                .Sequence(string.Empty) // í˜ì´ì¦ˆ ì²´í¬
+                    .Condition(string.Empty, t => hp <= 0) // ì²´ë ¥ì´ 0ë³´ë‹¤ ì‘ê±°ë‚˜ ê°™ìœ¼ë©´ í˜ì´ì¦ˆ ë³€ê²½ ì‹œë„
                     .Sequence(string.Empty)
-                        .Do(string.Empty, t => // ÆäÀÌÁî º¯°æ ½Ãµµ
+                        .Do(string.Empty, t => // í˜ì´ì¦ˆ ë³€ê²½ ì‹œë„
                         {
-                            if (phase == 1)
+                            if (IsDead == false)
                             {
-                                phase = 2;
-                                anim.Play(AnimHash.PHASE_EXIT_1);
-                                currentPlayingAnim = AnimHash.PHASE_EXIT_1;
+                                IsDead = true;
+                                anim.Play(AnimHash.DIE);
+                                currentPlayingAnim = AnimHash.DIE;
                             }
 
                             return BehaviourTreeStatus.Success;
@@ -226,9 +225,9 @@ namespace Monster
                     .End()
                 .End()
 
-                .Sequence(string.Empty) // ¸ŞÀÎ ÆĞÅÏ ÁøÀÔÁ¡
-                    .Condition(string.Empty, t => Time.time > nextActionTime) // ½ºÅ³ »ç¿ë ¼±Á¦ Á¶°Ç Ã¼Å©
-                    .Sequence(string.Empty) // ÁØºñÁßÀÎ ½ºÅ³ÀÌ ¾ø´Â °æ¿ì ·£´ıÇÏ°Ô ½ºÅ³ ÁöÁ¤
+                .Sequence(string.Empty) // ë©”ì¸ íŒ¨í„´ ì§„ì…ì 
+                    .Condition(string.Empty, t => Time.time > nextActionTime) // ìŠ¤í‚¬ ì‚¬ìš© ì„ ì œ ì¡°ê±´ ì²´í¬
+                    .Sequence(string.Empty) // ì¤€ë¹„ì¤‘ì¸ ìŠ¤í‚¬ì´ ì—†ëŠ” ê²½ìš° ëœë¤í•˜ê²Œ ìŠ¤í‚¬ ì§€ì •
                         .Do(string.Empty, t =>
                         {
                             if (currentSkill == SkillState.None)
@@ -248,7 +247,7 @@ namespace Monster
                     .End()
                 .End()
 
-                .Do(string.Empty, t => // ÇÃ·¹ÀÌ¾î¸¦ ¹Ù¶óº¸´Â µ¿ÀÛ Ã³¸®.
+                .Do(string.Empty, t => // í”Œë ˆì´ì–´ë¥¼ ë°”ë¼ë³´ëŠ” ë™ì‘ ì²˜ë¦¬.
                 {
                     LookAt(playerTr.position);
 
@@ -262,7 +261,7 @@ namespace Monster
         }
 
         /// <summary>
-        /// ·£´ıÇÑ ½ºÅ³À» ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+        /// ëœë¤í•œ ìŠ¤í‚¬ì„ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
         /// </summary>
         private SkillState GetSkillRandomly()
         {
@@ -295,10 +294,10 @@ namespace Monster
                 }
             }
 
-            return result; // NoneÀÌ¸é ¾È‰Î.
+            return result; // Noneì´ë©´ ì•ˆëŒ.
         }
 
-        // °ø°İ ½ºÅ³ ¼­ºê Æ®¸® ¹İÈ¯
+        // ê³µê²© ìŠ¤í‚¬ ì„œë¸Œ íŠ¸ë¦¬ ë°˜í™˜
         private IBehaviourTreeNode GetSlashBehaviourTree()
         {
             float afterDelay = 2f;
@@ -314,17 +313,17 @@ namespace Monster
                     else
                         return BehaviourTreeStatus.Failure;
                 })
-                .Do(string.Empty, t => // ¾Ö´Ï¸ŞÀÌÅÍ¿Í ½ºÅ©¸³Æ® °£ÀÇ ½ÌÅ© Å×½ºÆ®
+                .Do(string.Empty, t => // ì• ë‹ˆë©”ì´í„°ì™€ ìŠ¤í¬ë¦½íŠ¸ ê°„ì˜ ì‹±í¬ í…ŒìŠ¤íŠ¸
                 {
-                    if (currentPlayingAnim != AnimHash.SLASH) // Play ¸Ş¼­µå¸¦ È£ÃâÇÏ·Á´Â ½ÃÁ¡.
+                    if (currentPlayingAnim != AnimHash.SLASH) // Play ë©”ì„œë“œë¥¼ í˜¸ì¶œí•˜ë ¤ëŠ” ì‹œì .
                     {
                         return BehaviourTreeStatus.Success;
                     }
-                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.SLASH) // Play ¸Ş¼­µå°¡ È£Ãâ µÇ¾ú°í, µ¿±âÈ­°¡ ÀÌ·ç¾îÁöÁö ¾ÊÀº ½ÃÁ¡.
+                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.SLASH) // Play ë©”ì„œë“œê°€ í˜¸ì¶œ ë˜ì—ˆê³ , ë™ê¸°í™”ê°€ ì´ë£¨ì–´ì§€ì§€ ì•Šì€ ì‹œì .
                     {
                         return BehaviourTreeStatus.Failure;
                     }
-                    else  // Play ¸Ş¼­µå°¡ È£ÃâµÇ¾ú°í, ¾Ö´Ï¸ŞÀÌÅÍ¿Í ½ÌÅ©°¡ ÀÏÄ¡ÇÏ´Â ½ÃÁ¡.
+                    else  // Play ë©”ì„œë“œê°€ í˜¸ì¶œë˜ì—ˆê³ , ì• ë‹ˆë©”ì´í„°ì™€ ì‹±í¬ê°€ ì¼ì¹˜í•˜ëŠ” ì‹œì .
                     {
                         return BehaviourTreeStatus.Success;
                     }
@@ -332,10 +331,10 @@ namespace Monster
                 .Selector(string.Empty)
                     .Do(string.Empty, t =>
                     {
-                        if (currentPlayingAnim != AnimHash.SLASH) // ÇöÀç Àç»ıÁßÀÎ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ÆøÆÄ°¡ ¾Æ´Ñ °æ¿ì
+                        if (currentPlayingAnim != AnimHash.SLASH) // í˜„ì¬ ì¬ìƒì¤‘ì¸ ì• ë‹ˆë©”ì´ì…˜ì´ í­íŒŒê°€ ì•„ë‹Œ ê²½ìš°
                             return BehaviourTreeStatus.Failure;
 
-                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // ÆøÆÄ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³­ °æ¿ì
+                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // í­íŒŒ ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚œ ê²½ìš°
                         {
                             currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
@@ -352,9 +351,9 @@ namespace Monster
                     })
 
                     .Selector(string.Empty)
-                        .Do(string.Empty, t => // ¾Ö´Ï¸ŞÀÌ¼ÇÀÇ ½ÃÁ¡.
+                        .Do(string.Empty, t => // ì• ë‹ˆë©”ì´ì…˜ì˜ ì‹œì .
                         {
-                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // »çÁ¤°Å¸® Á¶°Ç
+                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // ì‚¬ì •ê±°ë¦¬ ì¡°ê±´
                             {
                                 anim.Play(AnimHash.SLASH);
                                 currentPlayingAnim = AnimHash.SLASH;
@@ -379,11 +378,11 @@ namespace Monster
                             }
                         })
 
-                        .Do(string.Empty, t => // ÇÃ·¹ÀÌ¾îÂÊÀ¸·Î ÀÌµ¿
+                        .Do(string.Empty, t => // í”Œë ˆì´ì–´ìª½ìœ¼ë¡œ ì´ë™
                         {
                             Vector3 dir = playerTr.position - transform.position;
 
-                            // ÁÂ¿ì È¸Àü
+                            // ì¢Œìš° íšŒì „
                             if (dir.x > 0f)
                             {
                                 transform.rotation = Quaternion.identity;
@@ -409,7 +408,7 @@ namespace Monster
 
         public float speed = 5f;
 
-        // °ø°İ ½ºÅ³ ¼­ºê Æ®¸® ¹İÈ¯
+        // ê³µê²© ìŠ¤í‚¬ ì„œë¸Œ íŠ¸ë¦¬ ë°˜í™˜
         private IBehaviourTreeNode GetEjectSlashBehaviourTree()
         {
             float afterDelay = 2f;
@@ -425,17 +424,17 @@ namespace Monster
                     else
                         return BehaviourTreeStatus.Failure;
                 })
-                .Do(string.Empty, t => // ¾Ö´Ï¸ŞÀÌÅÍ¿Í ½ºÅ©¸³Æ® °£ÀÇ ½ÌÅ© Å×½ºÆ®
+                .Do(string.Empty, t => // ì• ë‹ˆë©”ì´í„°ì™€ ìŠ¤í¬ë¦½íŠ¸ ê°„ì˜ ì‹±í¬ í…ŒìŠ¤íŠ¸
                 {
-                    if (currentPlayingAnim != AnimHash.EJECT_SLASH) // Play ¸Ş¼­µå¸¦ È£ÃâÇÏ·Á´Â ½ÃÁ¡.
+                    if (currentPlayingAnim != AnimHash.EJECT_SLASH) // Play ë©”ì„œë“œë¥¼ í˜¸ì¶œí•˜ë ¤ëŠ” ì‹œì .
                     {
                         return BehaviourTreeStatus.Success;
                     }
-                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.EJECT_SLASH) // Play ¸Ş¼­µå°¡ È£Ãâ µÇ¾ú°í, µ¿±âÈ­°¡ ÀÌ·ç¾îÁöÁö ¾ÊÀº ½ÃÁ¡.
+                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.EJECT_SLASH) // Play ë©”ì„œë“œê°€ í˜¸ì¶œ ë˜ì—ˆê³ , ë™ê¸°í™”ê°€ ì´ë£¨ì–´ì§€ì§€ ì•Šì€ ì‹œì .
                     {
                         return BehaviourTreeStatus.Failure;
                     }
-                    else  // Play ¸Ş¼­µå°¡ È£ÃâµÇ¾ú°í, ¾Ö´Ï¸ŞÀÌÅÍ¿Í ½ÌÅ©°¡ ÀÏÄ¡ÇÏ´Â ½ÃÁ¡.
+                    else  // Play ë©”ì„œë“œê°€ í˜¸ì¶œë˜ì—ˆê³ , ì• ë‹ˆë©”ì´í„°ì™€ ì‹±í¬ê°€ ì¼ì¹˜í•˜ëŠ” ì‹œì .
                     {
                         return BehaviourTreeStatus.Success;
                     }
@@ -443,10 +442,10 @@ namespace Monster
                 .Selector(string.Empty)
                     .Do(string.Empty, t =>
                     {
-                        if (currentPlayingAnim != AnimHash.EJECT_SLASH) // ÇöÀç Àç»ıÁßÀÎ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ÆøÆÄ°¡ ¾Æ´Ñ °æ¿ì
+                        if (currentPlayingAnim != AnimHash.EJECT_SLASH) // í˜„ì¬ ì¬ìƒì¤‘ì¸ ì• ë‹ˆë©”ì´ì…˜ì´ í­íŒŒê°€ ì•„ë‹Œ ê²½ìš°
                             return BehaviourTreeStatus.Failure;
 
-                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // ÆøÆÄ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³­ °æ¿ì
+                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // í­íŒŒ ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚œ ê²½ìš°
                         {
                             currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
@@ -463,9 +462,9 @@ namespace Monster
                     })
 
                     .Selector(string.Empty)
-                        .Do(string.Empty, t => // ¾Ö´Ï¸ŞÀÌ¼ÇÀÇ ½ÃÁ¡.
+                        .Do(string.Empty, t => // ì• ë‹ˆë©”ì´ì…˜ì˜ ì‹œì .
                         {
-                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // »çÁ¤°Å¸® Á¶°Ç
+                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // ì‚¬ì •ê±°ë¦¬ ì¡°ê±´
                             {
                                 anim.Play(AnimHash.EJECT_SLASH);
                                 currentPlayingAnim = AnimHash.EJECT_SLASH;
@@ -492,7 +491,7 @@ namespace Monster
                             }
                         })
 
-                        .Do(string.Empty, t => // ÇÃ·¹ÀÌ¾îÂÊÀ¸·Î ÀÌµ¿
+                        .Do(string.Empty, t => // í”Œë ˆì´ì–´ìª½ìœ¼ë¡œ ì´ë™
                         {
                             Vector3 dir = playerTr.position - transform.position;
 
@@ -512,7 +511,7 @@ namespace Monster
             return builder.Build();
         }
         
-        // °ø°İ ½ºÅ³ ¼­ºê Æ®¸® ¹İÈ¯
+        // ê³µê²© ìŠ¤í‚¬ ì„œë¸Œ íŠ¸ë¦¬ ë°˜í™˜
         private IBehaviourTreeNode GetExplosionBehaviourTree()
         {
             float afterDelay = 2f;
@@ -528,17 +527,17 @@ namespace Monster
                     else
                         return BehaviourTreeStatus.Failure;
                 })
-                .Do(string.Empty, t => // ¾Ö´Ï¸ŞÀÌÅÍ¿Í ½ºÅ©¸³Æ® °£ÀÇ ½ÌÅ© Å×½ºÆ®
+                .Do(string.Empty, t => // ì• ë‹ˆë©”ì´í„°ì™€ ìŠ¤í¬ë¦½íŠ¸ ê°„ì˜ ì‹±í¬ í…ŒìŠ¤íŠ¸
                 {
-                    if (currentPlayingAnim != AnimHash.EXPLOSION) // Play ¸Ş¼­µå¸¦ È£ÃâÇÏ·Á´Â ½ÃÁ¡.
+                    if (currentPlayingAnim != AnimHash.EXPLOSION) // Play ë©”ì„œë“œë¥¼ í˜¸ì¶œí•˜ë ¤ëŠ” ì‹œì .
                     {
                         return BehaviourTreeStatus.Success;
                     }
-                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.EXPLOSION) // Play ¸Ş¼­µå°¡ È£Ãâ µÇ¾ú°í, µ¿±âÈ­°¡ ÀÌ·ç¾îÁöÁö ¾ÊÀº ½ÃÁ¡.
+                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.EXPLOSION) // Play ë©”ì„œë“œê°€ í˜¸ì¶œ ë˜ì—ˆê³ , ë™ê¸°í™”ê°€ ì´ë£¨ì–´ì§€ì§€ ì•Šì€ ì‹œì .
                     {
                         return BehaviourTreeStatus.Failure;
                     }
-                    else  // Play ¸Ş¼­µå°¡ È£ÃâµÇ¾ú°í, ¾Ö´Ï¸ŞÀÌÅÍ¿Í ½ÌÅ©°¡ ÀÏÄ¡ÇÏ´Â ½ÃÁ¡.
+                    else  // Play ë©”ì„œë“œê°€ í˜¸ì¶œë˜ì—ˆê³ , ì• ë‹ˆë©”ì´í„°ì™€ ì‹±í¬ê°€ ì¼ì¹˜í•˜ëŠ” ì‹œì .
                     {
                         return BehaviourTreeStatus.Success;
                     }
@@ -546,10 +545,10 @@ namespace Monster
                 .Selector(string.Empty)
                     .Do(string.Empty, t =>
                     {
-                        if (currentPlayingAnim != AnimHash.EXPLOSION) // ÇöÀç Àç»ıÁßÀÎ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ÆøÆÄ°¡ ¾Æ´Ñ °æ¿ì
+                        if (currentPlayingAnim != AnimHash.EXPLOSION) // í˜„ì¬ ì¬ìƒì¤‘ì¸ ì• ë‹ˆë©”ì´ì…˜ì´ í­íŒŒê°€ ì•„ë‹Œ ê²½ìš°
                             return BehaviourTreeStatus.Failure;
 
-                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // ÆøÆÄ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³­ °æ¿ì
+                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // í­íŒŒ ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚œ ê²½ìš°
                         {
                             currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
@@ -566,9 +565,9 @@ namespace Monster
                     })
 
                     .Selector(string.Empty)
-                        .Do(string.Empty, t => // ¾Ö´Ï¸ŞÀÌ¼ÇÀÇ ½ÃÁ¡.
+                        .Do(string.Empty, t => // ì• ë‹ˆë©”ì´ì…˜ì˜ ì‹œì .
                         {
-                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // »çÁ¤°Å¸® Á¶°Ç
+                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // ì‚¬ì •ê±°ë¦¬ ì¡°ê±´
                             {
                                 anim.Play(AnimHash.EXPLOSION);
                                 currentPlayingAnim = AnimHash.EXPLOSION;
@@ -593,7 +592,7 @@ namespace Monster
                             }
                         })
 
-                        .Do(string.Empty, t => // ÇÃ·¹ÀÌ¾îÂÊÀ¸·Î ÀÌµ¿
+                        .Do(string.Empty, t => // í”Œë ˆì´ì–´ìª½ìœ¼ë¡œ ì´ë™
                         {
                             Vector3 dir = playerTr.position - transform.position;
 
@@ -613,7 +612,7 @@ namespace Monster
             return builder.Build();
         }
         public float rushSpeed = 4f;
-        // °ø°İ ½ºÅ³ ¼­ºê Æ®¸® ¹İÈ¯
+        // ê³µê²© ìŠ¤í‚¬ ì„œë¸Œ íŠ¸ë¦¬ ë°˜í™˜
         private IBehaviourTreeNode GetRushBehaviourTree()
         {
             float afterDelay = 2f;
@@ -630,17 +629,17 @@ namespace Monster
                     else
                         return BehaviourTreeStatus.Failure;
                 })
-                .Do(string.Empty, t => // ¾Ö´Ï¸ŞÀÌÅÍ¿Í ½ºÅ©¸³Æ® °£ÀÇ ½ÌÅ© Å×½ºÆ®
+                .Do(string.Empty, t => // ì• ë‹ˆë©”ì´í„°ì™€ ìŠ¤í¬ë¦½íŠ¸ ê°„ì˜ ì‹±í¬ í…ŒìŠ¤íŠ¸
                 {
-                    if (currentPlayingAnim != AnimHash.RUSH) // Play ¸Ş¼­µå¸¦ È£ÃâÇÏ·Á´Â ½ÃÁ¡.
+                    if (currentPlayingAnim != AnimHash.RUSH) // Play ë©”ì„œë“œë¥¼ í˜¸ì¶œí•˜ë ¤ëŠ” ì‹œì .
                     {
                         return BehaviourTreeStatus.Success;
                     }
-                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.RUSH) // Play ¸Ş¼­µå°¡ È£Ãâ µÇ¾ú°í, µ¿±âÈ­°¡ ÀÌ·ç¾îÁöÁö ¾ÊÀº ½ÃÁ¡.
+                    else if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash != AnimHash.RUSH) // Play ë©”ì„œë“œê°€ í˜¸ì¶œ ë˜ì—ˆê³ , ë™ê¸°í™”ê°€ ì´ë£¨ì–´ì§€ì§€ ì•Šì€ ì‹œì .
                     {
                         return BehaviourTreeStatus.Failure;
                     }
-                    else  // Play ¸Ş¼­µå°¡ È£ÃâµÇ¾ú°í, ¾Ö´Ï¸ŞÀÌÅÍ¿Í ½ÌÅ©°¡ ÀÏÄ¡ÇÏ´Â ½ÃÁ¡.
+                    else  // Play ë©”ì„œë“œê°€ í˜¸ì¶œë˜ì—ˆê³ , ì• ë‹ˆë©”ì´í„°ì™€ ì‹±í¬ê°€ ì¼ì¹˜í•˜ëŠ” ì‹œì .
                     {
                         return BehaviourTreeStatus.Success;
                     }
@@ -648,10 +647,10 @@ namespace Monster
                 .Selector(string.Empty)
                     .Do(string.Empty, t =>
                     {
-                        if (currentPlayingAnim != AnimHash.RUSH) // ÇöÀç Àç»ıÁßÀÎ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ µ¹ÁøÀÌ ¾Æ´Ñ °æ¿ì
+                        if (currentPlayingAnim != AnimHash.RUSH) // í˜„ì¬ ì¬ìƒì¤‘ì¸ ì• ë‹ˆë©”ì´ì…˜ì´ ëŒì§„ì´ ì•„ë‹Œ ê²½ìš°
                             return BehaviourTreeStatus.Failure;
 
-                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // µ¹Áø ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³­ °æ¿ì
+                        if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f) // ëŒì§„ ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚œ ê²½ìš°
                         {
                             currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
@@ -659,7 +658,7 @@ namespace Monster
                             anim.Play(AnimHash.IDLE);
                             currentPlayingAnim = AnimHash.IDLE;
 
-                            rushDir = Vector2.zero; // ¶÷´Ù ¿ÜºÎ º¯¼ö ¼öµ¿ ÃÊ±âÈ­
+                            rushDir = Vector2.zero; // ëŒë‹¤ ì™¸ë¶€ ë³€ìˆ˜ ìˆ˜ë™ ì´ˆê¸°í™”
 
                             return BehaviourTreeStatus.Success;
                         }
@@ -672,9 +671,9 @@ namespace Monster
                     })
 
                     .Selector(string.Empty)
-                        .Do(string.Empty, t => // ¾Ö´Ï¸ŞÀÌ¼ÇÀÇ ½ÃÁ¡.
+                        .Do(string.Empty, t => // ì• ë‹ˆë©”ì´ì…˜ì˜ ì‹œì .
                         {
-                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // »çÁ¤°Å¸® Á¶°Ç
+                            if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // ì‚¬ì •ê±°ë¦¬ ì¡°ê±´
                             {
                                 if (rushSkill == null)
                                 {
@@ -686,7 +685,7 @@ namespace Monster
                                     anim.Play(AnimHash.RUSH);
                                     currentPlayingAnim = AnimHash.RUSH;
 
-                                    rushDir = (playerTr.position - transform.position) * Vector2.right; // ÇÃ·¹ÀÌ¾î¸¦ ÇâÇÑ xÃà ¹æÇâº¤ÅÍ »êÃâ
+                                    rushDir = (playerTr.position - transform.position) * Vector2.right; // í”Œë ˆì´ì–´ë¥¼ í–¥í•œ xì¶• ë°©í–¥ë²¡í„° ì‚°ì¶œ
                                     rushDir.Normalize();
 
                                     return BehaviourTreeStatus.Running;
@@ -702,7 +701,7 @@ namespace Monster
                             }
                         })
 
-                        .Do(string.Empty, t => // ÇÃ·¹ÀÌ¾îÂÊÀ¸·Î ÀÌµ¿
+                        .Do(string.Empty, t => // í”Œë ˆì´ì–´ìª½ìœ¼ë¡œ ì´ë™
                         {
                             Vector3 dir = playerTr.position - transform.position;
 
