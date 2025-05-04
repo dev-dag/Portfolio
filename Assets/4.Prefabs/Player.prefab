@@ -189,16 +189,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d00f724f67a51004f8d0a4c550187b4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dashPow: 60
-  axe_jump_y_pow: 120
-  axe_jump_x_pow: 30
-  axe_drop_y_pow: -20
   render: {fileID: 1002364023983658795}
   info: {fileID: 11400000, guid: 3d159c8ce19c9254ba4309b893e06256, type: 2}
   rigidBody: {fileID: 1227313422299097224}
   animator: {fileID: 2584992744505221506}
   footTr: {fileID: 4259155674246106138}
-  interactableDistance: 2
+  interactableDistance: 8
 --- !u!50 &1227313422299097224
 Rigidbody2D:
   serializedVersion: 5
