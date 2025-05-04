@@ -92,7 +92,7 @@ namespace Monster
 
         void ICombatable.TakeHit(int damage, BaseObject hitter)
         {
-            if (isInteractable)
+            if (isInteractable || IsDead)
             {
                 return;
             }
@@ -160,10 +160,9 @@ namespace Monster
                     // 다이얼로그 시작.
                     GameManager.Instance.uiManager.dialog.StartDialog(dialogWrapper.DialogTextList, () =>
                     {
-                        playerTr = Player.Current.transform;
                         isInteractable = false;
                         this.gameObject.layer = LayerMask.NameToLayer(GameManager.MONSTER_LAYER_NAME);
-
+                        OnInteractionEnd();
                         rb.bodyType = RigidbodyType2D.Dynamic;
 
                         interactionCallback?.Invoke();
@@ -172,6 +171,13 @@ namespace Monster
                     overheadUI.ActiveG_Key(false);
                 }
             }
+        }
+
+        private async Awaitable OnInteractionEnd()
+        {
+            await Awaitable.WaitForSecondsAsync(1f);
+
+            playerTr = Player.Current.transform;
         }
 
         private void LookAt(Vector3 targetPos)
