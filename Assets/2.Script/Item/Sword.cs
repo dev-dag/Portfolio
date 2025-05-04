@@ -79,7 +79,7 @@ public class Sword : Weapon
                         player.Animator.Play(WeaponInfo.AnimationStateName_0[0]); // 애니메이션 재생
                         player.CurrentAnimationState = Player.AnimationState.Attack_0; // 상태머신 갱신
 
-                        skill_0.TryOperate(player.transform.position, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
+                        skill_0.TryOperateWithFollow(player.transform, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
                         return BehaviourTreeStatus.Success;
                     }
                     else
@@ -233,7 +233,7 @@ public class Sword : Weapon
                             player.RigidBody.linearVelocityX = -DASH_POWER;
                         }
 
-                        skill_2.TryOperateWithFollow(player.transform, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
+                        skill_2.TryOperate(player.transform.position, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
                         return BehaviourTreeStatus.Success;
                     }
                     else

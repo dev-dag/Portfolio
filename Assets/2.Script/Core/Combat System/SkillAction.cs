@@ -1,4 +1,4 @@
-using Unity.VisualScripting;
+ï»¿using Unity.VisualScripting;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
@@ -60,8 +60,11 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
 
         CancelInvoke();
 
-        proxyCollider.Return();
-        proxyCollider = null;
+        if (data.collisionType != SkillData.SkillCollisionType.None)
+        {
+            proxyCollider.Return();
+            proxyCollider = null;
+        }
     }
 
     protected override void Update()
@@ -85,7 +88,7 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     }
 
     /// <summary>
-    /// ½ºÅ³ Å¸ÀÔ ¹İÈ¯
+    /// ìŠ¤í‚¬ íƒ€ì… ë°˜í™˜
     /// </summary>
     public SkillData.ParryType GetSkillType()
     {
@@ -107,7 +110,7 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     }
 
     /// <summary>
-    /// ¾Ö´Ï¸ŞÀÌÅÍ¿¡¼­ ÀÌº¥Æ®·Î È£ÃâµÇ´Â ÇÇ°İÆÇÁ¤À» ½ÃÀÛÇÏ´Â ÇÔ¼ö
+    /// ì• ë‹ˆë©”ì´í„°ì—ì„œ ì´ë²¤íŠ¸ë¡œ í˜¸ì¶œë˜ëŠ” í”¼ê²©íŒì •ì„ ì‹œì‘í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     void ICombatAnimatorEventListener.StartHit()
     {
@@ -149,7 +152,7 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
             }
             default:
             {
-                EDebug.LogError("½ºÅ³ µ¥ÀÌÅÍ ¿À·ù ¹ß»ı");
+                EDebug.LogError("ìŠ¤í‚¬ ë°ì´í„° ì˜¤ë¥˜ ë°œìƒ");
 
                 break;
             }
@@ -157,7 +160,7 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     }
 
     /// <summary>
-    /// ¾Ö´Ï¸ŞÀÌÅÍ¿¡¼­ ÀÌº¥Æ®·Î È£ÃâµÇ´Â ÇÇ°İÆÇÁ¤À» Á¾·áÇÏ´Â ÇÔ¼ö
+    /// ì• ë‹ˆë©”ì´í„°ì—ì„œ ì´ë²¤íŠ¸ë¡œ í˜¸ì¶œë˜ëŠ” í”¼ê²©íŒì •ì„ ì¢…ë£Œí•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     void ICombatAnimatorEventListener.StopHit()
     {
@@ -170,12 +173,12 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     }
 
     /// <summary>
-    /// ÇÇ°İ ¹üÀ§¿¡ µé¾î¿Â ´ë»óÀÇ Ã¼·ÂÀ» °¨¼Ò½ÃÅ°´Â ÇÔ¼ö.
+    /// í”¼ê²© ë²”ìœ„ì— ë“¤ì–´ì˜¨ ëŒ€ìƒì˜ ì²´ë ¥ì„ ê°ì†Œì‹œí‚¤ëŠ” í•¨ìˆ˜.
     /// </summary>
-    /// <param name="combatInterface">Ã¼·ÂÀ» °¨¼Ò½ÃÅ°´Â ÇÔ¼ö¸¦ Á¦°øÇÏ´Â ÀÎÅÍÆäÀÌ½º</param>
+    /// <param name="combatInterface">ì²´ë ¥ì„ ê°ì†Œì‹œí‚¤ëŠ” í•¨ìˆ˜ë¥¼ ì œê³µí•˜ëŠ” ì¸í„°í˜ì´ìŠ¤</param>
     protected virtual void OnHit(Collider2D collision)
     {
-        if (IsParryed || isHitable == false) // Ãæµ¹ °¡´É Å¸ÀÌ¹ÖÀÌ ¾Æ´Ñ °æ¿ì³ª, ÆĞ¸®µÈ ½ºÅ³Àº ¹°¸®Ã³¸® ÇÏÁö ¾ÊÀ½.
+        if (IsParryed || isHitable == false) // ì¶©ëŒ ê°€ëŠ¥ íƒ€ì´ë°ì´ ì•„ë‹Œ ê²½ìš°ë‚˜, íŒ¨ë¦¬ëœ ìŠ¤í‚¬ì€ ë¬¼ë¦¬ì²˜ë¦¬ í•˜ì§€ ì•ŠìŒ.
         {
             return;
         }
@@ -188,7 +191,7 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
 
             combatInterface.TakeHit(weaponDamage + data.additionalDamage, caller);
         }
-        else if (hitObject is ProxyCollider) // ½ºÅ³°ú Ãæµ¹ Ã¼Å©µÈ °æ¿ì ÆĞ¸® °¡´ÉÇÑÁö Ã¼Å©
+        else if (hitObject is ProxyCollider) // ìŠ¤í‚¬ê³¼ ì¶©ëŒ ì²´í¬ëœ ê²½ìš° íŒ¨ë¦¬ ê°€ëŠ¥í•œì§€ ì²´í¬
         {
             SkillAction hitSkill = (hitObject as ProxyCollider).GetSkill();
 
