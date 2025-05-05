@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Database_Table;
 using System;
 
@@ -46,7 +46,7 @@ public class ItemContainer
     {
         ItemContainer newContainer = null;
 
-        if (GameManager.Instance.data.item.TryGetValue(id, out Item data))
+        if (GameManager.Instance.ReferenceData.item.TryGetValue(id, out Item data))
         {
             if (data.TypeEnum == Item.ItemType.Weapon)
             {

@@ -289,7 +289,19 @@ public class Player : BaseObject, ICombatable
                     }
                 })
 
-                .Condition(string.Empty, (t) => BlockInput)
+                .Do(string.Empty, (t) =>
+                {
+                    if (BlockInput)
+                    {
+                        animator.Play(AnimHash.IDLE);
+                        CurrentAnimationState = AnimationState.Idle;
+                        return BehaviourTreeStatus.Success;
+                    }
+                    else
+                    {
+                        return BehaviourTreeStatus.Failure;
+                    }
+                })
 
                 .Sequence(string.Empty) // 무기가 장착된 상태에서 공격 처리
                     .Condition(string.Empty, (t) => weaponCache != null)

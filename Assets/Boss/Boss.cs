@@ -153,7 +153,7 @@ namespace Monster
             // IsInteractable == true 일 때만 호출 가능.
             if (isInteractable)
             {
-                if (GameManager.Instance.data.dialog.TryGetValue(4, out var dialogWrapper)) // 4번 다이얼로그 시작
+                if (GameManager.Instance.ReferenceData.dialog.TryGetValue(4, out var dialogWrapper)) // 4번 다이얼로그 시작
                 {
                     LookAt(Player.Current.transform.position);
 

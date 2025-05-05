@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
@@ -18,16 +18,16 @@ public abstract class Quest : BaseObject
     }
 
     public int QuestID { get; protected set; }
-    public State QuestState { get; protected set; } // Äù½ºÆ® ÁøÇà »óÅÂ
-    public bool IsInit { get; protected set; } = false; // ÃÊ±âÈ­ ¿©ºÎ ÇÃ·¡±×
+    public State QuestState { get; protected set; } // í€˜ìŠ¤íŠ¸ ì§„í–‰ ìƒíƒœ
+    public bool IsInit { get; protected set; } = false; // ì´ˆê¸°í™” ì—¬ë¶€ í”Œë˜ê·¸
 
-    protected Database_Table.Quest questData; // Äù½ºÆ® µ¥ÀÌÅÍ Å×ÀÌºí
-    protected DataContainer db; // DB Ä¿³Ø¼Ç Ä³½Ì
+    protected Database_Table.Quest questData; // í€˜ìŠ¤íŠ¸ ë°ì´í„° í…Œì´ë¸”
+    protected DataContainer db; // DB ì»¤ë„¥ì…˜ ìºì‹±
 
     /// <summary>
-    /// Äù½ºÆ® ¼ö¶ô ÇÔ¼ö
+    /// í€˜ìŠ¤íŠ¸ ìˆ˜ë½ í•¨ìˆ˜
     /// </summary>
-    /// <returns>¼ö¶ô Á¶°Ç¿¡ ÃæÁ·ÇÏ´Â °æ¿ì True ¹İÈ¯</returns>
+    /// <returns>ìˆ˜ë½ ì¡°ê±´ì— ì¶©ì¡±í•˜ëŠ” ê²½ìš° True ë°˜í™˜</returns>
     public virtual bool TryAccept()
     {
         QuestState = State.OnProgress;
@@ -36,9 +36,9 @@ public abstract class Quest : BaseObject
     }
 
     /// <summary>
-    /// ´ÙÀÌ¾ó·Î±×¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    /// ë‹¤ì´ì–¼ë¡œê·¸ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
-    /// <returns>ÁøÇà »óÈ²¿¡ ¸Â´Â ÀûÀıÇÑ ´ÙÀÌ¾ó·Î±× ÅØ½ºÆ® ¹è¿­</returns>
+    /// <returns>ì§„í–‰ ìƒí™©ì— ë§ëŠ” ì ì ˆí•œ ë‹¤ì´ì–¼ë¡œê·¸ í…ìŠ¤íŠ¸ ë°°ì—´</returns>
     public virtual List<string> GetDialog()
     {
         switch (QuestState)
@@ -61,7 +61,7 @@ public abstract class Quest : BaseObject
     }
 
     /// <summary>
-    /// ¿À¹öÇìµå ´ÙÀÌ¾ó·Î±×¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    /// ì˜¤ë²„í—¤ë“œ ë‹¤ì´ì–¼ë¡œê·¸ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     /// <returns></returns>
     public virtual string GetOverheadDialog()
@@ -99,14 +99,14 @@ public abstract class Quest : BaseObject
 
     public virtual void Init()
     {
-        // DB ÂüÁ¶ ÃÊ±âÈ­
-        db = GameManager.Instance.data;
+        // DB ì°¸ì¡° ì´ˆê¸°í™”
+        db = GameManager.Instance.ReferenceData;
         if (db == null)
         {
             return;
         }
 
-        // Äù½ºÆ® Å×ÀÌºí ÃÊ±âÈ­
+        // í€˜ìŠ¤íŠ¸ í…Œì´ë¸” ì´ˆê¸°í™”
         if (db.quest.ContainsKey(QuestID) == false)
         {
             return;
@@ -119,7 +119,7 @@ public abstract class Quest : BaseObject
     }
 
     /// <summary>
-    /// Äù½ºÆ® ¿Ï·á º¸»óÀ» Áö±ŞÇÏ°í Äù½ºÆ®¸¦ ¿Ï·áÃ³¸®ÇÏ´Â ÇÔ¼ö
+    /// í€˜ìŠ¤íŠ¸ ì™„ë£Œ ë³´ìƒì„ ì§€ê¸‰í•˜ê³  í€˜ìŠ¤íŠ¸ë¥¼ ì™„ë£Œì²˜ë¦¬í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     /// <returns></returns>
     public virtual bool ReceiveCompleteReward()
@@ -129,15 +129,15 @@ public abstract class Quest : BaseObject
             return false;
         }
 
-        // º¸»ó È¹µæ ·ÎÁ÷
+        // ë³´ìƒ íšë“ ë¡œì§
 
-        OnDone(); // Äù½ºÆ® ¿Ï·á Ã³¸®
+        OnDone(); // í€˜ìŠ¤íŠ¸ ì™„ë£Œ ì²˜ë¦¬
 
         return true;
     }
 
     /// <summary>
-    /// Äù½ºÆ® ¿Ï·á Á¶°ÇÀ» ¸¸Á·ÇÑ »óÅÂÀÏ ¶§ È£ÃâµÇ´Â ÇÔ¼ö
+    /// í€˜ìŠ¤íŠ¸ ì™„ë£Œ ì¡°ê±´ì„ ë§Œì¡±í•œ ìƒíƒœì¼ ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
     /// </summary>
     protected virtual void OnComplete()
     {
@@ -147,7 +147,7 @@ public abstract class Quest : BaseObject
     }
     
     /// <summary>
-    /// Äù½ºÆ®¸¦ Á¾·áÇÏ´Â ÇÔ¼ö
+    /// í€˜ìŠ¤íŠ¸ë¥¼ ì¢…ë£Œí•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     protected virtual void OnDone()
     {

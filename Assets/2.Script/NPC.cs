@@ -158,14 +158,14 @@ public class NPC : BaseObject, IInteractable
             return;
         }
 
-        List<string> stringList = GameManager.Instance.data.dialog[NPC_Data.dialogID].DialogTextList;
+        List<string> stringList = GameManager.Instance.ReferenceData.dialog[NPC_Data.dialogID].DialogTextList;
 
         GameManager.Instance.uiManager.dialog.StartDialog(stringList, callback);
     }
 
     protected virtual void SetOverheadDialog()
     {
-        overheadUI.SetDialogText(GameManager.Instance.data.overheadDialog[NPC_Data.overheadDialogID].DialogText);
+        overheadUI.SetDialogText(GameManager.Instance.ReferenceData.overheadDialog[NPC_Data.overheadDialogID].DialogText);
     }
 
     public bool IsInteractable()

@@ -16,6 +16,7 @@ public class GameManager : SingleTon<GameManager>
     public const string PLAYER_EXCLUSIVE_LAYER_NAME = "PlayerExclusive";
     public const string MONSTER_EXCLUSIVE_LAYER_NAME = "MonsterExclusive";
 
+    public DataContainer ReferenceData { get; private set; }
     [Space(20f)]
     public InputActionAsset globalInputActionAsset;
     public QuestSystem questSystem;
@@ -135,7 +136,7 @@ public class GameManager : SingleTon<GameManager>
 
         await MakeCache();
 
-        data = dbConnecter.ConnectAndLoadDB();
+        ReferenceData = dbConnecter.ConnectAndLoadDB();
 
         globalInputActionAsset.Enable(); // 인풋 활성화
 

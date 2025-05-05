@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,21 +11,21 @@ public class QuestSystem : SingleTon<QuestSystem>
     public void Init()
     {
         if (GameManager.Instance == null
-            || GameManager.Instance.data == null
-            || GameManager.Instance.data.quest == null)
+            || GameManager.Instance.ReferenceData == null
+            || GameManager.Instance.ReferenceData.quest == null)
         {
             IsInit = false;
             return;
         }
 
-        // Äù½ºÆ® ÀÎ½ºÅÏ½º »ı¼º ¹× ÃÊ±âÈ­
-        foreach (var table in GameManager.Instance.data.quest.Values)
+        // í€˜ìŠ¤íŠ¸ ì¸ìŠ¤í„´ìŠ¤ ìƒì„± ë° ì´ˆê¸°í™”
+        foreach (var table in GameManager.Instance.ReferenceData.quest.Values)
         {
             var instance = Activator.CreateInstance(Type.GetType(table.QuestClassName));
             
             if ((instance is Quest) == false)
             {
-                EDebug.LogError("Quest Å¸ÀÔ ¿À·ù ¹ß°ß");
+                EDebug.LogError("Quest íƒ€ì… ì˜¤ë¥˜ ë°œê²¬");
                 continue;
             }
 

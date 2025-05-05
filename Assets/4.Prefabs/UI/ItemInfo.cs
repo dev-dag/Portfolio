@@ -1,4 +1,4 @@
-using Database_Table;
+ï»¿using Database_Table;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class ItemInfo : BaseObject
 {
     /// <summary>
-    /// ÇöÀç º¸¿©ÁÖ°í ÀÖ´Â ¾ÆÀÌÅÛÀÇ ID¹İÈ¯. ¾øÀ¸¸é null ¹İÈ¯
+    /// í˜„ì¬ ë³´ì—¬ì£¼ê³  ìˆëŠ” ì•„ì´í…œì˜ IDë°˜í™˜. ì—†ìœ¼ë©´ null ë°˜í™˜
     /// </summary>
     public int? CurrentID
     {
@@ -26,7 +26,7 @@ public class ItemInfo : BaseObject
     }
 
     /// <summary>
-    /// »ç¿ëÁßÀÎÁö ¿©ºÎ ¹İÈ¯
+    /// ì‚¬ìš©ì¤‘ì¸ì§€ ì—¬ë¶€ ë°˜í™˜
     /// </summary>
     public bool IsActive
     {
@@ -53,19 +53,19 @@ public class ItemInfo : BaseObject
     }
 
     /// <summary>
-    /// Ä¿¼­ À§Ä¡¿¡ Æ¯Á¤ ¾ÆÀÌÅÛ ÀÎÆ÷¸¦ Ãâ·ÂÇÏ´Â ÇÔ¼ö
+    /// ì»¤ì„œ ìœ„ì¹˜ì— íŠ¹ì • ì•„ì´í…œ ì¸í¬ë¥¼ ì¶œë ¥í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public async void SetOnCursorBy(int itemID)
     {
-        current = GameManager.Instance.data.item[itemID];
+        current = GameManager.Instance.ReferenceData.item[itemID];
 
         if (current.TypeEnum == Item.ItemType.Weapon)
         {
             WeaponInfo weaponInfo = GameManager.Instance.LoadItemInfo<WeaponInfo>(itemID);
             image.sprite = current.IconSprite;
             name.text = current.Name;
-            type.text = "¹«±â";
-            effect.text = $"°ø°İ·Â +{weaponInfo.damage}";
+            type.text = "ë¬´ê¸°";
+            effect.text = $"ê³µê²©ë ¥ +{weaponInfo.damage}";
             description.text = weaponInfo.description;
 
             this.gameObject.SetActive(true);
@@ -75,8 +75,8 @@ public class ItemInfo : BaseObject
             PotionInfo potionInfo = GameManager.Instance.LoadItemInfo<PotionInfo>(itemID);
             image.sprite = current.IconSprite;
             name.text = current.Name;
-            type.text = "Æ÷¼Ç";
-            effect.text = $"È¸º¹·® : +{potionInfo.healingAmount}";
+            type.text = "í¬ì…˜";
+            effect.text = $"íšŒë³µëŸ‰ : +{potionInfo.healingAmount}";
             description.text = potionInfo.description;
 
             this.gameObject.SetActive(true);
@@ -101,12 +101,12 @@ public class ItemInfo : BaseObject
     {
         RectTransform rtr = this.transform as RectTransform;
 
-        // UI¸¦ ¿ìÃø¿¡ ³ëÃâ ½Ãµµ
+        // UIë¥¼ ìš°ì¸¡ì— ë…¸ì¶œ ì‹œë„
         RectTransformUtility.ScreenPointToLocalPointInRectangle(transform.parent as RectTransform, Input.mousePosition, null, out Vector2 localAnchoredPos);
         rtr.pivot = new Vector2(0f, 0f);
         rtr.anchoredPosition = localAnchoredPos + Vector2.right * 100f;
 
-        if (IsFullyInScreen() == false) // ¿ìÃø¿¡ ½ºÅ©¸° °ø°£ÀÌ ¾øÀ¸¸é ¿ŞÂÊ¿¡ ³ëÃâ
+        if (IsFullyInScreen() == false) // ìš°ì¸¡ì— ìŠ¤í¬ë¦° ê³µê°„ì´ ì—†ìœ¼ë©´ ì™¼ìª½ì— ë…¸ì¶œ
         {
             rtr.pivot = new Vector2(1f, 0f);
             rtr.anchoredPosition = localAnchoredPos + Vector2.left * 100f;
@@ -120,7 +120,7 @@ public class ItemInfo : BaseObject
         Vector3[] corners = new Vector3[4];
         rtr.GetWorldCorners(corners);
 
-        // ÁÂÇÏ´Ü, ¿ì»ó´Ü ÄÚ³Ê ¿ùµå ÁÂÇ¥ Á¶È¸
+        // ì¢Œí•˜ë‹¨, ìš°ìƒë‹¨ ì½”ë„ˆ ì›”ë“œ ì¢Œí‘œ ì¡°íšŒ
         Vector2 min = corners[0];
         Vector2 max = corners[0];
 
@@ -137,11 +137,11 @@ public class ItemInfo : BaseObject
             }
         }
 
-        // ½ºÅ©¸° ±âÁØ ÁÂÇ¥·Î º¯È¯
+        // ìŠ¤í¬ë¦° ê¸°ì¤€ ì¢Œí‘œë¡œ ë³€í™˜
         Vector2 minScreenPos = RectTransformUtility.WorldToScreenPoint(null, min);
         Vector2 maxScreenPos = RectTransformUtility.WorldToScreenPoint(null, max);
 
-        // À¯È¿°ªÀÇ ¹üÀ§¸¦ 0 ~ 1·Î ¸®¸ÅÇÎ
+        // ìœ íš¨ê°’ì˜ ë²”ìœ„ë¥¼ 0 ~ 1ë¡œ ë¦¬ë§¤í•‘
         Vector2 normalizedScreenMinPos = new Vector2
         {
             x = minScreenPos.x / Screen.width,
@@ -154,9 +154,9 @@ public class ItemInfo : BaseObject
             y = maxScreenPos.y / Screen.height
         };
 
-        // À¯È¿¼º Ã¼Å©
+        // ìœ íš¨ì„± ì²´í¬
         if (normalizedScreenMinPos.x < 0f
-            || normalizedScreenMaxPos.x > 1f) // È­¸é ¹üÀ§¸¦ UI°¡ ¹ş¾î³ª´Â °æ¿ì (ÁÂ¿ì¸¸ °è»ê)
+            || normalizedScreenMaxPos.x > 1f) // í™”ë©´ ë²”ìœ„ë¥¼ UIê°€ ë²—ì–´ë‚˜ëŠ” ê²½ìš° (ì¢Œìš°ë§Œ ê³„ì‚°)
         {
             return false;
         }
