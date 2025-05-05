@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_Manager : BaseObject
@@ -25,35 +26,42 @@ public class UI_Manager : BaseObject
 
         dialog.gameObject.SetActive(false);
         inventory.gameObject.SetActive(false);
-        quickSlot.gameObject.SetActive(true);
+        quickSlot.gameObject.SetActive(false);
         itemInfo.gameObject.SetActive(false);
-        playerInfoPreview.gameObject.SetActive(true);
-        skillView.gameObject.SetActive(true);
+        playerInfoPreview.gameObject.SetActive(false);
+        skillView.gameObject.SetActive(false);
     }
 
     public void Init()
     {
+        dialog.gameObject.SetActive(false);
+        inventory.gameObject.SetActive(false);
+        quickSlot.gameObject.SetActive(true);
+        itemInfo.gameObject.SetActive(false);
+        playerInfoPreview.gameObject.SetActive(true);
+        skillView.gameObject.SetActive(true);
+
         inventory.Init();
     }
 
-    public void FadeIn(float duration = 1f)
+    public void FadeIn(float duration = 1f, Action callback = null)
     {
         if (fadeAwaiter != null)
         {
             fadeAwaiter.Cancel();
         }
 
-        fadeAwaiter = Fade(1f, 0f, duration);
+        fadeAwaiter = Fade(1f, 0f, duration, callback);
     }
 
-    public void FadeOut(float duration = 1f)
+    public void FadeOut(float duration = 1f, Action callback = null)
     {
         if (fadeAwaiter != null)
         {
             fadeAwaiter.Cancel();
         }
 
-        fadeAwaiter = Fade(0f, 1f, duration);
+        fadeAwaiter = Fade(0f, 1f, duration, callback);
     }
 
     public void ShowUI_ForCinematic(bool isShown = false)
@@ -68,7 +76,7 @@ public class UI_Manager : BaseObject
         playerInfoPreview.gameObject.SetActive(isShown);
     }
 
-    private async Awaitable Fade(float fromAlpha, float toAlpha, float duration)
+    private async Awaitable Fade(float fromAlpha, float toAlpha, float duration, Action callback = null)
     {
         float time = 0f;
 
@@ -84,5 +92,7 @@ public class UI_Manager : BaseObject
         fadeImage.color = new Color(0f, 0f, 0f, toAlpha);
 
         fadeAwaiter = null;
+
+        callback?.Invoke();
     }
 }

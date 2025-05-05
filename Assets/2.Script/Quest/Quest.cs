@@ -3,7 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
-public abstract class Quest : BaseObject
+public abstract class Quest
 {
     private const string OVERHEAD_TEXT_ON_PROGRESS = "...";
     private const string OVERHEAD_TEXT_ON_COMPLETE = "!";

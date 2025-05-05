@@ -76,6 +76,8 @@ public class Player : BaseObject, ICombatable
     private Awaitable blinkAwaiter = null;
     private Weapon weaponCache = null;
 
+    private bool isInit = false;
+
     protected override void Awake()
     {
         base.Awake();
@@ -89,10 +91,6 @@ public class Player : BaseObject, ICombatable
         {
             Destroy(this);
         }
-
-        Init();
-
-        AttachCamera();
     }
 
     protected override void Start()
@@ -102,6 +100,11 @@ public class Player : BaseObject, ICombatable
     
     protected override void Update()
     {
+        if (isInit == false)
+        {
+            return;
+        }
+
         base.Update();
 
         BT_Root.Tick(new TimeData(Time.deltaTime));
@@ -113,6 +116,11 @@ public class Player : BaseObject, ICombatable
 
     private void OnEnable()
     {
+        if (isInit == false)
+        {
+            return;
+        }
+
         interactAction.performed += OnInteract;
         quickSlot_0_Action.performed += OnQuickSlot_0;
         quickSlot_1_Action.performed += OnQuickSlot_1;
@@ -241,7 +249,7 @@ public class Player : BaseObject, ICombatable
         };
     }
 
-    private void Init()
+    public void Init()
     {
         InputActionMap actionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("Player");
 
@@ -270,6 +278,10 @@ public class Player : BaseObject, ICombatable
         {
             EquipWeapon(inventory.Items[data.EquippedWeaponID] as Weapon);
         }
+
+        AttachCamera();
+
+        isInit = true;
     }
 
     private IBehaviourTreeNode MakeBehaviourTree()

@@ -1,7 +1,7 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 /// <summary>
-/// Å×½ºÆ® Äù½ºÆ®
+/// í…ŒìŠ¤íŠ¸ í€˜ìŠ¤íŠ¸
 /// </summary>
 public class Quest_0 : Quest
 {

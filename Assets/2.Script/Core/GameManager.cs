@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.U2D;
@@ -36,6 +37,7 @@ public class GameManager : SingleTon<GameManager>
     private SpriteAtlas itemIconAtlas;
 
     private Dictionary<int, ItemInfoData> itemInfoDataCache = new Dictionary<int, ItemInfoData>();
+    private Awaitable cachingAwaiter;
 
     /// <summary>
     /// 맵 변경 함수
@@ -122,6 +124,34 @@ public class GameManager : SingleTon<GameManager>
         }
     }
 
+    public async void StartGame()
+    {
+        await cachingAwaiter;
+
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
+        var task = new TaskCompletionSource<object>();
+        asyncOperation.completed += _ => task.SetResult(null);
+
+        EventSystem.current.enabled = false; // 현재 씬 이벤트 시스템 비활성화
+
+        uiManager.FadeOut(1f, async () =>
+        {
+            await SceneManager.UnloadSceneAsync(0); // 이전 씬 언로드
+
+            await task.Task; // 게임 레퍼런스 데이터 캐싱이 아직 안된 경우 대기
+
+            questSystem.Init(); // 퀘스트 시스템 초기화
+            uiManager.Init();
+            Player.Current.Init();
+
+            GameObject.Instantiate(baseHomeLevelPrefab); // 초기 맵 로드
+
+            globalInputActionAsset.Enable(); // 인풋 활성화
+
+            uiManager.FadeIn(1f);
+        });
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -135,15 +165,13 @@ public class GameManager : SingleTon<GameManager>
     {
         DB_Connecter dbConnecter = new DB_Connecter();
 
-        await MakeCache();
+        cachingAwaiter = MakeCache();
 
         ReferenceData = dbConnecter.ConnectAndLoadDB();
 
         globalInputActionAsset.Enable(); // 인풋 활성화
 
-        questSystem.Init(); // 퀘스트 시스템 초기화
-
-        InstanceData = new InstanceData(new Dictionary<int, int>()
+                InstanceData = new InstanceData(new Dictionary<int, int>()
         {
             { 0, 1 },
             { 1, 1 },
@@ -153,10 +181,8 @@ public class GameManager : SingleTon<GameManager>
         , 1, 3, -1, -1);
 
         uiManager = GameObject.Instantiate(UI_Prefab).GetComponent<UI_Manager>(); // UI 인스턴스 생성 및 초기화
-        uiManager.Init();
+        DontDestroyOnLoad(uiManager.gameObject); // UI 오브젝트 파괴 방지
 
-        GameObject.Instantiate(Player_Prefab); // 플레이어 생성
-
-        GameObject.Instantiate(baseHomeLevelPrefab); // 초기 맵 로드
+        GameObject.Instantiate(Player_Prefab); // 플레이어 오브젝트 생성
     }
 }
