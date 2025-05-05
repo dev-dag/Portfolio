@@ -34,11 +34,6 @@ public class UI_Manager : BaseObject
     public void Init()
     {
         inventory.Init();
-
-        inventory.AddItem(0, 1);
-        inventory.AddItem(1, 1);
-        inventory.AddItem(2, 1);
-        inventory.AddItem(3, 3);
     }
 
     public void FadeIn(float duration = 1f)

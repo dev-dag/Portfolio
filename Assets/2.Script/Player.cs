@@ -146,7 +146,7 @@ public class Player : BaseObject, ICombatable
         GameManager.Instance.uiManager.playerInfoPreview.Increase(amount);
     }
 
-    public async Task EquipWeapon(Weapon weapon)
+    public void EquipWeapon(Weapon weapon)
     {
         EquipedWeapon = weapon;
 
@@ -260,6 +260,16 @@ public class Player : BaseObject, ICombatable
         GameManager.Instance.uiManager.playerInfoPreview.Init(info.HP, null); // 체력 UI 설정
 
         BT_Root = MakeBehaviourTree();
+
+        // 데이터 기반으로 인벤토리 채우기
+        Inventory inventory = GameManager.Instance.uiManager.inventory;
+        InstanceData data = GameManager.Instance.InstanceData;
+        
+        if (data.EquippedWeaponID != -1
+            && inventory.WeaponSlot.ItemID != null)
+        {
+            EquipWeapon(inventory.Items[data.EquippedWeaponID] as Weapon);
+        }
     }
 
     private IBehaviourTreeNode MakeBehaviourTree()

@@ -17,13 +17,14 @@ public class GameManager : SingleTon<GameManager>
     public const string MONSTER_EXCLUSIVE_LAYER_NAME = "MonsterExclusive";
 
     public DataContainer ReferenceData { get; private set; }
+    public InstanceData InstanceData { get; private set; }
+
     [Space(20f)]
     public InputActionAsset globalInputActionAsset;
     public QuestSystem questSystem;
     public CombatSystem combatSystem;
 
     [Space(20f)]
-    public DataContainer data;
     [HideInInspector] public UI_Manager uiManager;
 
     [Space(20f), Header("Level Prefabs")]
@@ -142,10 +143,20 @@ public class GameManager : SingleTon<GameManager>
 
         questSystem.Init(); // 퀘스트 시스템 초기화
 
+        InstanceData = new InstanceData(new Dictionary<int, int>()
+        {
+            { 0, 1 },
+            { 1, 1 },
+            { 2, 1 },
+            { 3, 3 }
+        }
+        , 1, 3, -1, -1);
+
         uiManager = GameObject.Instantiate(UI_Prefab).GetComponent<UI_Manager>(); // UI 인스턴스 생성 및 초기화
         uiManager.Init();
 
         GameObject.Instantiate(Player_Prefab); // 플레이어 생성
+
         GameObject.Instantiate(baseHomeLevelPrefab); // 초기 맵 로드
     }
 }

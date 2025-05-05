@@ -8,6 +8,7 @@ using static ItemSlot;
 public class Inventory : BaseObject
 {
     public Dictionary<int, ItemContainer> Items { get; private set; } = new Dictionary<int, ItemContainer>();
+    public ItemSlot WeaponSlot { get => weaponSlot; }
 
     [Space(20f)]
     [SerializeField] private List<ItemSlot> bagItemSlots;
@@ -59,6 +60,50 @@ public class Inventory : BaseObject
                 Disable();
             }
         };
+
+        // 데이터 기반으로 아이템 채우기
+        {
+            InstanceData data = GameManager.Instance.InstanceData;
+
+            foreach (int itemID in data.Items.Keys) // 아이템 추가
+            {
+                if (itemID != data.EquippedWeaponID)
+                {
+                    AddItem(itemID, data.Items[itemID]);
+                }
+            }
+
+            if (data.EquippedWeaponID != -1) // 무기 슬롯에 장착된 무기 설정
+            {
+                ItemContainer weaponContainer = ItemContainer.CreateItemContainer(data.EquippedWeaponID, 1);
+                Items.Add(data.EquippedWeaponID, weaponContainer);
+                weaponSlot.Set(weaponContainer);
+            }
+
+            if (data.QuickSlot_0_ID != -1) // 퀵 슬롯 0 설정
+            {
+                if (Items.ContainsKey(data.QuickSlot_0_ID))
+                {
+                    SetQuickSlot(0, Items[data.QuickSlot_0_ID]);
+                }
+            }
+
+            if (data.QuickSlot_1_ID != -1) // 퀵 슬롯 1 설정
+            {
+                if (Items.ContainsKey(data.QuickSlot_1_ID))
+                {
+                    SetQuickSlot(1, Items[data.QuickSlot_1_ID]);
+                }
+            }
+
+            if (data.QuickSlot_2_ID != -1) // 퀵 슬롯 2 설정
+            {
+                if (Items.ContainsKey(data.QuickSlot_2_ID))
+                {
+                    SetQuickSlot(2, Items[data.QuickSlot_2_ID]);
+                }
+            }
+        }
     }
 
     protected override void Start()
@@ -82,12 +127,6 @@ public class Inventory : BaseObject
         playerActionMap.FindAction("UseSkill_2").Enable();
 
         GameManager.Instance.uiManager.itemInfo.Disable();
-    }   
-
-    [ContextMenu("Add Potion")]
-    public void AddPotion()
-    {
-        AddItem(3, 1);
     }
 
     /// <summary>
