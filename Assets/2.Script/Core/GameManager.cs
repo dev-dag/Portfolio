@@ -24,6 +24,7 @@ public class GameManager : SingleTon<GameManager>
     public InputActionAsset globalInputActionAsset;
     public QuestSystem questSystem;
     public CombatSystem combatSystem;
+    public AudioSystem audioSystem;
 
     [Space(20f)]
     [HideInInspector] public UI_Manager uiManager;
@@ -165,13 +166,12 @@ public class GameManager : SingleTon<GameManager>
     {
         DB_Connecter dbConnecter = new DB_Connecter();
 
-        cachingAwaiter = MakeCache();
-
         ReferenceData = dbConnecter.ConnectAndLoadDB();
+        cachingAwaiter = MakeCache();
 
         globalInputActionAsset.Enable(); // 인풋 활성화
 
-                InstanceData = new InstanceData(new Dictionary<int, int>()
+        InstanceData = new InstanceData(new Dictionary<int, int>()
         {
             { 0, 1 },
             { 1, 1 },
@@ -184,5 +184,7 @@ public class GameManager : SingleTon<GameManager>
         DontDestroyOnLoad(uiManager.gameObject); // UI 오브젝트 파괴 방지
 
         GameObject.Instantiate(Player_Prefab); // 플레이어 오브젝트 생성
+
+        audioSystem.Init(); // 오디오 시스템 초기화
     }
 }
