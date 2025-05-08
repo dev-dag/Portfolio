@@ -381,7 +381,6 @@ public class Player : BaseObject, ICombatable
                 .End()
 
                 .Sequence(string.Empty)
-                    .Condition(string.Empty, (t) => onInteration == false)
                     .Condition(string.Empty, (t) => BlockInput == false)
                     .Do(string.Empty, (t) =>
                     {
@@ -474,11 +473,17 @@ public class Player : BaseObject, ICombatable
 
         GameManager.Instance.uiManager.inventory.Disable();
 
+        animator.Play(AnimHash.IDLE);
+        CurrentAnimationState = AnimationState.Idle;
+        audioPlayer.Stop();
+
         onInteration = true;
+        BlockInput = true;
         interactionCurrent.StartInteraction(async () =>
         {
             interactionCurrent = null;
             await Awaitable.WaitForSecondsAsync(0.1f); // 상호작용 딜레이 설정
+            BlockInput = false;
             onInteration = false;
         });
     }
