@@ -44,6 +44,16 @@ public class AudioSystem : BaseObject
     }
 
     /// <summary>
+    /// SFX를 재생하는 함수
+    /// </summary>
+    public void PlaySFX(AudioClip audioClip)
+    {
+        var sfx = GameManager.Instance.audioSystem.GetSFX_Player(); // SFX 재생
+        sfx.Enable();
+        sfx.Play(audioClip);
+    }
+
+    /// <summary>
     /// SFX 플레이어가 재생이 끝났을 때 호출되는 콜백 함수
     /// </summary>
     private void OnSFXEnd(int playerID)

@@ -1,3 +1,4 @@
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Skill Data", menuName = "Scriptable Object/Skill Data")]
@@ -6,14 +7,14 @@ public class SkillData : ScriptableObject
     public enum SkillType
     {
         Normal = 0,
-        LinearDynamic = 1, // ¼öÁ÷ ÀÌµ¿ÇÏ´Â ½ºÅ³
+        LinearDynamic = 1, // ìˆ˜ì§ ì´ë™í•˜ëŠ” ìŠ¤í‚¬
     }
 
     public enum ParryType
     {
         Normal = 0,
-        Parryable = 1, // ÆĞ¸® °¡´ÉÇÑ ½ºÅ³
-        Parried = 2, // ÆĞ¸® ´ë»ó ½ºÅ³
+        Parryable = 1, // íŒ¨ë¦¬ ê°€ëŠ¥í•œ ìŠ¤í‚¬
+        Parried = 2, // íŒ¨ë¦¬ ëŒ€ìƒ ìŠ¤í‚¬
     }
 
     public enum SkillCollisionType
@@ -35,6 +36,9 @@ public class SkillData : ScriptableObject
     public RuntimeAnimatorController animationController;
     public Vector2 colliderOffset;
     public int castingLayer;
+
+    [Space(30f)]
+    public List<AudioClip> SFX_Clips;
 
     [Space(30f)]
     public bool useLifeTime = true;
