@@ -81,7 +81,7 @@ namespace Monster
 
             rb.bodyType = RigidbodyType2D.Kinematic; // 첫 조우 시 상호작용 전에 원 위치에서 이탈 방지
 
-            audioPlayer = GameManager.Instance.audioSystem.GetUnManagedAudioPlayer();
+            audioPlayer = GameManager.Instance.audioSystem.GetUnManagedAudioPlayer(AudioSystem.AudioType.SFX);
         }
 
         protected override void Update()

@@ -79,7 +79,7 @@ public class Sword : Weapon
                         player.Animator.Play(WeaponInfo.AnimationStateName_0[0]); // 애니메이션 재생
                         player.CurrentAnimationState = Player.AnimationState.Attack_0; // 상태머신 갱신
 
-                        GameManager.Instance.audioSystem.PlaySFX(skill_0.Data.SFX_Clips[0]); // SFX 재생
+                        GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, skill_0.Data.SFX_Clips[0]); // SFX 재생
 
                         skill_0.TryOperateWithFollow(player.transform, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
                         return BehaviourTreeStatus.Success;
@@ -150,7 +150,7 @@ public class Sword : Weapon
                         player.CurrentAnimationState = Player.AnimationState.Attack_1; // 상태머신 갱신
                         player.RigidBody.linearVelocityY = JUMP_POWER;
 
-                        GameManager.Instance.audioSystem.PlaySFX(skill_1.Data.SFX_Clips[0]); // SFX 재생
+                        GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, skill_1.Data.SFX_Clips[0]); // SFX 재생
 
                         skill_1.TryOperate(player.transform.position, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
                         return BehaviourTreeStatus.Success;
@@ -237,7 +237,7 @@ public class Sword : Weapon
                             player.RigidBody.linearVelocityX = -DASH_POWER;
                         }
 
-                        GameManager.Instance.audioSystem.PlaySFX(skill_2.Data.SFX_Clips[0]); // SFX 재생
+                        GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, skill_2.Data.SFX_Clips[0]); // SFX 재생
 
                         skill_2.TryOperate(player.transform.position, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
                         return BehaviourTreeStatus.Success;

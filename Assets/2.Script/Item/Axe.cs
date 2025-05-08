@@ -65,7 +65,7 @@ public class Axe : Weapon
                     {
                         if (skillActivated == false)
                         {
-                            GameManager.Instance.audioSystem.PlaySFX(skill_0.Data.SFX_Clips[0]); // SFX 재생
+                            GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, skill_0.Data.SFX_Clips[0]); // SFX 재생
 
                             skill_0.TryOperateWithFollow(player.transform, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
                             skillActivated = true;
@@ -156,7 +156,7 @@ public class Axe : Weapon
                     {
                         if (skillActivated == false)
                         {
-                            GameManager.Instance.audioSystem.PlaySFX(skill_1.Data.SFX_Clips[1]); // SFX 재생
+                            GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, skill_1.Data.SFX_Clips[1]); // SFX 재생
 
                             player.Animator.Play(WeaponInfo.AnimationStateName_1[1]);
                             skill_1.TryOperate(player.transform.position, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
@@ -209,7 +209,7 @@ public class Axe : Weapon
                         player.Animator.Play(WeaponInfo.AnimationStateName_1[0]); // 애니메이션 재생
                         player.CurrentAnimationState = Player.AnimationState.Attack_1; // 상태머신 갱신
 
-                        GameManager.Instance.audioSystem.PlaySFX(skill_1.Data.SFX_Clips[0]); // SFX 재생
+                        GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, skill_1.Data.SFX_Clips[0]); // SFX 재생
 
                         // Progress
                         {
@@ -276,7 +276,7 @@ public class Axe : Weapon
                     {
                         if (skillActivated == false)
                         {
-                            GameManager.Instance.audioSystem.PlaySFX(skill_2.Data.SFX_Clips[0]); // SFX 재생
+                            GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, skill_2.Data.SFX_Clips[0]); // SFX 재생
 
                             skill_2.TryOperate(player.transform.position, player.transform.rotation, LayerMask.NameToLayer(GameManager.PLAYER_EXCLUSIVE_LAYER_NAME), player); // 스킬 시전 시도
                             skillActivated = true;

@@ -3,10 +3,20 @@ using UnityEngine;
 
 public class AudioSystem : BaseObject
 {
+    public enum AudioType
+    {
+        BGM,
+        SFX,
+        UI_SFX
+    }
+
+    public bool IsInit { get; private set; } = false; // 초기화 여부
+
     [SerializeField] private ObjectPool audioPlayerPool; // 오디오 플레이어 풀
 
     private AudioPlayer BGM_Player; // BGM 플레이어 캐시
     private Dictionary<int, AudioPlayer> SFX_Player; // 재생중인 SFX 플레이어
+    private Dictionary<int, AudioPlayer> UI_SFX_Player; // UI SFX 플레이어
 
     public void Init()
     {
@@ -20,6 +30,76 @@ public class AudioSystem : BaseObject
         }
 
         SFX_Player = new Dictionary<int, AudioPlayer>();
+        UI_SFX_Player = new Dictionary<int, AudioPlayer>();
+
+        IsInit = true;
+    }
+
+    /// <summary>
+    /// /// <summary>
+    /// 오디오 플레이어를 반환하는 함수
+    /// </summary>
+    /// <param name="audioType">오디오 분류. BGM은 반환하지 않음.</param>
+    public AudioPlayer GetAudioPlayer(AudioType audioType)
+    {
+        switch (audioType)
+        {
+            case AudioType.SFX:
+            {
+                AudioPlayer player = audioPlayerPool.Burrow<AudioPlayer>();
+                int playerID = player.GetInstanceID();
+                player.Init(playerID, OnSFXEnd); // SFX 플레이어 초기화
+                player.Enable(); // SFX 플레이어 활성화
+                SFX_Player.Add(playerID, player); // SFX 플레이어 추가
+
+                return player;
+            }
+            case AudioType.UI_SFX:
+            {
+                AudioPlayer player = audioPlayerPool.Burrow<AudioPlayer>();
+                int playerID = player.GetInstanceID();
+                player.Init(playerID, OnSFXEnd); // SFX 플레이어 초기화
+                player.Enable(); // SFX 플레이어 활성화
+                UI_SFX_Player.Add(playerID, player); // SFX 플레이어 추가
+
+                return player;
+            }
+        }
+
+        return null; // BGM은 반환하지 않음
+    }
+
+    /// <summary>
+    /// 재생이 끝난 후 자동으로 반환되지 않는 오디오 플레이어를 반환하는 함수. BGM이 필요한 경우 "GetBGM_Player()" 사용
+    /// </summary>
+    /// <param name="audioType">오디오 분류. BGM은 반환하지 않음.</param>
+    public AudioPlayer GetUnManagedAudioPlayer(AudioType audioType)
+    {
+        switch (audioType)
+        {
+            case AudioType.SFX:
+            {
+                AudioPlayer player = audioPlayerPool.Burrow<AudioPlayer>();
+                int playerID = player.GetInstanceID();
+                player.Init(playerID, null); // SFX 플레이어 초기화
+                player.Enable(); // SFX 플레이어 활성화
+                SFX_Player.Add(playerID, player); // SFX 플레이어 추가
+
+                return player;
+            }
+            case AudioType.UI_SFX:
+            {
+                AudioPlayer player = audioPlayerPool.Burrow<AudioPlayer>();
+                int playerID = player.GetInstanceID();
+                player.Init(playerID, null); // SFX 플레이어 초기화
+                player.Enable(); // SFX 플레이어 활성화
+                UI_SFX_Player.Add(playerID, player); // SFX 플레이어 추가
+
+                return player;
+            }
+        }
+
+        return null; // BGM은 반환하지 않음
     }
 
     /// <summary>
@@ -31,41 +111,12 @@ public class AudioSystem : BaseObject
     }
 
     /// <summary>
-    /// SFX 플레이어를 반환하는 함수
-    /// </summary>
-    public AudioPlayer GetSFX_Player()
-    {
-        AudioPlayer player = audioPlayerPool.Burrow<AudioPlayer>();
-        int playerID = player.GetInstanceID();
-        player.Init(playerID, OnSFXEnd); // SFX 플레이어 초기화
-        player.Enable(); // SFX 플레이어 활성화
-        SFX_Player.Add(playerID, player); // SFX 플레이어 추가
-
-        return player;
-    }
-
-    /// <summary>
-    /// 오디오 시스템이 관리하지 않는 오디오 플레이어를 반환하는 함수. 풀링은 되고 있으므로 메모리 관리는 가능함.
-    /// </summary>
-    public AudioPlayer GetUnManagedAudioPlayer()
-    {
-        AudioPlayer player = audioPlayerPool.Burrow<AudioPlayer>();
-        int playerID = player.GetInstanceID();
-        player.Init(playerID, null); // SFX 플레이어 초기화
-        player.Enable(); // SFX 플레이어 활성화
-        SFX_Player.Add(playerID, player); // SFX 플레이어 추가
-
-        return player;
-    }
-
-    /// <summary>
     /// SFX를 재생하는 함수
     /// </summary>
-    public void PlaySFX(AudioClip audioClip)
+    public void PlaySFX(AudioType audioType, AudioClip audioClip)
     {
-        var sfx = GameManager.Instance.audioSystem.GetSFX_Player(); // SFX 재생
-        sfx.Enable();
-        sfx.Play(audioClip);
+        var audioPlayer = GetAudioPlayer(audioType); // SFX 플레이어 가져오기
+        audioPlayer.Play(audioClip); // SFX 재생
     }
 
     /// <summary>
@@ -77,6 +128,11 @@ public class AudioSystem : BaseObject
         {
             SFX_Player[playerID].Return(); // SFX 플레이어 반환
             SFX_Player.Remove(playerID); // SFX 플레이어 제거
+        }
+        else if (UI_SFX_Player.ContainsKey(playerID))
+        {
+            UI_SFX_Player[playerID].Return(); // SFX 플레이어 반환
+            UI_SFX_Player.Remove(playerID); // SFX 플레이어 제거
         }
     }
 }

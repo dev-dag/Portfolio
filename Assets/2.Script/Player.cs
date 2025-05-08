@@ -297,7 +297,7 @@ public class Player : BaseObject, ICombatable
 
         AttachCamera(); // 카메라 팔로우 설정
 
-        audioPlayer = GameManager.Instance.audioSystem.GetUnManagedAudioPlayer(); // 오디오 플레이어 로드
+        audioPlayer = GameManager.Instance.audioSystem.GetUnManagedAudioPlayer(AudioSystem.AudioType.SFX); // 오디오 플레이어 로드
 
         isInit = true;
     }
@@ -316,7 +316,7 @@ public class Player : BaseObject, ICombatable
                     }
                     else if (info.HP <= 0)
                     {
-                        GameManager.Instance.audioSystem.PlaySFX(deadSFX); // SFX 재생
+                        GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, deadSFX); // SFX 재생
 
                         animator.Play(AnimHash.DEAD); // 사망 애니메이션 재생
                         CurrentAnimationState = AnimationState.Dead;

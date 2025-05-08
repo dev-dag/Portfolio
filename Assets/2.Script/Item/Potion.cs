@@ -23,6 +23,6 @@ public class Potion : ItemContainer
     {
         Amount--;
         Player.Current.IncreaseHP(info.healingAmount);
-        GameManager.Instance.audioSystem.PlaySFX(info.drinkSFX); // SFX 재생
+        GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, info.drinkSFX); // SFX 재생
     }
 }

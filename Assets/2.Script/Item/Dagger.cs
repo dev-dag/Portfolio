@@ -84,7 +84,7 @@ public class Dagger : Weapon
                         player.Animator.Play(WeaponInfo.AnimationStateName_0[0]); // 애니메이션 재생
                         player.CurrentAnimationState = Player.AnimationState.Attack_0; // 상태머신 갱신
 
-                        GameManager.Instance.audioSystem.PlaySFX(skill_0.Data.SFX_Clips[0]); // SFX 재생
+                        GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, skill_0.Data.SFX_Clips[0]); // SFX 재생
 
                         // Progress
                         {
@@ -163,7 +163,7 @@ public class Dagger : Weapon
                         player.Animator.Play(WeaponInfo.AnimationStateName_1[0]); // 애니메이션 재생
                         player.CurrentAnimationState = Player.AnimationState.Attack_1; // 상태머신 갱신
 
-                        GameManager.Instance.audioSystem.PlaySFX(skill_1.Data.SFX_Clips[0]); // SFX 재생
+                        GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, skill_1.Data.SFX_Clips[0]); // SFX 재생
 
                         // Progress
                         {
@@ -242,7 +242,7 @@ public class Dagger : Weapon
                         player.Animator.Play(WeaponInfo.AnimationStateName_2[0]); // 애니메이션 재생
                         player.CurrentAnimationState = Player.AnimationState.Attack_2; // 상태머신 갱신
 
-                        GameManager.Instance.audioSystem.PlaySFX(skill_2.Data.SFX_Clips[0]); // SFX 재생
+                        GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, skill_2.Data.SFX_Clips[0]); // SFX 재생
 
                         // Progress
                         {
