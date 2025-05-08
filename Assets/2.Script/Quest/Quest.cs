@@ -65,24 +65,17 @@ public abstract class Quest
     /// </summary>
     /// <returns></returns>
     public virtual string GetOverheadDialog()
-    {
-        if (QuestState == State.OnStartable)
-        {
-            if (db.overheadDialog.TryGetValue(questData.OverheadDialogID, out var result))
-            {
-                return result.DialogText;
-            }
-        }
-        else if (QuestState == State.OnProgress)
-        {
-            return "...";
-        }
-        
+    {        
         switch (QuestState)
         {
             case State.OnStartable:
             {
-                break;
+                if (db.overheadDialog.TryGetValue(questData.OverheadDialogID, out var result))
+                {
+                    return result.DialogText;
+                }
+
+                return string.Empty;
             }
             case State.OnProgress:
             {
