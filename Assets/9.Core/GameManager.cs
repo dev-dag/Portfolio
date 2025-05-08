@@ -139,7 +139,7 @@ public class GameManager : SingleTon<GameManager>
         {
             await SceneManager.UnloadSceneAsync(0); // 이전 씬 언로드
 
-            await task.Task; // 게임 레퍼런스 데이터 캐싱이 아직 안된 경우 대기
+            await task.Task; // Play 씬이 로드 안된 경우 대기
 
             questSystem.Init(); // 퀘스트 시스템 초기화
             uiManager.Init();
