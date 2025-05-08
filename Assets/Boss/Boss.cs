@@ -54,6 +54,8 @@ namespace Monster
         private Skill explosionSkill;
         private Skill rushSkill;
 
+        private AudioPlayer audioPlayer;
+
         protected override void Awake()
         {
             base.Awake();
@@ -78,6 +80,8 @@ namespace Monster
             overheadUI.Enable();
 
             rb.bodyType = RigidbodyType2D.Kinematic; // 첫 조우 시 상호작용 전에 원 위치에서 이탈 방지
+
+            audioPlayer = GameManager.Instance.audioSystem.GetUnManagedAudioPlayer();
         }
 
         protected override void Update()
@@ -364,6 +368,8 @@ namespace Monster
                             currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
 
+                            audioPlayer.Stop(); // SFX 정지
+
                             anim.Play(AnimHash.IDLE);
                             currentPlayingAnim = AnimHash.IDLE;
 
@@ -380,6 +386,8 @@ namespace Monster
                         {
                             if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // 사정거리 조건
                             {
+                                audioPlayer.Play(slashSkillData.SFX_Clips[0]); // SFX 재생
+
                                 anim.Play(AnimHash.SLASH);
                                 currentPlayingAnim = AnimHash.SLASH;
 
@@ -475,6 +483,8 @@ namespace Monster
                             currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
 
+                            audioPlayer.Stop(); // SFX 정지
+
                             anim.Play(AnimHash.IDLE);
                             currentPlayingAnim = AnimHash.IDLE;
 
@@ -491,6 +501,8 @@ namespace Monster
                         {
                             if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // 사정거리 조건
                             {
+                                audioPlayer.Play(ejectSlashSkillData.SFX_Clips[0]); // SFX 재생
+
                                 anim.Play(AnimHash.EJECT_SLASH);
                                 currentPlayingAnim = AnimHash.EJECT_SLASH;
 
@@ -578,10 +590,21 @@ namespace Monster
                             currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
 
+                            audioPlayer.Stop(); // SFX 정지
+
                             anim.Play(AnimHash.IDLE);
                             currentPlayingAnim = AnimHash.IDLE;
 
                             return BehaviourTreeStatus.Success;
+                        }
+                        else if (anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f)
+                        {
+                            if (audioPlayer.GetCurrentClip() != explosionSkillData.SFX_Clips[1])
+                            {
+                                audioPlayer.Play(explosionSkillData.SFX_Clips[1]); // SFX 재생
+                            }
+
+                            return BehaviourTreeStatus.Running;
                         }
                         else
                         {
@@ -594,6 +617,8 @@ namespace Monster
                         {
                             if (Mathf.Abs(playerTr.position.x - transform.position.x) < xDistance) // 사정거리 조건
                             {
+                                audioPlayer.Play(explosionSkillData.SFX_Clips[0]); // SFX 재생
+
                                 anim.Play(AnimHash.EXPLOSION);
                                 currentPlayingAnim = AnimHash.EXPLOSION;
 
@@ -680,6 +705,8 @@ namespace Monster
                             currentSkill = SkillState.None;
                             nextActionTime = Time.time + afterDelay;
 
+                            audioPlayer.Stop(); // SFX 정지
+
                             anim.Play(AnimHash.IDLE);
                             currentPlayingAnim = AnimHash.IDLE;
 
@@ -707,6 +734,8 @@ namespace Monster
 
                                 if (rushSkill.TryOperateWithFollow(transform, transform.rotation, LayerMask.NameToLayer(GameManager.MONSTER_EXCLUSIVE_LAYER_NAME), this))
                                 {
+                                    audioPlayer.Play(rushSkillData.SFX_Clips[0]); // SFX 재생
+
                                     anim.Play(AnimHash.RUSH);
                                     currentPlayingAnim = AnimHash.RUSH;
 

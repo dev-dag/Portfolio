@@ -53,6 +53,7 @@ public class AudioSystem : BaseObject
         int playerID = player.GetInstanceID();
         player.Init(playerID, null); // SFX 플레이어 초기화
         player.Enable(); // SFX 플레이어 활성화
+        SFX_Player.Add(playerID, player); // SFX 플레이어 추가
 
         return player;
     }
