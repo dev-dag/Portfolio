@@ -52,11 +52,30 @@ public class AudioPlayer : PoolingObject
         audioSource.loop = isLoop; // 루프 설정
     }
 
+    /// <summary>
+    /// 현재 재생 혹은 대기중인 클립의 참조 반환
+    /// </summary>
+    /// <returns></returns>
+    public AudioClip GetCurrentClip()
+    {
+        if (isInit == false)
+        {
+            return null;
+        }
+
+        return audioSource.clip;
+    }
+
     public void Play(AudioClip clip)
     {
         if (isInit == false)
         {
             return;
+        }
+
+        if (audioSource.isPlaying)
+        {
+            audioSource.Stop(); // 정지
         }
 
         audioSource.clip = clip;

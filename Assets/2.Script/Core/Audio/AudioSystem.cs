@@ -38,7 +38,21 @@ public class AudioSystem : BaseObject
         AudioPlayer player = audioPlayerPool.Burrow<AudioPlayer>();
         int playerID = player.GetInstanceID();
         player.Init(playerID, OnSFXEnd); // SFX 플레이어 초기화
+        player.Enable(); // SFX 플레이어 활성화
         SFX_Player.Add(playerID, player); // SFX 플레이어 추가
+
+        return player;
+    }
+
+    /// <summary>
+    /// 오디오 시스템이 관리하지 않는 오디오 플레이어를 반환하는 함수. 풀링은 되고 있으므로 메모리 관리는 가능함.
+    /// </summary>
+    public AudioPlayer GetUnManagedAudioPlayer()
+    {
+        AudioPlayer player = audioPlayerPool.Burrow<AudioPlayer>();
+        int playerID = player.GetInstanceID();
+        player.Init(playerID, null); // SFX 플레이어 초기화
+        player.Enable(); // SFX 플레이어 활성화
 
         return player;
     }

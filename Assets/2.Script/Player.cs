@@ -46,7 +46,7 @@ public class Player : BaseObject, ICombatable
     public InputAction JumpAction { get => jumpAction; }
     public bool IsOnGround { get; private set; }
     public Transform FootTr { get => footTr; }
-    public bool BlockInput { get; set; }
+    public bool BlockInput { get; set; } = false; // 시네마틱 연출을 위해서 플레이어의 입력을 차단하기 위한 플래그  
     public bool OnInteration { get => onInteration; }
 
     [Space(20f)]
@@ -58,6 +58,12 @@ public class Player : BaseObject, ICombatable
 
     [Space(20f)]
     [SerializeField] private float interactableDistance = 2f;
+
+    [Space(30f)]
+    [SerializeField] private AudioClip runSFX;
+    [SerializeField] private AudioClip jumpSFX;
+    [SerializeField] private AudioClip landingSFX;
+    [SerializeField] private AudioClip deadSFX;
 
     private IBehaviourTreeNode BT_Root;
 
@@ -77,6 +83,7 @@ public class Player : BaseObject, ICombatable
     private Weapon weaponCache = null;
 
     private bool isInit = false;
+    private AudioPlayer audioPlayer;
 
     protected override void Awake()
     {
@@ -260,9 +267,18 @@ public class Player : BaseObject, ICombatable
         quickSlot_1_Action = actionMap.FindAction("UseQuickSlot_1");
         quickSlot_2_Action = actionMap.FindAction("UseQuickSlot_2");
 
+        quickSlot_0_Action.performed -= OnQuickSlot_0;
+        quickSlot_1_Action.performed -= OnQuickSlot_1;
+        quickSlot_2_Action.performed -= OnQuickSlot_2;
+        quickSlot_0_Action.performed += OnQuickSlot_0;
+        quickSlot_1_Action.performed += OnQuickSlot_1;
+        quickSlot_2_Action.performed += OnQuickSlot_2;
+
         // UI 입력 초기화
         InputActionMap UI_ActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("UI");
         interactAction = UI_ActionMap.FindAction("Interact");
+        interactAction.performed -= OnInteract;
+        interactAction.performed += OnInteract;
 
         info.Init();
         GameManager.Instance.uiManager.playerInfoPreview.Init(info.HP, null); // 체력 UI 설정
@@ -279,7 +295,9 @@ public class Player : BaseObject, ICombatable
             EquipWeapon(inventory.Items[data.EquippedWeaponID] as Weapon);
         }
 
-        AttachCamera();
+        AttachCamera(); // 카메라 팔로우 설정
+
+        audioPlayer = GameManager.Instance.audioSystem.GetUnManagedAudioPlayer(); // 오디오 플레이어 로드
 
         isInit = true;
     }
@@ -298,6 +316,8 @@ public class Player : BaseObject, ICombatable
                     }
                     else if (info.HP <= 0)
                     {
+                        GameManager.Instance.audioSystem.PlaySFX(deadSFX); // SFX 재생
+
                         animator.Play(AnimHash.DEAD); // 사망 애니메이션 재생
                         CurrentAnimationState = AnimationState.Dead;
 
@@ -391,6 +411,9 @@ public class Player : BaseObject, ICombatable
 
                         if (jumpAction.IsPressed() && jumpAction.IsInProgress() && rigidBody.linearVelocityY.IsAlmostEqaul(0f)) // 점프 키가 눌린 경우
                         {
+                            audioPlayer.SetLoop(false);
+                            audioPlayer.Play(jumpSFX); // SFX 재생
+
                             rigidBody.linearVelocityY += info.jumpPower;
                         }
 
@@ -398,6 +421,12 @@ public class Player : BaseObject, ICombatable
                     })
                     .Do(string.Empty, (t) =>
                     {
+                        if (RigidBody.linearVelocityY.IsAlmostEqaul(0f) && CurrentAnimationState == AnimationState.Fall) // 착지 SFX를 위한 분기
+                        {
+                            audioPlayer.SetLoop(false);
+                            audioPlayer.Play(landingSFX); // SFX 재생
+                        }
+
                         if (RigidBody.linearVelocityY > 0.01f)
                         {
                             animator.Play(AnimHash.JUMP);
@@ -410,11 +439,19 @@ public class Player : BaseObject, ICombatable
                         }
                         else if (RigidBody.linearVelocityX.IsAlmostEqaul(0f) == false)
                         {
+                            if (CurrentAnimationState != AnimationState.Run) // 처음에 재생되는 Run 애니메이션인 경우
+                            {
+                                audioPlayer.SetLoop();
+                                audioPlayer.Play(runSFX); // SFX 재생
+                            }
+
                             animator.Play(AnimHash.RUN);
                             CurrentAnimationState = AnimationState.Run;
                         }
                         else
                         {
+                            audioPlayer.Stop();
+
                             animator.Play(AnimHash.IDLE);
                             CurrentAnimationState = AnimationState.Idle;
                         }

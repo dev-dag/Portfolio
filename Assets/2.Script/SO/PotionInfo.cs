@@ -4,4 +4,5 @@
 public class PotionInfo : ItemInfoData
 {
     public int healingAmount;
+    public AudioClip drinkSFX;
 }
