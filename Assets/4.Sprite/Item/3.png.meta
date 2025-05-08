@@ -1,11 +1,12 @@
 fileFormatVersion: 2
-guid: 8b87b2b7faf49724b8c8385d9a6878f5
+guid: 269cf6447493b8c42941e5f49a44aff8
 AssetOrigin:
   serializedVersion: 1
   productId: 312684
   packageName: "RPG Essentials \u2013 Icon Free Pack (25 items)"
   packageVersion: 1.0
-  assetPath: Assets/Pegasus Studios/Free General RPG Icons/Resources/Icons/Weapons/Axe.png
+  assetPath: Assets/Pegasus Studios/Free General RPG Icons/Resources/Icons/Consumables/health
+    potion.png
   uploadId: 737142
 TextureImporter:
   internalIDToNameTable: []
@@ -52,7 +53,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 1
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 32
