@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 96c7b22a6e46a53449719ca6b460d497
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 196945
+  packageName: '2D Pixel Effect : Attack&Skill'
+  packageVersion: 1.0
+  assetPath: Assets/PixelAttackFx/Animations/Flash/Flash_02/Flash_02_domo.controller
+  uploadId: 441145

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5035751b558438940ad8ec5883bd7d29
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 196945
+  packageName: '2D Pixel Effect : Attack&Skill'
+  packageVersion: 1.0
+  assetPath: Assets/PixelAttackFx/Animations/Skill/Skill_05/Skill_05_color1.controller
+  uploadId: 441145
