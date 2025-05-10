@@ -25,8 +25,9 @@ public class AudioSystem : BaseObject
         {
             BGM_Player = audioPlayerPool.Burrow<AudioPlayer>();
             int playerID = BGM_Player.GetInstanceID();
-            BGM_Player.SetLoop(); // BGM 루프 설정
+            BGM_Player.gameObject.name = "BGM Player";
             BGM_Player.Init(playerID, null); // BGM 플레이어 초기화    
+            BGM_Player.SetLoop(); // BGM 루프 설정
         }
 
         SFX_Player = new Dictionary<int, AudioPlayer>();

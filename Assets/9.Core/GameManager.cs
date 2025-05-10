@@ -187,6 +187,17 @@ public class GameManager : SingleTon<GameManager>
 
         audioSystem.Init(); // 오디오 시스템 초기화
 
-        
+        Addressables.LoadAssetAsync<AudioClip>("02 Through The Lands - Atmospheres Part I").Completed += (result) =>
+        {
+            if (result.Status != UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
+            {
+                return;
+            }
+
+            if (SceneManager.GetActiveScene().buildIndex == 0)
+            {
+                audioSystem.GetBGM_Player().Play(result.Result);
+            }
+        };
     }
 }

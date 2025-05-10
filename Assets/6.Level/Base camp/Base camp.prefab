@@ -431,6 +431,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startPoint: {x: -24.85, y: -1.97}
+  BGM_Clip: {fileID: 8300000, guid: a4a0dcdba45e64a39be4191197b9d75f, type: 3}
 --- !u!1 &3081699141788946358
 GameObject:
   m_ObjectHideFlags: 0

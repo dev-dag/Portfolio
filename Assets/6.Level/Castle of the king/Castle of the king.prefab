@@ -31337,6 +31337,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startPoint: {x: -38.83, y: -6.49}
+  BGM_Clip: {fileID: 8300000, guid: d69597c64f8ca4858b52e7c5f764183d, type: 3}
   npc: {fileID: 5630469669583448935}
   closeUpLensValue: 5
 --- !u!1001 &9127150820821740045

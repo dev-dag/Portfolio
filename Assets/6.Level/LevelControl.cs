@@ -3,8 +3,17 @@
 public abstract class LevelControl : BaseObject
 {
     [SerializeField] protected Vector2 startPoint;
+    [SerializeField] protected AudioClip BGM_Clip;
 
     public static LevelControl Current { get; protected set; }
+
+    protected void PlayBGM()
+    {
+        if (BGM_Clip != null)
+        {
+            GameManager.Instance.audioSystem.GetBGM_Player().Play(BGM_Clip);
+        }
+    }
 
     protected override void Awake()
     {
@@ -20,5 +29,6 @@ public abstract class LevelControl : BaseObject
         base.Start();
 
         GameManager.Instance.uiManager.ShowUI_ForCinematic(true);
+        PlayBGM();
     }
 }
