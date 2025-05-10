@@ -2,9 +2,11 @@
 
 public abstract class Entity : MonoBehaviour
 {
-    protected EntityInfo Info { get => info; }
-    protected int HP { get => hp; }
-    protected bool IsDead { get => isDead; }
+    public bool IsInit { get; protected set; } = false;
+
+    public EntityInfo Info { get => info; }
+    public int HP { get => hp; }
+    public bool IsDead { get => isDead; }
 
     [SerializeField] protected EntityInfo info;
     protected int hp;
@@ -14,6 +16,7 @@ public abstract class Entity : MonoBehaviour
     {
         hp = Info.Hp;
         isDead = false;
+        IsInit = true;
 
         return;
     }

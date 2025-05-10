@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 
-public class HealthSlot : MonoBehaviour
+public class HealthSlot : View
 {
-    [SerializeField] private float sizeAnimSpeed = 0.05f;
-    [SerializeField] private float posAnimSpeed = 0.05f;
+    public override void Init()
+    {
+        base.Init();
+    }
 
     public void Destroy()
     {

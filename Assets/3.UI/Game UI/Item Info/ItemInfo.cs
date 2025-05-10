@@ -1,11 +1,9 @@
 ﻿using Database_Table;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 
-public class ItemInfo : MonoBehaviour
+public class ItemInfo : View
 {
     /// <summary>
     /// 현재 보여주고 있는 아이템의 ID반환. 없으면 null 반환
@@ -36,24 +34,36 @@ public class ItemInfo : MonoBehaviour
         }
     }
 
-    [SerializeField] private TMP_Text name;
-    [SerializeField] private TMP_Text type;
-    [SerializeField] private TMP_Text effect;
-    [SerializeField] private TMP_Text description;
+    [SerializeField] private TMP_Text nameTmp;
+    [SerializeField] private TMP_Text typeTmp;
+    [SerializeField] private TMP_Text effectTmp;
+    [SerializeField] private TMP_Text descriptionTmp;
     [SerializeField] private Image image;
 
     private Item current;
     private Canvas canvas;
 
-    private void Awake()
+    public override void Init()
     {
+        base.Init();
+
+        nameTmp.text = string.Empty;
+        typeTmp.text = string.Empty;
+        effectTmp.text = string.Empty;
+        descriptionTmp.text = string.Empty;
+        image.sprite = null;
+        current = null;
         canvas = GetComponentInParent<Canvas>();
+
+        RectTransform rectTransform = GetComponent<RectTransform>();
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        rectTransform.anchoredPosition = Vector2.zero;
     }
 
     /// <summary>
     /// 커서 위치에 특정 아이템 인포를 출력하는 함수
     /// </summary>
-    public async void SetOnCursorBy(int itemID)
+    public void SetOnCursorBy(int itemID)
     {
         current = GameManager.Instance.ReferenceData.item[itemID];
 
@@ -61,10 +71,10 @@ public class ItemInfo : MonoBehaviour
         {
             WeaponInfo weaponInfo = GameManager.Instance.LoadItemInfo<WeaponInfo>(itemID);
             image.sprite = current.IconSprite;
-            name.text = current.Name;
-            type.text = "무기";
-            effect.text = $"공격력 +{weaponInfo.damage}";
-            description.text = weaponInfo.description;
+            nameTmp.text = current.Name;
+            typeTmp.text = "무기";
+            effectTmp.text = $"공격력 +{weaponInfo.damage}";
+            descriptionTmp.text = weaponInfo.description;
 
             this.gameObject.SetActive(true);
         }
@@ -72,10 +82,10 @@ public class ItemInfo : MonoBehaviour
         {
             PotionInfo potionInfo = GameManager.Instance.LoadItemInfo<PotionInfo>(itemID);
             image.sprite = current.IconSprite;
-            name.text = current.Name;
-            type.text = "포션";
-            effect.text = $"회복량 : +{potionInfo.healingAmount}";
-            description.text = potionInfo.description;
+            nameTmp.text = current.Name;
+            typeTmp.text = "포션";
+            effectTmp.text = $"회복량 : +{potionInfo.healingAmount}";
+            descriptionTmp.text = potionInfo.description;
 
             this.gameObject.SetActive(true);
         }

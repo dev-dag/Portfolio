@@ -1,4 +1,5 @@
 ﻿using System;
+using Database_Table;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,8 +22,6 @@ public class GameUI : MonoBehaviour
     [SerializeField] private PlayerInfoPreview playerInfoPreview;
     [SerializeField] private SkillView skillView;
 
-    private Awaitable fadeAwaiter = null;
-
     private void Start()
     {
         dialog.gameObject.SetActive(false);
@@ -35,27 +34,35 @@ public class GameUI : MonoBehaviour
 
     public void Init()
     {
-        dialog.gameObject.SetActive(false);
-        inventory.gameObject.SetActive(false);
-        quickSlot.gameObject.SetActive(true);
-        itemInfo.gameObject.SetActive(false);
-        playerInfoPreview.gameObject.SetActive(true);
-        skillView.gameObject.SetActive(true);
-
+        dialog.Init();
         inventory.Init();
+        quickSlot.Init();
+        itemInfo.Init();
+        playerInfoPreview.Init();
+        skillView.Init();
+        inventory.Init();
+
+        quickSlot.Show();
+        playerInfoPreview.Show();
+        skillView.Show();
     }
 
     public void ShowUI_ForCinematic(bool isShown = false)
     {
-        if (isShown == false)
+        if (isShown)
         {
-            Inventory.Disable();
+            quickSlot.Show();
+            skillView.Show();
+            playerInfoPreview.Show();
         }
+        else
+        {
+            inventory.Hide();
+            dialog.Hide();
 
-        quickSlot.gameObject.SetActive(isShown);
-        skillView.gameObject.SetActive(isShown);
-        playerInfoPreview.gameObject.SetActive(isShown);
+            quickSlot.Hide();
+            skillView.Hide();
+            playerInfoPreview.Hide();
+        }    
     }
-
-   
 }

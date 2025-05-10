@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Dialog : MonoBehaviour
+public class Dialog : View
 {
     public bool IsActing { get; private set; } = false;
     public event Action onDialogEndEvent;
@@ -18,19 +18,26 @@ public class Dialog : MonoBehaviour
 
     private Awaitable typingAwaiter = null;
 
-    private void Awake()
-    {
-        continueDialogAction = GameManager.Instance.globalInputActionAsset.FindActionMap("UI")?.FindAction("ContinueDialog");
-        if (continueDialogAction == null)
-        {
-            EDebug.LogError("Input Action 참조 오류");
-        }
-    }
-
     private void OnDisable()
     {
         // 인풋 액션에 이벤트가 남아있으면 제거
         continueDialogAction.performed -= OnContinueDialog;
+    }
+
+    public override void Init()
+    {
+        IsActing = false;
+        onDialogEndEvent = null;
+        dialogTMP.text = string.Empty;
+        continueDialogAction = GameManager.Instance.globalInputActionAsset.FindActionMap("UI")?.FindAction("ContinueDialog");
+        dialogList = null;
+        currentIndex = 0;
+        
+        if (typingAwaiter != null)
+        {
+            typingAwaiter.Cancel();
+            typingAwaiter = null;
+        }
     }
 
     public void StartDialog(List<string> dialogList, Action callback = null)

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemSlot : MonoBehaviour, IPointerClickHandler, IDragHandler, IPointerMoveHandler, IPointerUpHandler, IPointerExitHandler
+public class ItemSlot : View, IPointerClickHandler, IDragHandler, IPointerMoveHandler, IPointerUpHandler, IPointerExitHandler
 {
     public enum InputStatus
     {
@@ -94,8 +94,27 @@ public class ItemSlot : MonoBehaviour, IPointerClickHandler, IDragHandler, IPoin
         }
     }
 
+    public override void Init()
+    {
+        base.Init();
+
+        this.dragEventHandler = null; 
+        this.clickEventHandler = null;
+        this.hoverEventHandler = null;
+
+        itemContainer = null;
+        onDrag = false;
+        iconImage.sprite = null;
+        iconImage.gameObject.SetActive(false);
+        amountText.text = string.Empty;
+        iconImage.color = new Color(iconImage.color.r, iconImage.color.g, iconImage.color.b, 1f);
+        amountText.alpha = 1f;
+    }
+
     public void Init(DragEventHandler dragEventHandler, ClickEventHandler clickEventHandler, HoverEventHandler hoverEventHandler)
     {
+        Init();
+
         this.dragEventHandler = dragEventHandler;
         this.clickEventHandler = clickEventHandler;
         this.hoverEventHandler = hoverEventHandler;

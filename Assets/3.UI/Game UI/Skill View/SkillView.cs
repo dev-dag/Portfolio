@@ -1,10 +1,19 @@
 ﻿using UnityEngine;
 
-public class SkillView : MonoBehaviour
+public class SkillView : View
 {
     public SkillSlotView skill_0_slotView;
     public SkillSlotView skill_1_slotView;
     public SkillSlotView skill_2_slotView;
+
+    public override void Init()
+    {
+        base.Init();
+
+        skill_0_slotView.Init();
+        skill_1_slotView.Init();
+        skill_2_slotView.Init();
+    }
 
     /// <summary>
     /// 무기에 포함된 스킬로 모든 슬롯을 설정하는 함수. 비우고 싶으면 null을 넣으면 됨.

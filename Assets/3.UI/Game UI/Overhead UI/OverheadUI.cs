@@ -1,9 +1,8 @@
 ﻿using System;
 using TMPro;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 
-public class OverheadUI : PoolingObject
+public class OverheadUI : PoolingView
 {
     private Vector3 offset;
     public Vector3 OffSet
@@ -53,14 +52,31 @@ public class OverheadUI : PoolingObject
         rtr = GetComponent<RectTransform>();
     }
 
+    public override void Init()
+    {
+        base.Init();
+
+        this.followTargetTr = null;
+        this.offset = Vector3.zero;
+        this.origin = Vector3.zero;
+        dialogObject.SetActive(false);
+        dialogTMP.text = string.Empty;
+        gKeyObject.SetActive(false);
+        rtr.anchoredPosition = Vector2.zero;
+    }
+
     public void Init(Transform followTargetTr, Vector3 offset)
     {
+        Init();
+
         this.followTargetTr = followTargetTr;
         this.offset = offset;
     }
 
     public void Init(Vector3 origin, Vector3 offset)
     {
+        Init();
+
         this.origin = origin;
         this.offset = offset;
     }

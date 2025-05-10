@@ -1,16 +1,22 @@
-﻿using UnityEngine;
+﻿using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class SkillSlotView : MonoBehaviour
+public class SkillSlotView : View
 {
     [SerializeField] private Image image;
     [SerializeField] private Image coolTimeImage;
 
     private Skill currentSkill;
 
-    private void Awake()
+    public override void Init()
     {
+        base.Init();
+
         image.gameObject.SetActive(false);
+        image.sprite = null;
+        coolTimeImage.fillAmount = 0f;
+        currentSkill = null;
     }
 
     /// <summary>

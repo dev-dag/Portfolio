@@ -81,7 +81,6 @@ public class Player : Entity, ICombatable
     private Awaitable blinkAwaiter = null;
     private Weapon weaponCache = null;
 
-    private bool isInit = false;
     private AudioPlayer audioPlayer;
 
     private void Awake()
@@ -99,7 +98,7 @@ public class Player : Entity, ICombatable
         
     private void Update()
     {
-        if (isInit == false)
+        if (IsInit == false)
         {
             return;
         }
@@ -113,7 +112,7 @@ public class Player : Entity, ICombatable
 
     private void OnEnable()
     {
-        if (isInit == false)
+        if (IsInit == false)
         {
             return;
         }
@@ -126,15 +125,15 @@ public class Player : Entity, ICombatable
 
     private void OnDisable()
     {
+        if (IsInit == false)
+        {
+            return;
+        }
+
         interactAction.performed -= OnInteract;
         quickSlot_0_Action.performed -= OnQuickSlot_0;
         quickSlot_1_Action.performed -= OnQuickSlot_1;
         quickSlot_2_Action.performed -= OnQuickSlot_2;
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        
     }
 
     /// <summary>
@@ -266,6 +265,22 @@ public class Player : Entity, ICombatable
     {
         base.Init();
 
+        CurrentAnimationState = AnimationState.Idle;
+        BlockInput = false;
+        IsOnGround = true;
+        interactionCurrent = null;
+        onInteration = false;
+        noTakeDamage = false;
+        weaponCache = null;
+
+        if (blinkAwaiter != null)
+        {
+            blinkAwaiter.Cancel();
+            blinkAwaiter = null;
+        }
+
+        render.color = new Color(render.color.r, render.color.g, render.color.b, 1f);
+
         InputActionMap actionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("Player");
 
         moveAction = actionMap.FindAction("Move");
@@ -290,8 +305,6 @@ public class Player : Entity, ICombatable
 
         GameManager.Instance.gameUI.PlayerInfoPreview.Init(hp, null); // 체력 UI 설정
 
-        BT_Root = MakeBehaviourTree();
-
         // 데이터 기반으로 인벤토리 채우기
         Inventory inventory = GameManager.Instance.gameUI.Inventory;
         InstanceData data = GameManager.Instance.InstanceData;
@@ -299,14 +312,20 @@ public class Player : Entity, ICombatable
         if (data.EquippedWeaponID != -1
             && inventory.WeaponSlot.ItemID != null)
         {
-            EquipWeapon(inventory.Items[data.EquippedWeaponID] as Weapon);
+            EquipWeapon(inventory.ItemContainers[data.EquippedWeaponID] as Weapon);
         }
 
         AttachCamera(); // 카메라 팔로우 설정
 
-        audioPlayer = GameManager.Instance.audioSystem.GetUnManagedAudioPlayer(AudioSystem.AudioType.SFX); // 오디오 플레이어 로드
+        if (audioPlayer == null)
+        {
+            audioPlayer = GameManager.Instance.audioSystem.GetUnManagedAudioPlayer(AudioSystem.AudioType.SFX); // 오디오 플레이어 로드
+        }
 
-        isInit = true;
+        if (BT_Root == null)
+        {
+            BT_Root = MakeBehaviourTree();
+        }
     }
 
     private IBehaviourTreeNode MakeBehaviourTree()
@@ -478,7 +497,7 @@ public class Player : Entity, ICombatable
             return;
         }
 
-        GameManager.Instance.gameUI.Inventory.Disable();
+        GameManager.Instance.gameUI.Inventory.Hide();
 
         animator.Play(AnimHash.IDLE);
         CurrentAnimationState = AnimationState.Idle;
@@ -501,7 +520,7 @@ public class Player : Entity, ICombatable
 
         if (quickSlot.ItemID != null)
         {
-            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.Items[quickSlot.ItemID.Value];
+            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.ItemContainers[quickSlot.ItemID.Value];
 
             (itemContainer as Potion).Drink();
         }
@@ -513,7 +532,7 @@ public class Player : Entity, ICombatable
 
         if (quickSlot.ItemID != null)
         {
-            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.Items[quickSlot.ItemID.Value];
+            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.ItemContainers[quickSlot.ItemID.Value];
 
             (itemContainer as Potion).Drink();
         }
@@ -525,7 +544,7 @@ public class Player : Entity, ICombatable
 
         if (quickSlot.ItemID != null)
         {
-            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.Items[quickSlot.ItemID.Value];
+            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.ItemContainers[quickSlot.ItemID.Value];
 
             (itemContainer as Potion).Drink();
         }

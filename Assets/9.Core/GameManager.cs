@@ -63,6 +63,8 @@ public class GameManager : SingleTon<GameManager>
                 break;
             }
         }
+
+        Player.Current.Init();
     }
 
     /// <summary>
@@ -166,7 +168,7 @@ public class GameManager : SingleTon<GameManager>
         Init();
     }
 
-    private async void Init()
+    private void Init()
     {
         DB_Connecter dbConnecter = new DB_Connecter();
         ReferenceData = dbConnecter.ConnectAndLoadDB();

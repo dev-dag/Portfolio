@@ -1228,10 +1228,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d0a009ae40dde34c94023ed65831c51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: {fileID: 1964860590384656668}
-  type: {fileID: 4149966641953261710}
-  effect: {fileID: 3362239596990498216}
-  description: {fileID: 8849815094738038241}
+  nameTmp: {fileID: 1964860590384656668}
+  typeTmp: {fileID: 4149966641953261710}
+  effectTmp: {fileID: 3362239596990498216}
+  descriptionTmp: {fileID: 8849815094738038241}
   image: {fileID: 4680615873650698347}
 --- !u!223 &2981096369945436119
 Canvas:

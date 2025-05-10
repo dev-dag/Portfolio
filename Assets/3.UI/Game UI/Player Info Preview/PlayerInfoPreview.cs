@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerInfoPreview : MonoBehaviour
+public class PlayerInfoPreview : View
 {
     [SerializeField] private Image weaponImage;
     [SerializeField] private GameObject originHealthSlotPrefab;
@@ -10,8 +10,25 @@ public class PlayerInfoPreview : MonoBehaviour
 
     private List<GameObject> healthInstances = new List<GameObject>();
 
+    public override void Init()
+    {
+        base.Init();
+
+        weaponImage.sprite = null;
+        weaponImage.color = new Color(weaponImage.color.r, weaponImage.color.g, weaponImage.color.b, 0f);
+
+        foreach (GameObject health in healthInstances)
+        {
+            Destroy(health);
+        }
+
+        healthInstances.Clear();
+    }
+
     public void Init(int hp, Sprite weaponSprite)
     {
+        Init();
+
         for (int count = 1; count <= hp; count++)
         {
             GameObject newHealth = Instantiate(originHealthSlotPrefab, healthSlotLayoutGroupTr);

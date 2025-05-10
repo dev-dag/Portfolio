@@ -5,9 +5,9 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using static ItemSlot;
 
-public class Inventory : MonoBehaviour
+public class Inventory : View
 {
-    public Dictionary<int, ItemContainer> Items { get; private set; } = new Dictionary<int, ItemContainer>();
+    public Dictionary<int, ItemContainer> ItemContainers { get; private set; } = new Dictionary<int, ItemContainer>();
     public ItemSlot WeaponSlot { get => weaponSlot; }
 
     [Space(20f)]
@@ -24,9 +24,15 @@ public class Inventory : MonoBehaviour
     /// <summary>
     /// 인벤토리 사용 전 호출되어야 하는 함수
     /// </summary>
-    public void Init()
+    public override void Init()
     {
+        base.Init();
+
+        ItemContainers.Clear();
         raycaster = GetComponentInParent<GraphicRaycaster>();
+        holdingItemImage.sprite = null;
+        holdingItemImage.gameObject.SetActive(false);
+        onHolding = false;
 
         // 가방 아이템 슬롯 초기화
         foreach (ItemSlot bagItemSlot in bagItemSlots)
@@ -44,20 +50,20 @@ public class Inventory : MonoBehaviour
 
         // 인벤토리 단축키 설정
         InputActionMap UI_ActionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("UI");
-        UI_ActionMap.FindAction("Cancel").performed += (arg) => Disable();
+        UI_ActionMap.FindAction("Cancel").performed += (arg) => Hide();
         UI_ActionMap.FindAction("Inventory").performed += (arg) =>
         {
             if (Player.Current.OnInteration)
             {
-                Disable();
+                Hide();
             }
             else if (this.gameObject.activeInHierarchy == false)
             {
-                Enable();
+                Show();
             }
             else
             {
-                Disable();
+                Hide();
             }
         };
 
@@ -76,31 +82,31 @@ public class Inventory : MonoBehaviour
             if (data.EquippedWeaponID != -1) // 무기 슬롯에 장착된 무기 설정
             {
                 ItemContainer weaponContainer = ItemContainer.CreateItemContainer(data.EquippedWeaponID, 1);
-                Items.Add(data.EquippedWeaponID, weaponContainer);
+                ItemContainers.Add(data.EquippedWeaponID, weaponContainer);
                 weaponSlot.Set(weaponContainer);
             }
 
             if (data.QuickSlot_0_ID != -1) // 퀵 슬롯 0 설정
             {
-                if (Items.ContainsKey(data.QuickSlot_0_ID))
+                if (ItemContainers.ContainsKey(data.QuickSlot_0_ID))
                 {
-                    SetQuickSlot(0, Items[data.QuickSlot_0_ID]);
+                    SetQuickSlot(0, ItemContainers[data.QuickSlot_0_ID]);
                 }
             }
 
             if (data.QuickSlot_1_ID != -1) // 퀵 슬롯 1 설정
             {
-                if (Items.ContainsKey(data.QuickSlot_1_ID))
+                if (ItemContainers.ContainsKey(data.QuickSlot_1_ID))
                 {
-                    SetQuickSlot(1, Items[data.QuickSlot_1_ID]);
+                    SetQuickSlot(1, ItemContainers[data.QuickSlot_1_ID]);
                 }
             }
 
             if (data.QuickSlot_2_ID != -1) // 퀵 슬롯 2 설정
             {
-                if (Items.ContainsKey(data.QuickSlot_2_ID))
+                if (ItemContainers.ContainsKey(data.QuickSlot_2_ID))
                 {
-                    SetQuickSlot(2, Items[data.QuickSlot_2_ID]);
+                    SetQuickSlot(2, ItemContainers[data.QuickSlot_2_ID]);
                 }
             }
         }
@@ -129,7 +135,7 @@ public class Inventory : MonoBehaviour
     /// </summary>
     public bool AddItem(int itemID, int amount)
     {
-        if (Items.TryGetValue(itemID, out ItemContainer container))
+        if (ItemContainers.TryGetValue(itemID, out ItemContainer container))
         {
             container.Amount += amount;
 
@@ -144,7 +150,7 @@ public class Inventory : MonoBehaviour
                 ItemContainer newContainer = ItemContainer.CreateItemContainer(itemID, amount);
                 newContainer.OnValueChanged += CheckItemValid;
 
-                Items.Add(itemID, newContainer);
+                ItemContainers.Add(itemID, newContainer);
                 emptyBagSlot.Set(newContainer);
 
                 for (int index = 0; index < quickItemSlots.Count; index++)
@@ -170,26 +176,14 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 인벤토리 활성화
-    /// </summary>
-    public void Enable()
+    public override void Show()
     {
-        if (this.gameObject.activeInHierarchy == false)
-        {
-            this.gameObject.SetActive(true);
-        }
+        base.Show();
     }
 
-    /// <summary>
-    /// 인벤토리 비활성화
-    /// </summary>
-    public void Disable()
+    public override void Hide()
     {
-        if (this.gameObject.activeInHierarchy == true)
-        {
-            this.gameObject.SetActive(false);
-        }
+        base.Hide();
     }
 
     private void CheckItemValid(ItemContainer container)
@@ -197,7 +191,7 @@ public class Inventory : MonoBehaviour
         if (container.Amount <= 0)
         {
             container.OnValueChanged -= CheckItemValid;
-            Items.Remove(container.Item.ID);
+            ItemContainers.Remove(container.Item.ID);
         }
     }
 
@@ -207,7 +201,7 @@ public class Inventory : MonoBehaviour
     private void OnSlotDragging(ItemSlot trigger, Vector2 position, ItemSlot.InputStatus status)
     {
         if (trigger.ItemID == null
-             || Items.ContainsKey(trigger.ItemID.Value) == false)
+             || ItemContainers.ContainsKey(trigger.ItemID.Value) == false)
         {
             return;
         }
@@ -254,25 +248,25 @@ public class Inventory : MonoBehaviour
                     if (dropSlot != null)
                     {
                         if (dropSlot == weaponSlot // Weapon Slot 인지 체크
-                            && Items[trigger.ItemID.Value].Item.TypeEnum == Database_Table.Item.ItemType.Weapon) // trigger가 무기 타입인 경우 스왑.
+                            && ItemContainers[trigger.ItemID.Value].Item.TypeEnum == Database_Table.Item.ItemType.Weapon) // trigger가 무기 타입인 경우 스왑.
                         {
                             SwapSlotItem(trigger, dropSlot);
                         }
                         else if (dropSlot is ExclusiveItemSlot // Quick Slot 인지 체크
-                            && Items[trigger.ItemID.Value].Item.TypeEnum == Database_Table.Item.ItemType.Potion) // trigger가 포션 타입인 경우
+                            && ItemContainers[trigger.ItemID.Value].Item.TypeEnum == Database_Table.Item.ItemType.Potion) // trigger가 포션 타입인 경우
                         {
                             if (trigger is ExclusiveItemSlot) // trigger도 퀵슬롯이변 퀵슬롯 간 변경
                             {
                                 ItemContainer dropContainer = null;
                                 if (dropSlot.ItemID != null)
                                 {
-                                    dropContainer = Items[dropSlot.ItemID.Value];
+                                    dropContainer = ItemContainers[dropSlot.ItemID.Value];
                                 }
 
                                 ItemContainer triggerContainer = null;
                                 if (trigger.ItemID != null)
                                 {
-                                    triggerContainer = Items[trigger.ItemID.Value];
+                                    triggerContainer = ItemContainers[trigger.ItemID.Value];
                                 }
 
                                 SetQuickSlot(quickItemSlots.IndexOf(trigger as ExclusiveItemSlot), dropContainer);
@@ -292,7 +286,7 @@ public class Inventory : MonoBehaviour
                                     }
                                 }
 
-                                SetQuickSlot(quickItemSlots.IndexOf(dropSlot as ExclusiveItemSlot), Items[trigger.ItemID.Value]); // 스왑 없이 퀵슬롯 설정
+                                SetQuickSlot(quickItemSlots.IndexOf(dropSlot as ExclusiveItemSlot), ItemContainers[trigger.ItemID.Value]); // 스왑 없이 퀵슬롯 설정
                             }
                         }
                         else
@@ -312,7 +306,7 @@ public class Inventory : MonoBehaviour
                 }
                 else
                 {
-                    Player.Current.EquipWeapon(Items[weaponSlot.ItemID.Value] as Weapon);
+                    Player.Current.EquipWeapon(ItemContainers[weaponSlot.ItemID.Value] as Weapon);
                 }
 
                 trigger.SetAlpha(1f);
@@ -344,7 +338,7 @@ public class Inventory : MonoBehaviour
             return;
         }
 
-        ItemContainer container = Items[trigger.ItemID.Value];
+        ItemContainer container = ItemContainers[trigger.ItemID.Value];
 
         if (button == PointerEventData.InputButton.Right) // 우클릭의 경우
         {
@@ -374,7 +368,7 @@ public class Inventory : MonoBehaviour
             }
             else
             {
-                Player.Current.EquipWeapon(Items[weaponSlot.ItemID.Value] as Weapon);
+                Player.Current.EquipWeapon(ItemContainers[weaponSlot.ItemID.Value] as Weapon);
             }
         }
     }
@@ -418,12 +412,12 @@ public class Inventory : MonoBehaviour
 
         if (b.ItemID != null)
         {
-            bContainer = Items[b.ItemID.Value];
+            bContainer = ItemContainers[b.ItemID.Value];
         }
 
         if (a.ItemID != null)
         {
-            b.Set(Items[a.ItemID.Value]);
+            b.Set(ItemContainers[a.ItemID.Value]);
         }
         else
         {
