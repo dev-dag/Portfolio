@@ -67,7 +67,7 @@ public class ItemInfo : View
     {
         current = GameManager.Instance.ReferenceData.item[itemID];
 
-        if (current.TypeEnum == Item.ItemType.Weapon)
+        if (current.TypeEnum == ItemTypeEnum.Weapon)
         {
             WeaponInfo weaponInfo = GameManager.Instance.LoadItemInfo<WeaponInfo>(itemID);
             image.sprite = current.IconSprite;
@@ -78,7 +78,7 @@ public class ItemInfo : View
 
             this.gameObject.SetActive(true);
         }
-        else if (current.TypeEnum == Item.ItemType.Potion)
+        else if (current.TypeEnum == ItemTypeEnum.Potion)
         {
             PotionInfo potionInfo = GameManager.Instance.LoadItemInfo<PotionInfo>(itemID);
             image.sprite = current.IconSprite;

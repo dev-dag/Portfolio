@@ -1,19 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using SQLite4Unity3d;
-using System;
-using UnityEngine.AddressableAssets;
 
 namespace Database_Table
 {
     [Table("Item")]
     public class Item
     {
-        public enum ItemType
-        {
-            Potion = 0,
-            Weapon = 1,
-        }
-
         [Column("id"), PrimaryKey]
         public int ID { get; set; }
 
@@ -26,11 +18,11 @@ namespace Database_Table
         [Column("class_type")]
         public string ClassTypeString { get; set; }
 
-        public ItemType TypeEnum
+        public ItemTypeEnum TypeEnum
         {
             get
             {
-                return (ItemType)Type;
+                return (ItemTypeEnum)Type;
             }
         }
 

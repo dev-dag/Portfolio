@@ -248,12 +248,12 @@ public class Inventory : View
                     if (dropSlot != null)
                     {
                         if (dropSlot == weaponSlot // Weapon Slot 인지 체크
-                            && ItemContainers[trigger.ItemID.Value].Item.TypeEnum == Database_Table.Item.ItemType.Weapon) // trigger가 무기 타입인 경우 스왑.
+                            && ItemContainers[trigger.ItemID.Value].Item.TypeEnum == ItemTypeEnum.Weapon) // trigger가 무기 타입인 경우 스왑.
                         {
                             SwapSlotItem(trigger, dropSlot);
                         }
                         else if (dropSlot is ExclusiveItemSlot // Quick Slot 인지 체크
-                            && ItemContainers[trigger.ItemID.Value].Item.TypeEnum == Database_Table.Item.ItemType.Potion) // trigger가 포션 타입인 경우
+                            && ItemContainers[trigger.ItemID.Value].Item.TypeEnum == ItemTypeEnum.Potion) // trigger가 포션 타입인 경우
                         {
                             if (trigger is ExclusiveItemSlot) // trigger도 퀵슬롯이변 퀵슬롯 간 변경
                             {
@@ -353,11 +353,11 @@ public class Inventory : View
             {
                 SetQuickSlot(quickItemSlots.IndexOf(trigger as ExclusiveItemSlot), null);
             }
-            else if (container.Item.TypeEnum == Database_Table.Item.ItemType.Weapon) // trigger가 소지품 슬롯이고 무기 타입 아이템인 경우
+            else if (container.Item.TypeEnum == ItemTypeEnum.Weapon) // trigger가 소지품 슬롯이고 무기 타입 아이템인 경우
             {
                 SwapSlotItem(trigger, weaponSlot);
             }
-            else if (container.Item.TypeEnum == Database_Table.Item.ItemType.Potion) // trigger가 소지품 슬롯이고 포션 타입 아이템인 경우
+            else if (container.Item.TypeEnum == ItemTypeEnum.Potion) // trigger가 소지품 슬롯이고 포션 타입 아이템인 경우
             {
                 (container as Potion).Drink();
             }

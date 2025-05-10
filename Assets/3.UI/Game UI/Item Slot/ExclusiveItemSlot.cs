@@ -1,4 +1,4 @@
-public class ExclusiveItemSlot : ItemSlot
+﻿public class ExclusiveItemSlot : ItemSlot
 {
     protected override void OnContainerValueChange(ItemContainer changed)
     {
@@ -11,7 +11,7 @@ public class ExclusiveItemSlot : ItemSlot
         {
             iconImage.gameObject.SetActive(true);
 
-            if (itemContainer.Item.TypeEnum == Database_Table.Item.ItemType.Potion)
+            if (itemContainer.Item.TypeEnum == ItemTypeEnum.Potion)
             {
                 amountText.text = itemContainer.Amount.ToString();
             }
@@ -22,7 +22,7 @@ public class ExclusiveItemSlot : ItemSlot
         {
             iconImage.gameObject.SetActive(true);
 
-            if (itemContainer.Item.TypeEnum == Database_Table.Item.ItemType.Potion)
+            if (itemContainer.Item.TypeEnum == ItemTypeEnum.Potion)
             {
                 amountText.text = itemContainer.Amount.ToString();
             }

@@ -48,13 +48,11 @@ public class ItemContainer
 
         if (GameManager.Instance.ReferenceData.item.TryGetValue(id, out Item data))
         {
-            if (data.TypeEnum == Item.ItemType.Weapon)
+            if (data.TypeEnum == ItemTypeEnum.Weapon)
             {
-                Type type = Type.GetType(data.ClassTypeString);
-
-                newContainer = Activator.CreateInstance(type) as Weapon;
+                newContainer = WeaponFactory.CreateWeapon((WeaponEnum)id);
             }
-            else if (data.TypeEnum == Item.ItemType.Potion)
+            else if (data.TypeEnum == ItemTypeEnum.Potion)
             {
                 newContainer = new Potion();
             }

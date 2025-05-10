@@ -1,0 +1,7 @@
+1. 무기 스킬 오디오 클립
+2. 무기 스킬 VFX 오버라이드 애니메이터, 클립 (Core/Combat System/Animation 내용물 상속)
+3. 무기 아이콘 Sprite
+4. 스킬 데이터 (SkillData)
+5. Weapon 타입을 상속받는 클래스
+6. WeaponEnum에 추가
+7. WeaponFactory에 추가

@@ -219,7 +219,7 @@ public class ItemSlot : View, IPointerClickHandler, IDragHandler, IPointerMoveHa
         {
             iconImage.gameObject.SetActive(true);
 
-            if (itemContainer.Item.TypeEnum == Database_Table.Item.ItemType.Potion)
+            if (itemContainer.Item.TypeEnum == ItemTypeEnum.Potion)
             {
                 amountText.text = itemContainer.Amount.ToString();
             }
