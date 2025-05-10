@@ -58,7 +58,7 @@ public class Cat6 : NPC
                         {
                             WaitOneSec(() =>
                             {
-                                GameManager.Instance.uiManager.FadeOut();
+                                GameManager.Instance.globalUI.Fade.FadeOut();
                             });
                         });
                     });

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,7 +14,7 @@ public class Portal : BaseObject, IInteractable
     {
         base.Start();
 
-        overheadUI = GameManager.Instance.uiManager.overheadUI_Pool.Burrow<OverheadUI>();
+        overheadUI = GameManager.Instance.gameUI.OverheadUI_Pool.Burrow<OverheadUI>();
 
         RectTransform overheadUI_RTR = overheadUI.GetComponent<RectTransform>();
         overheadUI_RTR.anchoredPosition = (Vector2)transform.position + Vector2.up * 1.5f;

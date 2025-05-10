@@ -10,7 +10,7 @@ public class CastleOfTheKingLevelControl : LevelControl
     {
         Player.Current.BlockInput = true;
 
-        GameManager.Instance.uiManager.ShowUI_ForCinematic(false);
+        GameManager.Instance.gameUI.ShowUI_ForCinematic(false);
 
         Progress();
     }

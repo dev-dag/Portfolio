@@ -126,7 +126,7 @@ public class Inventory : BaseObject
         playerActionMap.FindAction("UseSkill_1").Enable();
         playerActionMap.FindAction("UseSkill_2").Enable();
 
-        GameManager.Instance.uiManager.itemInfo.Disable();
+        GameManager.Instance.gameUI.ItemInfo.Disable();
     }
 
     /// <summary>
@@ -400,17 +400,17 @@ public class Inventory : BaseObject
 
         if (status == InputStatus.OnProcessing)
         {
-            var itemInfoUI = GameManager.Instance.uiManager.itemInfo;
+            var itemInfoUI = GameManager.Instance.gameUI.ItemInfo;
 
             if (itemInfoUI.IsActive == false
                  || itemInfoUI.CurrentID.Value != trigger.ItemID)
             {
-                GameManager.Instance.uiManager.itemInfo.SetOnCursorBy(trigger.ItemID.Value);
+                GameManager.Instance.gameUI.ItemInfo.SetOnCursorBy(trigger.ItemID.Value);
             }
         }
         else
         {
-            GameManager.Instance.uiManager.itemInfo.Disable();
+            GameManager.Instance.gameUI.ItemInfo.Disable();
         }
     }
     
@@ -460,7 +460,7 @@ public class Inventory : BaseObject
     {
         quickItemSlots[index].Set(itemContainer);
 
-        ExclusiveItemSlot quickSlot = GameManager.Instance.uiManager.quickSlot.GetQuickSlotByIndex(index);
+        ExclusiveItemSlot quickSlot = GameManager.Instance.gameUI.QuickSlot.GetQuickSlotByIndex(index);
         if (quickSlot != null)
         {
             quickSlot.Set(itemContainer); // 퀵슬롯 UI 업데이트

@@ -163,7 +163,7 @@ public class Player : BaseObject, ICombatable
         info.HP += amount;
 
         // HP UI 반영
-        GameManager.Instance.uiManager.playerInfoPreview.Increase(amount);
+        GameManager.Instance.gameUI.PlayerInfoPreview.Increase(amount);
     }
 
     public void EquipWeapon(Weapon weapon)
@@ -174,15 +174,15 @@ public class Player : BaseObject, ICombatable
         {
             weaponCache = null;
 
-            GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(null); // Info Preview UI 변경
-            GameManager.Instance.uiManager.skillView.SetSkill(null); // 스킬 View UI 설정
+            GameManager.Instance.gameUI.PlayerInfoPreview.SetWeaponSprite(null); // Info Preview UI 변경
+            GameManager.Instance.gameUI.SkillView.SetSkill(null); // 스킬 View UI 설정
         }
         else
         {
             weaponCache = weapon;
 
-            GameManager.Instance.uiManager.playerInfoPreview.SetWeaponSprite(weaponCache.Item.IconSprite); // Info Preview UI 변경
-            GameManager.Instance.uiManager.skillView.SetSkill(weaponCache); // 스킬 View UI 설정
+            GameManager.Instance.gameUI.PlayerInfoPreview.SetWeaponSprite(weaponCache.Item.IconSprite); // Info Preview UI 변경
+            GameManager.Instance.gameUI.SkillView.SetSkill(weaponCache); // 스킬 View UI 설정
         }
     }
 
@@ -297,12 +297,12 @@ public class Player : BaseObject, ICombatable
         interactAction.performed += OnInteract;
 
         info.Init();
-        GameManager.Instance.uiManager.playerInfoPreview.Init(info.HP, null); // 체력 UI 설정
+        GameManager.Instance.gameUI.PlayerInfoPreview.Init(info.HP, null); // 체력 UI 설정
 
         BT_Root = MakeBehaviourTree();
 
         // 데이터 기반으로 인벤토리 채우기
-        Inventory inventory = GameManager.Instance.uiManager.inventory;
+        Inventory inventory = GameManager.Instance.gameUI.Inventory;
         InstanceData data = GameManager.Instance.InstanceData;
         
         if (data.EquippedWeaponID != -1
@@ -487,7 +487,7 @@ public class Player : BaseObject, ICombatable
             return;
         }
 
-        GameManager.Instance.uiManager.inventory.Disable();
+        GameManager.Instance.gameUI.Inventory.Disable();
 
         animator.Play(AnimHash.IDLE);
         CurrentAnimationState = AnimationState.Idle;
@@ -506,11 +506,11 @@ public class Player : BaseObject, ICombatable
 
     private void OnQuickSlot_0(InputAction.CallbackContext context)
     {
-        ExclusiveItemSlot quickSlot = GameManager.Instance.uiManager.quickSlot.GetQuickSlotByIndex(0);
+        ExclusiveItemSlot quickSlot = GameManager.Instance.gameUI.QuickSlot.GetQuickSlotByIndex(0);
 
         if (quickSlot.ItemID != null)
         {
-            ItemContainer itemContainer = GameManager.Instance.uiManager.inventory.Items[quickSlot.ItemID.Value];
+            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.Items[quickSlot.ItemID.Value];
 
             (itemContainer as Potion).Drink();
         }
@@ -518,11 +518,11 @@ public class Player : BaseObject, ICombatable
 
     private void OnQuickSlot_1(InputAction.CallbackContext context)
     {
-        ExclusiveItemSlot quickSlot = GameManager.Instance.uiManager.quickSlot.GetQuickSlotByIndex(1);
+        ExclusiveItemSlot quickSlot = GameManager.Instance.gameUI.QuickSlot.GetQuickSlotByIndex(1);
 
         if (quickSlot.ItemID != null)
         {
-            ItemContainer itemContainer = GameManager.Instance.uiManager.inventory.Items[quickSlot.ItemID.Value];
+            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.Items[quickSlot.ItemID.Value];
 
             (itemContainer as Potion).Drink();
         }
@@ -530,11 +530,11 @@ public class Player : BaseObject, ICombatable
 
     private void OnQuickSlot_2(InputAction.CallbackContext context)
     {
-        ExclusiveItemSlot quickSlot = GameManager.Instance.uiManager.quickSlot.GetQuickSlotByIndex(2);
+        ExclusiveItemSlot quickSlot = GameManager.Instance.gameUI.QuickSlot.GetQuickSlotByIndex(2);
 
         if (quickSlot.ItemID != null)
         {
-            ItemContainer itemContainer = GameManager.Instance.uiManager.inventory.Items[quickSlot.ItemID.Value];
+            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.Items[quickSlot.ItemID.Value];
 
             (itemContainer as Potion).Drink();
         }
@@ -563,7 +563,7 @@ public class Player : BaseObject, ICombatable
         blinkAwaiter = BlinkSpriteRender();
 
         // HP UI 반영
-        GameManager.Instance.uiManager.playerInfoPreview.Decrease((int)damage);
+        GameManager.Instance.gameUI.PlayerInfoPreview.Decrease((int)damage);
     }
 
     private async Awaitable BlinkSpriteRender()

@@ -57,7 +57,7 @@ public class NPC : BaseObject, IInteractable
     /// </summary>
     private void MakeOverheadUI()
     {
-        overheadUI = GameManager.Instance.uiManager.overheadUI_Pool.Burrow<OverheadUI>();
+        overheadUI = GameManager.Instance.gameUI.OverheadUI_Pool.Burrow<OverheadUI>();
     }
 
     /// <summary>
@@ -153,14 +153,14 @@ public class NPC : BaseObject, IInteractable
     /// </summary>
     protected virtual void StartDialog(Action callback = null)
     {
-        if (GameManager.Instance.uiManager.dialog.IsActing || HasDialog() == false)
+        if (GameManager.Instance.gameUI.Dialog.IsActing || HasDialog() == false)
         {
             return;
         }
 
         List<string> stringList = GameManager.Instance.ReferenceData.dialog[NPC_Data.dialogID].DialogTextList;
 
-        GameManager.Instance.uiManager.dialog.StartDialog(stringList, callback);
+        GameManager.Instance.gameUI.Dialog.StartDialog(stringList, callback);
     }
 
     protected virtual void SetOverheadDialog()
@@ -184,7 +184,7 @@ public class NPC : BaseObject, IInteractable
 
         StartDialog();
 
-        GameManager.Instance.uiManager.dialog.onDialogEndEvent += () =>
+        GameManager.Instance.gameUI.Dialog.onDialogEndEvent += () =>
         {
             interactionCallback?.Invoke();
             overheadUI.gameObject.SetActive(true);
@@ -193,6 +193,6 @@ public class NPC : BaseObject, IInteractable
 
     public void CancelInteraction()
     {
-        GameManager.Instance.uiManager.dialog.StopDialog();
+        GameManager.Instance.gameUI.Dialog.StopDialog();
     }
 }

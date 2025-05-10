@@ -75,7 +75,7 @@ namespace Monster
         {
             base.Start();
 
-            overheadUI = GameManager.Instance.uiManager.overheadUI_Pool.Burrow<OverheadUI>();
+            overheadUI = GameManager.Instance.gameUI.OverheadUI_Pool.Burrow<OverheadUI>();
             overheadUI.Init(this.transform, Vector3.zero);
             overheadUI.Enable();
 
@@ -162,7 +162,7 @@ namespace Monster
                     LookAt(Player.Current.transform.position);
 
                     // 다이얼로그 시작.
-                    GameManager.Instance.uiManager.dialog.StartDialog(dialogWrapper.DialogTextList, () =>
+                    GameManager.Instance.gameUI.Dialog.StartDialog(dialogWrapper.DialogTextList, () =>
                     {
                         isInteractable = false;
                         this.gameObject.layer = LayerMask.NameToLayer(GameManager.MONSTER_LAYER_NAME);

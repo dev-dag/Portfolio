@@ -77,7 +77,7 @@ public class QuestNPC : NPC
 
     protected override void StartDialog(Action callback = null)
     {
-        if (GameManager.Instance.uiManager.dialog.IsActing)
+        if (GameManager.Instance.gameUI.Dialog.IsActing)
         {
             return;
         }
@@ -90,19 +90,19 @@ public class QuestNPC : NPC
                 {
                     case Quest.State.OnStartable:
                     {
-                        GameManager.Instance.uiManager.dialog.StartDialog(quest.GetDialog(), () => quest.TryAccept());
+                        GameManager.Instance.gameUI.Dialog.StartDialog(quest.GetDialog(), () => quest.TryAccept());
                         return;
                     }
                     case Quest.State.OnComplete:
                     {
                         {
-                            GameManager.Instance.uiManager.dialog.StartDialog(quest.GetDialog(), () => quest.ReceiveCompleteReward());
+                            GameManager.Instance.gameUI.Dialog.StartDialog(quest.GetDialog(), () => quest.ReceiveCompleteReward());
                             return;
                         }
                     }
                     case Quest.State.OnProgress:
                     {
-                        GameManager.Instance.uiManager.dialog.StartDialog(quest.GetDialog());
+                        GameManager.Instance.gameUI.Dialog.StartDialog(quest.GetDialog());
                         return;
                     }
                 }

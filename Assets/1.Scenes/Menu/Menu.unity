@@ -691,9 +691,11 @@ MonoBehaviour:
   questSystem: {fileID: 197062987}
   combatSystem: {fileID: 1231593700}
   audioSystem: {fileID: 514086281}
-  uiManager: {fileID: 0}
-  Player_Prefab: {fileID: 5527590581588932729, guid: 53bca47de750f584f944fc83a728dbd4, type: 3}
-  UI_Prefab: {fileID: 2355226230311456869, guid: ee0b2feb187134c48979080a86cb0012, type: 3}
+  gameUI: {fileID: 0}
+  globalUI: {fileID: 0}
+  player_Prefab: {fileID: 5527590581588932729, guid: 53bca47de750f584f944fc83a728dbd4, type: 3}
+  gameUI_Prefab: {fileID: 2355226230311456869, guid: ee0b2feb187134c48979080a86cb0012, type: 3}
+  globalUI_Prefab: {fileID: 5119923603476832518, guid: d3e5bd01732f9db4ab95e25cd19db8ce, type: 3}
   baseHomeLevelPrefab: {fileID: 2887648882320850767, guid: fe600c0044c2534498d59d682f5005a3, type: 3}
   dungeonLevelPrefab: {fileID: 8541422702383829968, guid: 9f52ccce8eb3457409b3e3d09c200ea5, type: 3}
 --- !u!4 &1069555080
@@ -890,10 +892,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 2560, y: 1440}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3

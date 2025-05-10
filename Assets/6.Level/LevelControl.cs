@@ -28,7 +28,7 @@ public abstract class LevelControl : BaseObject
     {
         base.Start();
 
-        GameManager.Instance.uiManager.ShowUI_ForCinematic(true);
+        GameManager.Instance.gameUI.ShowUI_ForCinematic(true);
         PlayBGM();
     }
 }

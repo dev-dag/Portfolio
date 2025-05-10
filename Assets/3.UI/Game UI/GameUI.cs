@@ -1,0 +1,63 @@
+﻿using System;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class GameUI : BaseObject
+{
+    public ObjectPool OverheadUI_Pool { get => overheadUI_Pool; }
+    public Dialog Dialog { get => dialog; }
+    public Inventory Inventory { get => inventory; }
+    public QuickSlot QuickSlot { get => quickSlot; }
+    public ItemInfo ItemInfo { get => itemInfo; }
+    public PlayerInfoPreview PlayerInfoPreview { get => playerInfoPreview; }
+    public SkillView SkillView { get => skillView; }
+
+
+    [SerializeField] private ObjectPool overheadUI_Pool;
+    [SerializeField] private Dialog dialog;
+    [SerializeField] private Inventory inventory;
+    [SerializeField] private QuickSlot quickSlot;
+    [SerializeField] private ItemInfo itemInfo;
+    [SerializeField] private PlayerInfoPreview playerInfoPreview;
+    [SerializeField] private SkillView skillView;
+
+    private Awaitable fadeAwaiter = null;
+
+    protected override void Start()
+    {
+        base.Start();
+
+        dialog.gameObject.SetActive(false);
+        inventory.gameObject.SetActive(false);
+        quickSlot.gameObject.SetActive(false);
+        itemInfo.gameObject.SetActive(false);
+        playerInfoPreview.gameObject.SetActive(false);
+        skillView.gameObject.SetActive(false);
+    }
+
+    public void Init()
+    {
+        dialog.gameObject.SetActive(false);
+        inventory.gameObject.SetActive(false);
+        quickSlot.gameObject.SetActive(true);
+        itemInfo.gameObject.SetActive(false);
+        playerInfoPreview.gameObject.SetActive(true);
+        skillView.gameObject.SetActive(true);
+
+        inventory.Init();
+    }
+
+    public void ShowUI_ForCinematic(bool isShown = false)
+    {
+        if (isShown == false)
+        {
+            Inventory.Disable();
+        }
+
+        quickSlot.gameObject.SetActive(isShown);
+        skillView.gameObject.SetActive(isShown);
+        playerInfoPreview.gameObject.SetActive(isShown);
+    }
+
+   
+}

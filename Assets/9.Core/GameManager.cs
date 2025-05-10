@@ -27,11 +27,13 @@ public class GameManager : SingleTon<GameManager>
     public AudioSystem audioSystem;
 
     [Space(20f)]
-    [HideInInspector] public UI_Manager uiManager;
+    [HideInInspector] public GameUI gameUI;
+    [HideInInspector] public GlobalUI globalUI;
 
     [Space(20f), Header("Level Prefabs")]
-    [SerializeField] private GameObject Player_Prefab;
-    [SerializeField] private GameObject UI_Prefab;
+    [SerializeField] private GameObject player_Prefab;
+    [SerializeField] private GameObject gameUI_Prefab;
+    [SerializeField] private GameObject globalUI_Prefab;
     [SerializeField] private GameObject baseHomeLevelPrefab;
     [SerializeField] private GameObject dungeonLevelPrefab;
 
@@ -135,21 +137,23 @@ public class GameManager : SingleTon<GameManager>
 
         EventSystem.current.enabled = false; // 현재 씬 이벤트 시스템 비활성화
 
-        uiManager.FadeOut(1f, async () =>
+        globalUI.Fade.FadeOut(1f, async () =>
         {
             await SceneManager.UnloadSceneAsync(0); // 이전 씬 언로드
 
             await task.Task; // Play 씬이 로드 안된 경우 대기
 
+            gameUI = GameObject.Instantiate(gameUI_Prefab).GetComponent<GameUI>(); // 게임 UI 생성
+            gameUI.Init();
+
             questSystem.Init(); // 퀘스트 시스템 초기화
-            uiManager.Init();
             Player.Current.Init();
 
             GameObject.Instantiate(baseHomeLevelPrefab); // 초기 맵 로드
 
             globalInputActionAsset.Enable(); // 인풋 활성화
 
-            uiManager.FadeIn(1f);
+            globalUI.Fade.FadeIn(1f);
         });
     }
 
@@ -165,7 +169,6 @@ public class GameManager : SingleTon<GameManager>
     private async void Init()
     {
         DB_Connecter dbConnecter = new DB_Connecter();
-
         ReferenceData = dbConnecter.ConnectAndLoadDB();
         cachingAwaiter = MakeCache();
 
@@ -180,10 +183,10 @@ public class GameManager : SingleTon<GameManager>
         }
         , 1, 3, -1, -1);
 
-        uiManager = GameObject.Instantiate(UI_Prefab).GetComponent<UI_Manager>(); // UI 인스턴스 생성 및 초기화
-        DontDestroyOnLoad(uiManager.gameObject); // UI 오브젝트 파괴 방지
+        globalUI = GameObject.Instantiate(globalUI_Prefab).GetComponent<GlobalUI>(); // 글로벌 UI 생성
+        DontDestroyOnLoad(globalUI.gameObject); // UI 오브젝트 파괴 방지
 
-        GameObject.Instantiate(Player_Prefab); // 플레이어 오브젝트 생성
+        GameObject.Instantiate(player_Prefab); // 플레이어 오브젝트 생성
 
         audioSystem.Init(); // 오디오 시스템 초기화
 
