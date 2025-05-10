@@ -142,6 +142,11 @@ public class Player : BaseObject, ICombatable
         quickSlot_2_Action.performed -= OnQuickSlot_2;
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        
+    }
+
     /// <summary>
     /// 생존 여부 반환
     /// </summary>
@@ -219,7 +224,10 @@ public class Player : BaseObject, ICombatable
             return;
         }
 
-        foreach (RaycastHit2D hit in hitArr)
+        Collider2D closeObject = hitArr[0].collider;
+        Vector2 closeDistance = hitArr[0].collider.transform.position - this.transform.position;
+         
+        foreach (RaycastHit2D hit in hitArr) // 상호작용 가능한 오브젝트 중, 더 가까운 오브젝트 선별
         {
             IInteractable interactableHit = hit.collider.GetComponent<IInteractable>();
 
@@ -228,21 +236,29 @@ public class Player : BaseObject, ICombatable
                 continue;
             }
 
-            if (interactionCurrent == null)
+            Vector2 distanceToPlayer = hit.collider.transform.position - this.transform.position; // 플레이어와의 거리 계산
+
+            if (closeDistance.sqrMagnitude > distanceToPlayer.sqrMagnitude) 
             {
-                interactionCurrent = interactableHit;
-
-                interactionCurrent.SetInteractionGuide(true);
+                closeObject = hit.collider;
+                closeDistance = distanceToPlayer;
             }
-            else if (interactableHit != interactionCurrent) // 현재 상호작용 가능한 대상 갱신 후 반환
-            {
-                interactionCurrent.SetInteractionGuide(false);
-                interactionCurrent = interactableHit;
+        }
 
-                interactionCurrent.SetInteractionGuide(true);
+        IInteractable interactable = closeObject.GetComponent<IInteractable>();
 
-                return;
-            }
+        if (interactionCurrent == null)
+        {
+            interactionCurrent = interactable;
+
+            interactionCurrent.SetInteractionGuide(true);
+        }
+        else if (interactable != interactionCurrent) // 현재 상호작용 가능한 대상 갱신 후 반환
+        {
+            interactionCurrent.SetInteractionGuide(false);
+            interactionCurrent = interactable;
+
+            interactionCurrent.SetInteractionGuide(true);
         }
     }
 
