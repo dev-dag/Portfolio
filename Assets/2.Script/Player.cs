@@ -49,14 +49,13 @@ public class Player : Entity, ICombatable
     public bool BlockInput { get; set; } = false; // 시네마틱 연출을 위해서 플레이어의 입력을 차단하기 위한 플래그  
     public bool OnInteration { get => onInteration; }
 
-    [Space(20f)]
+    [Space(30f)]
     [SerializeField] private SpriteRenderer render;
-    [SerializeField] private PlayerInfo info;
     [SerializeField] private Rigidbody2D rigidBody;
     [SerializeField] private Animator animator;
     [SerializeField] private Transform footTr;
 
-    [Space(20f)]
+    [Space(30f)]
     [SerializeField] private float interactableDistance = 2f;
 
     [Space(30f)]
@@ -143,7 +142,7 @@ public class Player : Entity, ICombatable
     /// </summary>
     public bool IsAlive()
     {
-        return info.HP > 0 ? false : true;
+        return hp > 0 ? false : true;
     }
 
     /// <summary>
@@ -151,7 +150,7 @@ public class Player : Entity, ICombatable
     /// </summary>
     public void IncreaseHP(int amount)
     {
-        info.HP += amount;
+        hp += amount;
 
         // HP UI 반영
         GameManager.Instance.gameUI.PlayerInfoPreview.Increase(amount);
@@ -263,8 +262,10 @@ public class Player : Entity, ICombatable
         };
     }
 
-    public void Init()
+    public override void Init()
     {
+        base.Init();
+
         InputActionMap actionMap = GameManager.Instance.globalInputActionAsset.FindActionMap("Player");
 
         moveAction = actionMap.FindAction("Move");
@@ -287,8 +288,7 @@ public class Player : Entity, ICombatable
         interactAction.performed -= OnInteract;
         interactAction.performed += OnInteract;
 
-        info.Init();
-        GameManager.Instance.gameUI.PlayerInfoPreview.Init(info.HP, null); // 체력 UI 설정
+        GameManager.Instance.gameUI.PlayerInfoPreview.Init(hp, null); // 체력 UI 설정
 
         BT_Root = MakeBehaviourTree();
 
@@ -317,18 +317,18 @@ public class Player : Entity, ICombatable
             .Selector("플레이어 BT")
                 .Do(string.Empty, (t) => // 사망 체크 및 처리
                 {
-                    if (info.isDead == true)
+                    if (isDead == true)
                     {
                         return BehaviourTreeStatus.Success;
                     }
-                    else if (info.HP <= 0)
+                    else if (hp <= 0)
                     {
                         GameManager.Instance.audioSystem.PlaySFX(AudioSystem.AudioType.SFX, deadSFX); // SFX 재생
 
                         animator.Play(AnimHash.DEAD); // 사망 애니메이션 재생
                         CurrentAnimationState = AnimationState.Dead;
 
-                        info.isDead = true; // 생존 여부 필드 설정
+                        isDead = true; // 생존 여부 필드 설정
 
                         return BehaviourTreeStatus.Success;
                     }
@@ -396,7 +396,7 @@ public class Player : Entity, ICombatable
                             Vector2 dir = moveAction.ReadValue<Vector2>();
                             float newX = dir.x;
 
-                            rigidBody.linearVelocityX = newX * info.speed;
+                            rigidBody.linearVelocityX = newX * Info.Speed;
 
                             // 회전 처리
                             {
@@ -420,7 +420,7 @@ public class Player : Entity, ICombatable
                             audioPlayer.SetLoop(false);
                             audioPlayer.Play(jumpSFX); // SFX 재생
 
-                            rigidBody.linearVelocityY += info.jumpPower;
+                            rigidBody.linearVelocityY += Info.JumpPower;
                         }
 
                         return BehaviourTreeStatus.Success;
@@ -542,7 +542,7 @@ public class Player : Entity, ICombatable
         vfx.Init(this.transform.position + Vector3.up * 2f);
         vfx.Enable();
 
-        info.HP -= damage;
+        hp -= damage;
 
         if (blinkAwaiter != null)
         {

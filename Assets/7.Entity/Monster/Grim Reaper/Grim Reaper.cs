@@ -4,7 +4,7 @@ using System;
 
 namespace Monster
 {
-    public class Boss : Monster, IInteractable, ICombatable
+    public class GrimReaper : Monster, IInteractable, ICombatable
     {
         public enum SkillState
         {
@@ -26,8 +26,7 @@ namespace Monster
             public static readonly int RUSH = Animator.StringToHash("Rush");
         }
 
-        public bool IsDead { get; private set; } = false;
-
+        [Space(30f)]
         [SerializeField] private Animator anim;
         [SerializeField] private Rigidbody2D rb;
         [SerializeField] private SpriteRenderer render;
@@ -90,7 +89,7 @@ namespace Monster
 
         void ICombatable.TakeHit(int damage, Entity hitter)
         {
-            if (isInteractable || IsDead)
+            if (isInteractable || isDead)
             {
                 return;
             }
@@ -194,18 +193,6 @@ namespace Monster
 
         #region Behaviour Tree
 
-        [ContextMenu("BT 초기화 함수")]
-        private void ResetBehaviourTree()
-        {
-            currentSkill = SkillState.None;
-            currentPlayingAnim = -1;
-            nextActionTime = -1f;
-            hp = info.hp;
-            IsDead = false;
-
-            anim.Play(AnimHash.IDLE);
-        }
-
         // 메인 Behaviour Tree 반환
         private IBehaviourTreeNode GetBehaviourTree()
         {
@@ -214,7 +201,7 @@ namespace Monster
             // BT..
             builder.Selector(string.Empty)
                 .Sequence(string.Empty)
-                    .Condition(string.Empty, (t) => IsDead)
+                    .Condition(string.Empty, (t) => isDead)
                     .Do(string.Empty, (t) =>
                     {
                         if (anim.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimHash.DIE
@@ -232,9 +219,9 @@ namespace Monster
                     .Sequence(string.Empty)
                         .Do(string.Empty, t =>
                         {
-                            if (IsDead == false)
+                            if (isDead == false)
                             {
-                                IsDead = true;
+                                isDead = true;
                                 anim.Play(AnimHash.DIE);
                                 currentPlayingAnim = AnimHash.DIE;
 
@@ -419,7 +406,7 @@ namespace Monster
                                 transform.rotation = Quaternion.Euler(0f, 180f, 0f);
                             }
 
-                            rb.linearVelocityX = Mathf.Sign(dir.x) * info.speed;
+                            rb.linearVelocityX = Mathf.Sign(dir.x) * Info.Speed;
 
                             anim.Play(AnimHash.MOVE);
                             currentPlayingAnim = AnimHash.MOVE;
@@ -528,7 +515,7 @@ namespace Monster
 
                             LookAt(playerTr.position);
 
-                            rb.linearVelocityX = Mathf.Sign(dir.x) * info.speed;
+                            rb.linearVelocityX = Mathf.Sign(dir.x) * Info.Speed;
 
                             anim.Play(AnimHash.MOVE);
                             currentPlayingAnim = AnimHash.MOVE;
@@ -642,7 +629,7 @@ namespace Monster
 
                             LookAt(playerTr.position);
 
-                            rb.linearVelocityX = Mathf.Sign(dir.x) * info.speed;
+                            rb.linearVelocityX = Mathf.Sign(dir.x) * Info.Speed;
 
                             anim.Play(AnimHash.MOVE);
                             currentPlayingAnim = AnimHash.MOVE;
@@ -755,7 +742,7 @@ namespace Monster
 
                             LookAt(playerTr.position);
 
-                            rb.linearVelocityX = Mathf.Sign(dir.x) * info.speed;
+                            rb.linearVelocityX = Mathf.Sign(dir.x) * Info.Speed;
 
                             anim.Play(AnimHash.MOVE);
                             currentPlayingAnim = AnimHash.MOVE;

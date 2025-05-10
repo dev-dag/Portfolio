@@ -4,13 +4,9 @@ namespace Monster
 {
     public class Monster : Entity
     {
-        [SerializeField] protected MonsterInfo info;
-        protected int hp;
-
-        public void Init()
+        public override void Init()
         {
-            hp = info.hp;
+            base.Init();
         }
     }
-
 }

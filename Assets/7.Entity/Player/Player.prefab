@@ -198,7 +198,7 @@ MonoBehaviour:
   runSFX: {fileID: 8300000, guid: 4865bfa618cb06b4e8651ae00e87f36f, type: 3}
   jumpSFX: {fileID: 8300000, guid: 68e1019f95f3a074c8cb88510b3ed5e3, type: 3}
   landingSFX: {fileID: 8300000, guid: d669913aff4d06d49902eed6536acfa7, type: 3}
-  deadSFX: {fileID: 0}
+  deadSFX: {fileID: 8300000, guid: dbf5952743d6b8344aa4fb19196d89d9, type: 3}
 --- !u!50 &1227313422299097224
 Rigidbody2D:
   serializedVersion: 5
