@@ -145,7 +145,10 @@ public class GameManager : SingleTon<GameManager>
 
             await task.Task; // Play 씬이 로드 안된 경우 대기
 
-            gameUI = GameObject.Instantiate(gameUI_Prefab).GetComponent<GameUI>(); // 게임 UI 생성
+            if (gameUI == null)
+            {
+                gameUI = GameObject.Instantiate(gameUI_Prefab).GetComponent<GameUI>(); // 게임 UI 생성
+            }
             gameUI.Init();
 
             questSystem.Init(); // 퀘스트 시스템 초기화
