@@ -1,8 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerInfoPreview : BaseObject
+public class PlayerInfoPreview : MonoBehaviour
 {
     [SerializeField] private Image weaponImage;
     [SerializeField] private GameObject originHealthSlotPrefab;

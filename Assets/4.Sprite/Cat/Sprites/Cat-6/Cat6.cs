@@ -20,20 +20,16 @@ public class Cat6 : NPC
     private IBehaviourTreeNode behaviourTreeRoot;
     private bool doBehaviourTree = false;
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
-
         animator.Play(AnimHash.ITCH);
         behaviourTreeRoot = GetBehaviourTree();
 
         WaitOneSec(() => doBehaviourTree = true);
     }
 
-    protected override void Update()
+    private void Update()
     {
-        base.Update();
-
         if (doBehaviourTree)
         {
             behaviourTreeRoot.Tick(new TimeData(Time.deltaTime));

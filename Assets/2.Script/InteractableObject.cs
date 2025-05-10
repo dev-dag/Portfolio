@@ -1,15 +1,13 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class InteractableObject : BaseObject
+public class InteractableObject : MonoBehaviour
 {
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
         if (GetComponent<Collider2D>().isTrigger == false)
         {
-            EDebug.LogWarning("ÀÎÀÚ·Î ¼³Á¤µÈ Ãæµ¹Ã¼°¡ Æ®¸®°Å Å¸ÀÔÀÌ ¾Æ´Ô.");
+            EDebug.LogWarning("ì¸ìë¡œ ì„¤ì •ëœ ì¶©ëŒì²´ê°€ íŠ¸ë¦¬ê±° íƒ€ì…ì´ ì•„ë‹˜.");
             return;
         }
     }

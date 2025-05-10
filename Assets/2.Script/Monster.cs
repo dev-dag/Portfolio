@@ -1,8 +1,8 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Monster
 {
-    public class Monster : BaseObject
+    public class Monster : Entity
     {
         [SerializeField] protected MonsterInfo info;
         protected int hp;

@@ -1,11 +1,11 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class LinearDynamicSkill : SkillAction
 {
     private Vector2 dir;
     private float speed;
 
-    public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller, Vector2 dir, float speed)
+    public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, Entity caller, Vector2 dir, float speed)
     {
         Init(weaponDamage, position, rotation, layer, data, caller, new Option());
 
@@ -13,20 +13,13 @@ public class LinearDynamicSkill : SkillAction
         this.speed = speed;
     }
 
-    public override void Enable()
+    private void Update()
     {
-        base.Enable();
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
         if (dir != Vector2.zero)
         {
             this.transform.position += new Vector3(dir.x * speed * Time.deltaTime, dir.y * speed * Time.deltaTime, 0f);
 
-            if (proxyCollider != null) // ¹°¸® Ã³¸®·Î ÀÎÇØ ReturnÇÔ¼ö°¡ È£ÃâµÈ °æ¿ì proxyCollider ÀÎ½ºÅÏ½º°¡ nullÀÏ ¼ö ÀÖÀ½.
+            if (proxyCollider != null) // ë¬¼ë¦¬ ì²˜ë¦¬ë¡œ ì¸í•´ Returní•¨ìˆ˜ê°€ í˜¸ì¶œëœ ê²½ìš° proxyCollider ì¸ìŠ¤í„´ìŠ¤ê°€ nullì¼ ìˆ˜ ìˆìŒ.
             {
                 proxyCollider.transform.position = this.transform.position;
             }

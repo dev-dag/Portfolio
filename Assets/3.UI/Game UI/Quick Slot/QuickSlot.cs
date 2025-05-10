@@ -1,12 +1,12 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
-public class QuickSlot : BaseObject
+public class QuickSlot : MonoBehaviour
 {
     [SerializeField] private List<ExclusiveItemSlot> quickSlots;
 
     /// <summary>
-    /// Æ¯Á¤ ¾ÆÀÌÅÛÀ» °¡Áö°í ÀÖ´Â ½½·ÔÀ» ¹İÈ¯
+    /// íŠ¹ì • ì•„ì´í…œì„ ê°€ì§€ê³  ìˆëŠ” ìŠ¬ë¡¯ì„ ë°˜í™˜
     /// </summary>
     public ExclusiveItemSlot GetQuickSlot(int holdingItemID)
     {

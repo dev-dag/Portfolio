@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameUI : BaseObject
+public class GameUI : MonoBehaviour
 {
     public ObjectPool OverheadUI_Pool { get => overheadUI_Pool; }
     public Dialog Dialog { get => dialog; }
@@ -23,10 +23,8 @@ public class GameUI : BaseObject
 
     private Awaitable fadeAwaiter = null;
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
-
         dialog.gameObject.SetActive(false);
         inventory.gameObject.SetActive(false);
         quickSlot.gameObject.SetActive(false);

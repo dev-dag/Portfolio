@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 
-public class ItemInfo : BaseObject
+public class ItemInfo : MonoBehaviour
 {
     /// <summary>
     /// 현재 보여주고 있는 아이템의 ID반환. 없으면 null 반환
@@ -45,10 +45,8 @@ public class ItemInfo : BaseObject
     private Item current;
     private Canvas canvas;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
         canvas = GetComponentInParent<Canvas>();
     }
 
@@ -85,10 +83,8 @@ public class ItemInfo : BaseObject
         SetPositionToCursorBased();
     }
 
-    protected override void Update()
+    private void Update()
     {
-        base.Update();
-
         SetPositionToCursorBased();
     }
 

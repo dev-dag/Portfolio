@@ -1,22 +1,20 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 
-public class SkillSlotView : BaseObject
+public class SkillSlotView : MonoBehaviour
 {
     [SerializeField] private Image image;
     [SerializeField] private Image coolTimeImage;
 
     private Skill currentSkill;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
         image.gameObject.SetActive(false);
     }
 
     /// <summary>
-    /// ºä¿¡ ½ºÅ³À» ÇÒ´çÇÏ´Â ÇÔ¼ö
+    /// ë·°ì— ìŠ¤í‚¬ì„ í• ë‹¹í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public void Set(Skill skill)
     {
@@ -35,10 +33,8 @@ public class SkillSlotView : BaseObject
         }
     }
 
-    protected override void Update()
+    private void Update()
     {
-        base.Update();
-
         if (currentSkill == null)
         {
             return;

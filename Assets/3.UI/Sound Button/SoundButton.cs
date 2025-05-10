@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// UI 버튼에 소리 효과를 추가하는 컴포넌트.
 /// </summary>
 [RequireComponent(typeof(Button))]
-public class SoundButton : BaseObject, IPointerClickHandler, IPointerEnterHandler
+public class SoundButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
 {
     [SerializeField] private AudioClip overAudioClip;
     [SerializeField] private AudioClip clickAudioClip;

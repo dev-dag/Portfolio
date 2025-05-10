@@ -1,6 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public class HealthSlot : BaseObject
+public class HealthSlot : MonoBehaviour
 {
     [SerializeField] private float sizeAnimSpeed = 0.05f;
     [SerializeField] private float posAnimSpeed = 0.05f;

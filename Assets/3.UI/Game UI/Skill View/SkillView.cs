@@ -1,11 +1,13 @@
-public class SkillView : BaseObject
+ï»¿using UnityEngine;
+
+public class SkillView : MonoBehaviour
 {
     public SkillSlotView skill_0_slotView;
     public SkillSlotView skill_1_slotView;
     public SkillSlotView skill_2_slotView;
 
     /// <summary>
-    /// ¹«±â¿¡ Æ÷ÇÔµÈ ½ºÅ³·Î ¸ğµç ½½·ÔÀ» ¼³Á¤ÇÏ´Â ÇÔ¼ö. ºñ¿ì°í ½ÍÀ¸¸é nullÀ» ³ÖÀ¸¸é µÊ.
+    /// ë¬´ê¸°ì— í¬í•¨ëœ ìŠ¤í‚¬ë¡œ ëª¨ë“  ìŠ¬ë¡¯ì„ ì„¤ì •í•˜ëŠ” í•¨ìˆ˜. ë¹„ìš°ê³  ì‹¶ìœ¼ë©´ nullì„ ë„£ìœ¼ë©´ ë¨.
     /// </summary>
     /// <param name="weaponInfo"></param>
     public void SetSkill(Weapon weapon)
@@ -27,7 +29,7 @@ public class SkillView : BaseObject
     }
 
     /// <summary>
-    /// A½ºÅ³ ½½·ÔÀ» ½ºÅ³ µ¥ÀÌÅÍ·Î ¼¼ÆÃÇÏ´Â ÇÔ¼ö. ºñ¿ì°í ½ÍÀ¸¸é nullÀ» ³ÖÀ¸¸é µÊ.
+    /// AìŠ¤í‚¬ ìŠ¬ë¡¯ì„ ìŠ¤í‚¬ ë°ì´í„°ë¡œ ì„¸íŒ…í•˜ëŠ” í•¨ìˆ˜. ë¹„ìš°ê³  ì‹¶ìœ¼ë©´ nullì„ ë„£ìœ¼ë©´ ë¨.
     /// </summary>
     public void SetSkill_0(Skill skill)
     {
@@ -35,7 +37,7 @@ public class SkillView : BaseObject
     }
 
     /// <summary>
-    /// A½ºÅ³ ½½·ÔÀ» ½ºÅ³ µ¥ÀÌÅÍ·Î ¼¼ÆÃÇÏ´Â ÇÔ¼ö. ºñ¿ì°í ½ÍÀ¸¸é nullÀ» ³ÖÀ¸¸é µÊ.
+    /// AìŠ¤í‚¬ ìŠ¬ë¡¯ì„ ìŠ¤í‚¬ ë°ì´í„°ë¡œ ì„¸íŒ…í•˜ëŠ” í•¨ìˆ˜. ë¹„ìš°ê³  ì‹¶ìœ¼ë©´ nullì„ ë„£ìœ¼ë©´ ë¨.
     /// </summary>
     public void SetSkill_1(Skill skill)
     {
@@ -43,7 +45,7 @@ public class SkillView : BaseObject
     }
 
     /// <summary>
-    /// A½ºÅ³ ½½·ÔÀ» ½ºÅ³ µ¥ÀÌÅÍ·Î ¼¼ÆÃÇÏ´Â ÇÔ¼ö. ºñ¿ì°í ½ÍÀ¸¸é nullÀ» ³ÖÀ¸¸é µÊ.
+    /// AìŠ¤í‚¬ ìŠ¬ë¡¯ì„ ìŠ¤í‚¬ ë°ì´í„°ë¡œ ì„¸íŒ…í•˜ëŠ” í•¨ìˆ˜. ë¹„ìš°ê³  ì‹¶ìœ¼ë©´ nullì„ ë„£ìœ¼ë©´ ë¨.
     /// </summary>
     public void SetSkill_2(Skill skill)
     {

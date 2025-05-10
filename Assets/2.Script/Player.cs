@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 /// 동시에 2개 이상의 인스턴스가 존재하면 안되는 클래스.
 /// 반드시 필요한 경우, 반드시 하나의 인스턴스는 Disable 된 상태여야 한다.
 /// </summary>
-public class Player : BaseObject, ICombatable
+public class Player : Entity, ICombatable
 {
     public static Player Current { get; private set; }
 
@@ -85,10 +85,8 @@ public class Player : BaseObject, ICombatable
     private bool isInit = false;
     private AudioPlayer audioPlayer;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
         if (Current == null)
         {
             Current = this;
@@ -99,20 +97,13 @@ public class Player : BaseObject, ICombatable
             Destroy(this);
         }
     }
-
-    protected override void Start()
-    {
-        base.Start();
-    }
-    
-    protected override void Update()
+        
+    private void Update()
     {
         if (isInit == false)
         {
             return;
         }
-
-        base.Update();
 
         BT_Root.Tick(new TimeData(Time.deltaTime));
 
@@ -540,7 +531,7 @@ public class Player : BaseObject, ICombatable
         }
     }
 
-    void ICombatable.TakeHit(int damage, BaseObject hitter)
+    void ICombatable.TakeHit(int damage, Entity hitter)
     {
         if (noTakeDamage)
         {

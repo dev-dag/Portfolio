@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Fade : BaseObject
+public class Fade : MonoBehaviour
 {
     [SerializeField] private Image fadeImage;
 

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(BoxCollider2D))]
-public class NPC : BaseObject, IInteractable
+public class NPC : MonoBehaviour, IInteractable
 {
     public bool IsInit { get; protected set; } = false;
 
@@ -15,10 +15,8 @@ public class NPC : BaseObject, IInteractable
     protected OverheadUI overheadUI;
     private InputAction startDialogAction;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
         startDialogAction = GameManager.Instance.globalInputActionAsset.FindActionMap("UI")?.FindAction("Interact");
         if (startDialogAction == null)
         {
@@ -26,10 +24,8 @@ public class NPC : BaseObject, IInteractable
         }
     }
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
-
         Init();
     }
 

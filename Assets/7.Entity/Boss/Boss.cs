@@ -56,10 +56,8 @@ namespace Monster
 
         private AudioPlayer audioPlayer;
 
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
-
             Init();
 
             this.gameObject.layer = LayerMask.NameToLayer(GameManager.INTERACTABLE_OBJECT_LAYER_NAME);
@@ -71,10 +69,8 @@ namespace Monster
             bt = GetBehaviourTree();
         }
 
-        protected override void Start()
+        private void Start()
         {
-            base.Start();
-
             overheadUI = GameManager.Instance.gameUI.OverheadUI_Pool.Burrow<OverheadUI>();
             overheadUI.Init(this.transform, Vector3.zero);
             overheadUI.Enable();
@@ -84,17 +80,15 @@ namespace Monster
             audioPlayer = GameManager.Instance.audioSystem.GetUnManagedAudioPlayer(AudioSystem.AudioType.SFX);
         }
 
-        protected override void Update()
+        private void Update()
         {
-            base.Update();
-
             if (playerTr != null)
             {
                 bt.Tick(new TimeData(Time.deltaTime));
             }
         }
 
-        void ICombatable.TakeHit(int damage, BaseObject hitter)
+        void ICombatable.TakeHit(int damage, Entity hitter)
         {
             if (isInteractable || IsDead)
             {

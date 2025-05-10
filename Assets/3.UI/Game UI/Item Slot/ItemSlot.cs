@@ -1,9 +1,9 @@
-using TMPro;
+ï»¿using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointerMoveHandler, IPointerUpHandler, IPointerExitHandler
+public class ItemSlot : MonoBehaviour, IPointerClickHandler, IDragHandler, IPointerMoveHandler, IPointerUpHandler, IPointerExitHandler
 {
     public enum InputStatus
     {
@@ -70,9 +70,8 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     private HoverEventHandler hoverEventHandler;
     private bool onDrag = false;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
         iconImage.gameObject.SetActive(false);
     }
 
@@ -103,7 +102,7 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     }
 
     /// <summary>
-    /// µå·¡±× ÀÌº¥Æ®
+    /// ë“œë˜ê·¸ ì´ë²¤íŠ¸
     /// </summary>
     public void OnDrag(PointerEventData eventData)
     {
@@ -116,7 +115,7 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     }
 
     /// <summary>
-    /// Å¬¸¯ ÀÌº¥Æ®
+    /// í´ë¦­ ì´ë²¤íŠ¸
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -124,7 +123,7 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     }
 
     /// <summary>
-    /// ¸¶¿ì½º È£¹ö ÀÌº¥Æ®
+    /// ë§ˆìš°ìŠ¤ í˜¸ë²„ ì´ë²¤íŠ¸
     /// </summary>
     public void OnPointerMove(PointerEventData eventData)
     {
@@ -137,7 +136,7 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     }
 
     /// <summary>
-    /// ¸¶¿ì½º È£¹ö Á¾·á ÀÌº¥Æ®
+    /// ë§ˆìš°ìŠ¤ í˜¸ë²„ ì¢…ë£Œ ì´ë²¤íŠ¸
     /// </summary>
     public void OnPointerExit(PointerEventData eventData)
     {
@@ -150,7 +149,7 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     }
 
     /// <summary>
-    /// µå·¡±× Á¾·á ÀÌº¥Æ®¸¦ ¾Ë¸®±â À§ÇÑ ÀÌº¥Æ®
+    /// ë“œë˜ê·¸ ì¢…ë£Œ ì´ë²¤íŠ¸ë¥¼ ì•Œë¦¬ê¸° ìœ„í•œ ì´ë²¤íŠ¸
     /// </summary>
     public void OnPointerUp(PointerEventData eventData)
     {
@@ -177,7 +176,7 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
             iconImage.sprite = itemContainer.Item.IconSprite;
         }
 
-        // UI ÃÊ±âÈ­
+        // UI ì´ˆê¸°í™”
         OnContainerValueChange(itemContainer);
     }
 
@@ -188,7 +187,7 @@ public class ItemSlot : BaseObject, IPointerClickHandler, IDragHandler, IPointer
     }
 
     /// <summary>
-    /// UIÀÇ »óÅÂ¸¦ ÄÁÅ×ÀÌ³Ê °ªÀ¸·Î °»½Å
+    /// UIì˜ ìƒíƒœë¥¼ ì»¨í…Œì´ë„ˆ ê°’ìœ¼ë¡œ ê°±ì‹ 
     /// </summary>
     protected virtual void OnContainerValueChange(ItemContainer changed)
     {

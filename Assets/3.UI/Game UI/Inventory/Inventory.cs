@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using static ItemSlot;
 
-public class Inventory : BaseObject
+public class Inventory : MonoBehaviour
 {
     public Dictionary<int, ItemContainer> Items { get; private set; } = new Dictionary<int, ItemContainer>();
     public ItemSlot WeaponSlot { get => weaponSlot; }
@@ -104,11 +104,6 @@ public class Inventory : BaseObject
                 }
             }
         }
-    }
-
-    protected override void Start()
-    {
-        base.Start();
     }
 
     private void OnEnable()

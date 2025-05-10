@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Portal : BaseObject, IInteractable
+public class Portal : MonoBehaviour, IInteractable
 {
     [SerializeField] private LevelSelector levelSelector;
 
     private OverheadUI overheadUI;
     private Action callback;
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
-
         overheadUI = GameManager.Instance.gameUI.OverheadUI_Pool.Burrow<OverheadUI>();
 
         RectTransform overheadUI_RTR = overheadUI.GetComponent<RectTransform>();

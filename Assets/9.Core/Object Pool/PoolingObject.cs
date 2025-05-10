@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using UnityEngine;
 
-public abstract class PoolingObject : BaseObject
+public abstract class PoolingObject : MonoBehaviour
 {
     public bool IsReturned { get; set; }
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using TMPro;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
@@ -48,10 +48,8 @@ public class OverheadUI : PoolingObject
 
     public TMP_Text dialogTMP;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
         rtr = GetComponent<RectTransform>();
     }
 
@@ -83,10 +81,8 @@ public class OverheadUI : PoolingObject
         origin = Vector3.zero;
     }
 
-    protected override void Update()
+    private void Update()
     {
-        base.Update();
-
         if (followTargetTr != null)
         {
             rtr.anchoredPosition = followTargetTr.position + offset;

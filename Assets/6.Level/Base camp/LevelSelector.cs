@@ -1,9 +1,9 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class LevelSelector : BaseObject
+public class LevelSelector : MonoBehaviour
 {
     [SerializeField] private List<RectTransform> listArg;
     [SerializeField] private RectTransform cursorRtr;
@@ -20,10 +20,8 @@ public class LevelSelector : BaseObject
 
     private bool isInit = false;
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
-
         InputActionAsset InputActionAsset = GameManager.Instance.globalInputActionAsset;
 
         InputActionMap UI_ActionMap = InputActionAsset.FindActionMap("UI");
@@ -38,7 +36,7 @@ public class LevelSelector : BaseObject
             || confirmAction == null
             || cancelAction == null)
         {
-            EDebug.LogError("¿Œ«≤ Ω√Ω∫≈€ º≥¡§ ø¿∑˘");
+            EDebug.LogError("Ïù∏Ìíã ÏãúÏä§ÌÖú ÏÑ§Ï†ï Ïò§Î•ò");
         }
 
         upAction.performed += OnUp;

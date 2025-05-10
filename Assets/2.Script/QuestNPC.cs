@@ -7,10 +7,8 @@ public class QuestNPC : NPC
 {
     private QuestNPC_Data QuestNPC_Data;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
         QuestNPC_Data = NPC_Data as QuestNPC_Data;
     }
 

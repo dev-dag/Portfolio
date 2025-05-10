@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class GlobalUI : BaseObject
+public class GlobalUI : MonoBehaviour
 {
     public Fade Fade { get => fade; }
 

@@ -1,7 +1,7 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Controller : BaseObject
+public class Controller : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D targetRB;
     [SerializeField] private PlayerInfo playerInfo;
@@ -10,10 +10,8 @@ public class Controller : BaseObject
     private InputActionMap actionMap;
     private InputAction moveAction;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
         inputAction.Enable();
 
         actionMap = inputAction.FindActionMap("Player");
@@ -30,11 +28,9 @@ public class Controller : BaseObject
         jumpAction.started -= OnJump;
     }
 
-    protected override void Update()
+    private void Update()
     {
-        base.Update();
-
-        // ¿Ãµø ¿‘∑¬ √≥∏Æ
+        // Ïù¥Îèô ÏûÖÎ†• Ï≤òÎ¶¨
         if (moveAction.IsPressed())
         {
             Vector2 dir = moveAction.ReadValue<Vector2>();

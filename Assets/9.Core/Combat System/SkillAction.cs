@@ -18,13 +18,13 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
     protected SkillData data;
 
     protected ProxyCollider proxyCollider;
-    protected BaseObject caller;
+    protected Entity caller;
     protected int layer = 0;
     protected bool isHitable = false;
     protected int weaponDamage = 0;
     protected Option option;
 
-    public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, BaseObject caller, Option option)
+    public void Init(int weaponDamage, Vector2 position, Quaternion rotation, int layer, SkillData data, Entity caller, Option option)
     {
         this.data = data;
         this.transform.rotation = rotation;
@@ -42,7 +42,7 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
             this.transform.position = position;
         }
 
-            effectAnimator.transform.localPosition = data.VFX_Offset;
+        effectAnimator.transform.localPosition = data.VFX_Offset;
         effectAnimator.runtimeAnimatorController = data.animationController;
 
         this.gameObject.SetActive(false);
@@ -75,10 +75,8 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
         }
     }
 
-    protected override void Update()
+    private void Update()
     {
-        base.Update();
-
         if (IsReturned)
         {
             return;
@@ -191,22 +189,34 @@ public class SkillAction : PoolingObject, ICombatAnimatorEventListener
             return;
         }
 
-        BaseObject hitObject = collision.attachedRigidbody?.GetComponent<BaseObject>();
+        Rigidbody2D targetRigidBody = collision.attachedRigidbody;
 
-        if (hitObject is ICombatable)
+        if (targetRigidBody == null)
         {
-            ICombatable combatInterface = collision.attachedRigidbody.GetComponent<BaseObject>() as ICombatable;
-
-            combatInterface.TakeHit(weaponDamage + data.additionalDamage, caller);
+            return;
         }
-        else if (hitObject is ProxyCollider) // 스킬과 충돌 체크된 경우 패리 가능한지 체크
+        else
         {
-            SkillAction hitSkill = (hitObject as ProxyCollider).GetSkill();
+            // 엔티티를 타격한 경우
+            ICombatable combatInterface = targetRigidBody.GetComponent<ICombatable>();
 
-            if (hitSkill.GetSkillType() == SkillData.ParryType.Parried
-                && data.parryType == SkillData.ParryType.Parryable)
+            if (combatInterface != null)
             {
-                hitSkill.TryParry();
+                combatInterface.TakeHit(weaponDamage + data.additionalDamage, caller);
+            }
+
+            // 패리 가능한 스킬을 타격한 경우
+            ProxyCollider proxyCollider = targetRigidBody.GetComponent<ProxyCollider>();
+
+            if (proxyCollider != null)
+            {
+                SkillAction hitSkill = proxyCollider.GetSkill();
+
+                if (hitSkill.GetSkillType() == SkillData.ParryType.Parried
+                    && data.parryType == SkillData.ParryType.Parryable)
+                {
+                    hitSkill.TryParry();
+                }
             }
         }
     }

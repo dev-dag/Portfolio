@@ -1,7 +1,7 @@
-using System;
+ï»¿using System;
 using UnityEngine;
 
-public class CombatSystem : BaseObject
+public class CombatSystem : MonoBehaviour
 {
     public enum EntityType
     {
@@ -16,7 +16,7 @@ public class CombatSystem : BaseObject
     [SerializeField] private ObjectPool takeHitVFX_Pool;
 
     /// <summary>
-    /// ¿øÇü ´ë¸® Ãæµ¹Ã¼¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    /// ì›í˜• ëŒ€ë¦¬ ì¶©ëŒì²´ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public BoxProxyCollider GetBoxProxyCollider()
     {
@@ -24,7 +24,7 @@ public class CombatSystem : BaseObject
     }
 
     /// <summary>
-    /// ¿øÇü ´ë¸® Ãæµ¹Ã¼¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    /// ì›í˜• ëŒ€ë¦¬ ì¶©ëŒì²´ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public CircleProxyCollider GetCircleProxyCollider()
     {
@@ -32,7 +32,7 @@ public class CombatSystem : BaseObject
     }
 
     /// <summary>
-    /// ½ºÅ³ ¾×¼Ç ÀÎ½ºÅÏ½º¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    /// ìŠ¤í‚¬ ì•¡ì…˜ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public SkillAction GetSkillAction()
     {
@@ -40,7 +40,7 @@ public class CombatSystem : BaseObject
     }
 
     /// <summary>
-    /// ¼±Çü µ¿Àû ½ºÅ³ ¾×¼Ç ÀÎ½ºÅÏ½º¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    /// ì„ í˜• ë™ì  ìŠ¤í‚¬ ì•¡ì…˜ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public LinearDynamicSkill GetLinearDynamicSkillAction()
     {
@@ -48,7 +48,7 @@ public class CombatSystem : BaseObject
     }
 
     /// <summary>
-    /// ÇÇ°İ ÀÌÆåÆ® ÀÎ½ºÅÏ½º¸¦ ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    /// í”¼ê²© ì´í™íŠ¸ ì¸ìŠ¤í„´ìŠ¤ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public TakeHitVFX GetTakeHitVFX()
     {

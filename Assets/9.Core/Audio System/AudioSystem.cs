@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioSystem : BaseObject
+public class AudioSystem : MonoBehaviour
 {
     public enum AudioType
     {

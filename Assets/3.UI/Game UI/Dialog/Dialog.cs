@@ -1,10 +1,10 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Dialog : BaseObject
+public class Dialog : MonoBehaviour
 {
     public bool IsActing { get; private set; } = false;
     public event Action onDialogEndEvent;
@@ -18,20 +18,18 @@ public class Dialog : BaseObject
 
     private Awaitable typingAwaiter = null;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
         continueDialogAction = GameManager.Instance.globalInputActionAsset.FindActionMap("UI")?.FindAction("ContinueDialog");
         if (continueDialogAction == null)
         {
-            EDebug.LogError("Input Action ÂüÁ¶ ¿À·ù");
+            EDebug.LogError("Input Action ì°¸ì¡° ì˜¤ë¥˜");
         }
     }
 
     private void OnDisable()
     {
-        // ÀÎÇ² ¾×¼Ç¿¡ ÀÌº¥Æ®°¡ ³²¾ÆÀÖÀ¸¸é Á¦°Å
+        // ì¸í’‹ ì•¡ì…˜ì— ì´ë²¤íŠ¸ê°€ ë‚¨ì•„ìˆìœ¼ë©´ ì œê±°
         continueDialogAction.performed -= OnContinueDialog;
     }
 
@@ -56,7 +54,7 @@ public class Dialog : BaseObject
     }
 
     /// <summary>
-    /// ´ÙÀÌ¾ó·Î±×¸¦ Á¤ÁöÇÏ´Â ÇÔ¼ö
+    /// ë‹¤ì´ì–¼ë¡œê·¸ë¥¼ ì •ì§€í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     public void StopDialog()
     {
@@ -64,18 +62,18 @@ public class Dialog : BaseObject
     }
 
     /// <summary>
-    /// ´ÙÀÌ¾ó·Î±× ÅØ½ºÆ®¸¦ ¼³Á¤ÇÏ´Â ÇÔ¼ö
+    /// ë‹¤ì´ì–¼ë¡œê·¸ í…ìŠ¤íŠ¸ë¥¼ ì„¤ì •í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
     private void SetDialog()
     {
-        if (typingAwaiter != null) // Å¸ÀÌÇÎÁßÀÎ °æ¿ì
+        if (typingAwaiter != null) // íƒ€ì´í•‘ì¤‘ì¸ ê²½ìš°
         {
-            typingAwaiter.Cancel(); // Å¸ÀÌÇÎ ·ÎÁ÷À» Ãë¼ÒÇÏ°í Áï½Ã ÀüÃ¼ ÅØ½ºÆ®¸¦ Ãâ·ÂÇÔ.
+            typingAwaiter.Cancel(); // íƒ€ì´í•‘ ë¡œì§ì„ ì·¨ì†Œí•˜ê³  ì¦‰ì‹œ ì „ì²´ í…ìŠ¤íŠ¸ë¥¼ ì¶œë ¥í•¨.
             typingAwaiter = null;
 
             dialogTMP.text = dialogList[currentIndex];
         }
-        else // ´ÙÀ½ ´ÙÀÌ¾ó·Î±×·Î ÁøÇà or Á¾·á
+        else // ë‹¤ìŒ ë‹¤ì´ì–¼ë¡œê·¸ë¡œ ì§„í–‰ or ì¢…ë£Œ
         {
             if (dialogList.Count > currentIndex)
             {
@@ -89,7 +87,7 @@ public class Dialog : BaseObject
     }
 
     /// <summary>
-    /// ContinueDialog ÀÎÇ²ÀÌ µé¾î¿Â °æ¿ì Äİ¹é ÇÔ¼ö
+    /// ContinueDialog ì¸í’‹ì´ ë“¤ì–´ì˜¨ ê²½ìš° ì½œë°± í•¨ìˆ˜
     /// </summary>
     private void OnContinueDialog(InputAction.CallbackContext args)
     {
@@ -102,7 +100,7 @@ public class Dialog : BaseObject
     }
 
     /// <summary>
-    /// ´ÙÀÌ¾ó·Î±×°¡ ³¡³µÀ» ¶§ È£ÃâµÇ´Â ÇÔ¼ö. ÇÊµå¿Í ÇÁ·ÎÆÛÆ¼¸¦ Á¤¸®ÇÑ´Ù.
+    /// ë‹¤ì´ì–¼ë¡œê·¸ê°€ ëë‚¬ì„ ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜. í•„ë“œì™€ í”„ë¡œí¼í‹°ë¥¼ ì •ë¦¬í•œë‹¤.
     /// </summary>
     private void OnDialogEnd()
     {
@@ -111,10 +109,10 @@ public class Dialog : BaseObject
 
         this.gameObject.SetActive(false);
 
-        // ÀÎÇ² ¾×¼Ç¿¡ ´Ş¾Æ³õÀº ÀÌº¥Æ® Á¦°Å
+        // ì¸í’‹ ì•¡ì…˜ì— ë‹¬ì•„ë†“ì€ ì´ë²¤íŠ¸ ì œê±°
         continueDialogAction.performed -= OnContinueDialog;
 
-        // ÇÁ·ÎÆÛÆ¼ »óÅÂ º¯°æ
+        // í”„ë¡œí¼í‹° ìƒíƒœ ë³€ê²½
         IsActing = false;
 
         onDialogEndEvent?.Invoke();

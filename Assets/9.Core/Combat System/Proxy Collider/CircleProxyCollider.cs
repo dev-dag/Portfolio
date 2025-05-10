@@ -1,17 +1,15 @@
-using System;
+ï»¿using System;
 using UnityEngine;
 
 /// <summary>
-/// Skill¿¡¼­ »ç¿ëÇÏ±â À§ÇÑ ´ë¸® Ãæµ¹Ã¼
+/// Skillì—ì„œ ì‚¬ìš©í•˜ê¸° ìœ„í•œ ëŒ€ë¦¬ ì¶©ëŒì²´
 /// </summary>
 public class CircleProxyCollider : ProxyCollider
 {
     private CircleCollider2D circleCollider;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
         circleCollider = GetComponent<CircleCollider2D>();
     }
 

@@ -1,8 +1,8 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPool : BaseObject
+public class ObjectPool : MonoBehaviour
 {
     [SerializeField] private int preparedObjectCount = 10;
     [SerializeField] private GameObject prefab;
@@ -15,9 +15,8 @@ public class ObjectPool : BaseObject
 
     private int count = 1;
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
 
         PrepareInstance();
     }

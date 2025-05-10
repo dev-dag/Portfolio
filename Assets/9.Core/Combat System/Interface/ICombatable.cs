@@ -1,10 +1,10 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public interface ICombatable
 {
     /// <summary>
-    /// Ã¼·ÂÀ» Áõ°¨ÇÏ´Â ÇÔ¼ö
+    /// ì²´ë ¥ì„ ì¦ê°í•˜ëŠ” í•¨ìˆ˜
     /// </summary>
-    /// <param name="damage">Áõ°¨ ¼öÄ¡</param>
-    public void TakeHit(int damage, BaseObject hitter);
+    /// <param name="damage">ì¦ê° ìˆ˜ì¹˜</param>
+    public void TakeHit(int damage, Entity hitter);
 }

@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UIElements;
 
 public class Skill
@@ -15,9 +15,9 @@ public class Skill
         this.weaponDamage = weaponDamage;
     }
 
-    public bool TryOperate(Vector2 position, Quaternion rotation, int layer, BaseObject caller)
+    public bool TryOperate(Vector2 position, Quaternion rotation, int layer, Entity caller)
     {
-        if (Time.time < NextCoolDownTime) // ÄðÅ¸ÀÓÀÌ ¾ÆÁ÷ Áö³ªÁö ¾ÊÀº °æ¿ì
+        if (Time.time < NextCoolDownTime) // ì¿¨íƒ€ìž„ì´ ì•„ì§ ì§€ë‚˜ì§€ ì•Šì€ ê²½ìš°
         {
             return false;
         }
@@ -40,9 +40,9 @@ public class Skill
         }
     }
 
-    public bool TryOperateWithFollow(Transform transform, Quaternion rotation, int layer, BaseObject caller)
+    public bool TryOperateWithFollow(Transform transform, Quaternion rotation, int layer, Entity caller)
     {
-        if (Time.time < NextCoolDownTime) // ÄðÅ¸ÀÓÀÌ ¾ÆÁ÷ Áö³ªÁö ¾ÊÀº °æ¿ì
+        if (Time.time < NextCoolDownTime) // ì¿¨íƒ€ìž„ì´ ì•„ì§ ì§€ë‚˜ì§€ ì•Šì€ ê²½ìš°
         {
             return false;
         }
@@ -65,9 +65,9 @@ public class Skill
         }
     }
 
-    public bool TryOperateLinearDynamic(Vector2 position, Quaternion rotation, int layer, BaseObject caller, Vector2 direction, float speed)
+    public bool TryOperateLinearDynamic(Vector2 position, Quaternion rotation, int layer, Entity caller, Vector2 direction, float speed)
     {
-        if (Time.time < NextCoolDownTime) // ÄðÅ¸ÀÓÀÌ ¾ÆÁ÷ Áö³ªÁö ¾ÊÀº °æ¿ì
+        if (Time.time < NextCoolDownTime) // ì¿¨íƒ€ìž„ì´ ì•„ì§ ì§€ë‚˜ì§€ ì•Šì€ ê²½ìš°
         {
             return false;
         }
@@ -92,7 +92,7 @@ public class Skill
 
     public bool IsOperatable()
     {
-        if (Time.time < NextCoolDownTime) // ÄðÅ¸ÀÓÀÌ ¾ÆÁ÷ Áö³ªÁö ¾ÊÀº °æ¿ì
+        if (Time.time < NextCoolDownTime) // ì¿¨íƒ€ìž„ì´ ì•„ì§ ì§€ë‚˜ì§€ ì•Šì€ ê²½ìš°
         {
             return false;
         }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class LevelControl : BaseObject
+public abstract class LevelControl : MonoBehaviour
 {
     [SerializeField] protected Vector2 startPoint;
     [SerializeField] protected AudioClip BGM_Clip;
@@ -15,19 +15,15 @@ public abstract class LevelControl : BaseObject
         }
     }
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-
         Current = this;
         Player.Current.transform.position = startPoint;
         Player.Current.AttachCamera();
     }
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
-
         GameManager.Instance.gameUI.ShowUI_ForCinematic(true);
         PlayBGM();
     }
