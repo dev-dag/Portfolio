@@ -1,3 +1,6 @@
+Assets/5.Font/나눔손글씨[[:space:]]왼손잡이도[[:space:]]예뻐[[:space:]]SDF.asset filter=lfs diff=lfs merge=lfs -text
+Assets/5.Font/나눔[[:space:]]고딕[[:space:]]SDF.asset filter=lfs diff=lfs merge=lfs -text
+Assets/5.Font/네이버[[:space:]]나눔[[:space:]]명조.asset filter=lfs diff=lfs merge=lfs -text
 *.psd filter=lfs diff=lfs merge=lfs -text
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.Asset filter=lfs diff=lfs merge=lfs -text
