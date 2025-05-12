@@ -19,6 +19,8 @@ public class CastleOfTheKingLevelControl : LevelControl
     {
         await Awaitable.WaitForSecondsAsync(3f); // 1초 대기
 
+        Player.Current.transform.rotation = Quaternion.Euler(0f, 180f, 0f); // 플레이어 회전
+
         npc.gameObject.SetActive(true); // NPC를 활용한 연출 시작
 
         var cam = GameObject.FindWithTag("MainCamera"); // 시네머신 카메라 팔로우 바인딩
