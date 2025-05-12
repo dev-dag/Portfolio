@@ -55,6 +55,7 @@ public class AudioSystem : MonoBehaviour
                 int playerID = player.GetInstanceID();
                 player.Init(playerID, OnSFXEnd); // SFX 플레이어 초기화
                 player.Enable(); // SFX 플레이어 활성화
+                player.SetVolume(SFX_Volume); // SFX 볼륨 설정
                 SFX_Player.Add(playerID, player); // SFX 플레이어 추가
 
                 return player;
@@ -65,6 +66,7 @@ public class AudioSystem : MonoBehaviour
                 int playerID = player.GetInstanceID();
                 player.Init(playerID, OnSFXEnd); // SFX 플레이어 초기화
                 player.Enable(); // SFX 플레이어 활성화
+                player.SetVolume(UI_SFX_Volume); // SFX 볼륨 설정
                 UI_SFX_Player.Add(playerID, player); // SFX 플레이어 추가
 
                 return player;
