@@ -141,6 +141,7 @@ public class GameManager : SingleTon<GameManager>
         else if (cachingAwaiter != null)
         {
             await cachingAwaiter;
+            cachingAwaiter = null;
         }
 
         onProgress = true;

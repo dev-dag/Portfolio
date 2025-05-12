@@ -356,20 +356,6 @@ public class Player : Entity, ICombatable
                     }
                 })
 
-                .Do(string.Empty, (t) =>
-                {
-                    if (BlockInput)
-                    {
-                        animator.Play(AnimHash.IDLE);
-                        CurrentAnimationState = AnimationState.Idle;
-                        return BehaviourTreeStatus.Success;
-                    }
-                    else
-                    {
-                        return BehaviourTreeStatus.Failure;
-                    }
-                })
-
                 .Sequence(string.Empty) // 무기가 장착된 상태에서 공격 처리
                     .Condition(string.Empty, (t) => weaponCache != null)
                     .Selector(string.Empty)
@@ -380,7 +366,14 @@ public class Player : Entity, ICombatable
                                 return BehaviourTreeStatus.Failure;
                             }
 
-                            return weaponCache.GetSkill_0_BehaviourTree(this).Tick(t);
+                            var result = weaponCache.GetSkill_0_BehaviourTree(this).Tick(t);
+
+                            if (result != BehaviourTreeStatus.Failure)
+                            {
+                                audioPlayer.Stop();
+                            }
+
+                            return result;
                         })
 
                         .Do(string.Empty, (t) =>
@@ -390,7 +383,14 @@ public class Player : Entity, ICombatable
                                 return BehaviourTreeStatus.Failure;
                             }
 
-                            return weaponCache.GetSkill_1_BehaviourTree(this).Tick(t);
+                            var result = weaponCache.GetSkill_1_BehaviourTree(this).Tick(t);
+
+                            if (result != BehaviourTreeStatus.Failure)
+                            {
+                                audioPlayer.Stop();
+                            }
+
+                            return result;
                         })
 
                         .Do(string.Empty, (t) =>
@@ -400,16 +400,22 @@ public class Player : Entity, ICombatable
                                 return BehaviourTreeStatus.Failure;
                             }
 
-                            return weaponCache.GetSkill_2_BehaviourTree(this).Tick(t);
+                            var result = weaponCache.GetSkill_2_BehaviourTree(this).Tick(t);
+
+                            if (result != BehaviourTreeStatus.Failure)
+                            {
+                                audioPlayer.Stop();
+                            }
+
+                            return result;
                         })
                     .End()
                 .End()
 
                 .Sequence(string.Empty)
-                    .Condition(string.Empty, (t) => BlockInput == false)
                     .Do(string.Empty, (t) =>
                     {
-                        if (moveAction.IsPressed() && moveAction.IsInProgress()) // 좌우 이동 처리
+                        if (moveAction.IsPressed() && moveAction.IsInProgress() && BlockInput == false) // 좌우 이동 처리
                         {
                             Vector2 dir = moveAction.ReadValue<Vector2>();
                             float newX = dir.x;
@@ -433,7 +439,7 @@ public class Player : Entity, ICombatable
                             }
                         }
 
-                        if (jumpAction.IsPressed() && jumpAction.IsInProgress() && rigidBody.linearVelocityY.IsAlmostEqaul(0f)) // 점프 키가 눌린 경우
+                        if (jumpAction.IsPressed() && jumpAction.IsInProgress() && rigidBody.linearVelocityY.IsAlmostEqaul(0f) && BlockInput == false) // 점프 키가 눌린 경우
                         {
                             audioPlayer.SetLoop(false);
                             audioPlayer.Play(jumpSFX); // SFX 재생

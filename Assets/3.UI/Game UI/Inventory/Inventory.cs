@@ -237,6 +237,7 @@ public class Inventory : View
                 {
                     if (dropSlot == weaponSlot && trigger.ItemType == ItemTypeEnum.Weapon) // Drop이 무기 슬롯이고 Trigger가 무기 타입인 경우 스왑.
                     {
+                        GameManager.Instance.InstanceData.EquippedWeaponID = trigger.ItemID; // 인스턴스 데이터에 장착된 무기 ID 갱신
                         SwapSlotItem(trigger, dropSlot);
                     }
                     else if (dropSlot is ExclusiveItemSlot && trigger.ItemType == ItemTypeEnum.Potion) // Drop이 퀵슬롯이고 Trigger가 포션 타입인 경우 스왑 시도
@@ -297,6 +298,7 @@ public class Inventory : View
             if (weaponSlot.IsEmpty) // 무기 장착 처리
             {
                 Player.Current.EquipWeapon(null);
+                GameManager.Instance.InstanceData.EquippedWeaponID = -1; // 인스턴스 데이터에 장착된 무기 ID 갱신
             }
             else
             {
@@ -334,6 +336,7 @@ public class Inventory : View
                 if (GetEmptyBagItemSlot(out ItemSlot emptyBagSlot))
                 {
                     SwapSlotItem(trigger, emptyBagSlot);
+                    GameManager.Instance.InstanceData.EquippedWeaponID = -1; // 인스턴스 데이터에 장착된 무기 ID 갱신
                 }
             }
             else if (trigger is ExclusiveItemSlot) // trigger가 퀵 슬롯인 경우)
@@ -343,6 +346,7 @@ public class Inventory : View
             else if (trigger.ItemType == ItemTypeEnum.Weapon) // trigger가 소지품 슬롯이고 무기 타입 아이템인 경우
             {
                 SwapSlotItem(trigger, weaponSlot);
+                GameManager.Instance.InstanceData.EquippedWeaponID = weaponSlot.ItemID; // 인스턴스 데이터에 장착된 무기 ID 갱신
             }
             else if (trigger.ItemType == ItemTypeEnum.Potion) // trigger가 소지품 슬롯이고 포션 타입 아이템인 경우
             {
@@ -353,6 +357,7 @@ public class Inventory : View
             if (weaponSlot.IsEmpty) // 무기 장착 처리
             {
                 Player.Current.EquipWeapon(null);
+                GameManager.Instance.InstanceData.EquippedWeaponID = -1; // 인스턴스 데이터에 장착된 무기 ID 갱신
             }
             else
             {

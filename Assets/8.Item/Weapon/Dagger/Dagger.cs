@@ -75,7 +75,7 @@ public class Dagger : Weapon
                 {
                     return BehaviourTreeStatus.Failure;
                 }
-                else if (skillAction.IsPressed()) // 입력이 있는 경우
+                else if (skillAction.IsPressed() && player.BlockInput == false) // 입력이 있는 경우
                 {
                     if (player.CurrentAnimationState != Player.AnimationState.Attack_1
                         && player.CurrentAnimationState != Player.AnimationState.Attack_2)
@@ -154,7 +154,7 @@ public class Dagger : Weapon
                 {
                     return BehaviourTreeStatus.Failure;
                 }
-                else if (skillAction.IsPressed()) // 입력이 있는 경우
+                else if (skillAction.IsPressed() && player.BlockInput == false) // 입력이 있는 경우
                 {
                     if (player.CurrentAnimationState != Player.AnimationState.Attack_0
                         && player.CurrentAnimationState != Player.AnimationState.Attack_2)
@@ -233,7 +233,7 @@ public class Dagger : Weapon
                 {
                     return BehaviourTreeStatus.Failure;
                 }
-                else if (skillAction.IsPressed()) // 입력이 있는 경우
+                else if (skillAction.IsPressed() && player.BlockInput == false) // 입력이 있는 경우
                 {
                     if (player.CurrentAnimationState != Player.AnimationState.Attack_0
                         && player.CurrentAnimationState != Player.AnimationState.Attack_1)

@@ -90,7 +90,7 @@ public class Axe : Weapon
                 {
                     return BehaviourTreeStatus.Failure;
                 }
-                else if (skillAction.IsPressed()) // 입력이 있는 경우
+                else if (skillAction.IsPressed() && player.BlockInput == false) // 입력이 있는 경우
                 {
                     if (player.CurrentAnimationState != Player.AnimationState.Attack_1
                         && player.CurrentAnimationState != Player.AnimationState.Attack_2)
@@ -196,7 +196,7 @@ public class Axe : Weapon
                 {
                     return BehaviourTreeStatus.Failure;
                 }
-                else if (skillAction.IsPressed()) // 입력이 있는 경우
+                else if (skillAction.IsPressed() && player.BlockInput == false) // 입력이 있는 경우
                 {
                     if (player.IsOnGround == false) // 공중에 있는 경우 시전 불가
                     {
@@ -301,7 +301,7 @@ public class Axe : Weapon
                 {
                     return BehaviourTreeStatus.Failure;
                 }
-                else if (skillAction.IsPressed()) // 입력이 있는 경우
+                else if (skillAction.IsPressed() && player.BlockInput == false) // 입력이 있는 경우
                 {
                     if (player.IsOnGround == false) // 공중에 있는 경우 시전 불가
                     {
