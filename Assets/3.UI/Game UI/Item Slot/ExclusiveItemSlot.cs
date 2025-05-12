@@ -1,33 +1,21 @@
 ﻿public class ExclusiveItemSlot : ItemSlot
 {
-    protected override void OnContainerValueChange(ItemContainer changed)
+    public override void SetAmount(int amount)
     {
-        if (itemContainer == null)
-        {
-            iconImage.gameObject.SetActive(false);
-            amountText.text = string.Empty;
-        }
-        else if (itemContainer.Amount >= 1)
-        {
-            iconImage.gameObject.SetActive(true);
+        itemAmount = amount;
 
-            if (itemContainer.Item.TypeEnum == ItemTypeEnum.Potion)
-            {
-                amountText.text = itemContainer.Amount.ToString();
-            }
-
+        if (itemAmount >= 1)
+        {
+            amountText.text = itemAmount.ToString();
             SetAlpha(1f);
         }
         else
         {
-            iconImage.gameObject.SetActive(true);
-
-            if (itemContainer.Item.TypeEnum == ItemTypeEnum.Potion)
-            {
-                amountText.text = itemContainer.Amount.ToString();
-            }
-
+            amountText.text = string.Empty;
             SetAlpha(0.5f);
         }
+
+        iconImage.gameObject.SetActive(true);
+        amountText.text = itemAmount.ToString();
     }
 }

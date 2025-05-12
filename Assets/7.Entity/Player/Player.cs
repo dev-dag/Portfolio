@@ -309,10 +309,9 @@ public class Player : Entity, ICombatable
         Inventory inventory = GameManager.Instance.gameUI.Inventory;
         InstanceData data = GameManager.Instance.InstanceData;
         
-        if (data.EquippedWeaponID != -1
-            && inventory.WeaponSlot.ItemID != null)
+        if (data.EquippedWeaponID != -1 && inventory.WeaponSlot.IsEmpty == false)
         {
-            EquipWeapon(inventory.ItemContainers[data.EquippedWeaponID] as Weapon);
+            EquipWeapon(GameManager.Instance.InstanceData.Items[data.EquippedWeaponID] as Weapon);
         }
 
         AttachCamera(); // 카메라 팔로우 설정
@@ -518,9 +517,9 @@ public class Player : Entity, ICombatable
     {
         ExclusiveItemSlot quickSlot = GameManager.Instance.gameUI.QuickSlot.GetQuickSlotByIndex(0);
 
-        if (quickSlot.ItemID != null)
+        if (quickSlot.IsEmpty == false)
         {
-            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.ItemContainers[quickSlot.ItemID.Value];
+            ItemContainer itemContainer = GameManager.Instance.InstanceData.Items[quickSlot.ItemID];
 
             (itemContainer as Potion).Drink();
         }
@@ -530,9 +529,9 @@ public class Player : Entity, ICombatable
     {
         ExclusiveItemSlot quickSlot = GameManager.Instance.gameUI.QuickSlot.GetQuickSlotByIndex(1);
 
-        if (quickSlot.ItemID != null)
+        if (quickSlot.IsEmpty == false)
         {
-            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.ItemContainers[quickSlot.ItemID.Value];
+            ItemContainer itemContainer = GameManager.Instance.InstanceData.Items[quickSlot.ItemID];
 
             (itemContainer as Potion).Drink();
         }
@@ -542,9 +541,9 @@ public class Player : Entity, ICombatable
     {
         ExclusiveItemSlot quickSlot = GameManager.Instance.gameUI.QuickSlot.GetQuickSlotByIndex(2);
 
-        if (quickSlot.ItemID != null)
+        if (quickSlot.IsEmpty == false)
         {
-            ItemContainer itemContainer = GameManager.Instance.gameUI.Inventory.ItemContainers[quickSlot.ItemID.Value];
+            ItemContainer itemContainer = GameManager.Instance.InstanceData.Items[quickSlot.ItemID];
 
             (itemContainer as Potion).Drink();
         }

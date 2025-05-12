@@ -13,6 +13,8 @@ public class QuickSlot : View
         {
             quickSlot.Init();
         }
+
+        Sync();
     }
 
     /// <summary>
@@ -22,8 +24,7 @@ public class QuickSlot : View
     {
         foreach (ExclusiveItemSlot quickSlot in quickSlots)
         {
-            if (quickSlot.ItemID != null
-                && quickSlot.ItemID.Value == holdingItemID)
+            if (quickSlot.IsEmpty == false && quickSlot.ItemID == holdingItemID)
             {
                 return quickSlot;
             }
@@ -35,5 +36,42 @@ public class QuickSlot : View
     public ExclusiveItemSlot GetQuickSlotByIndex(int index)
     {
         return quickSlots[index];
+    }
+
+    /// <summary>
+    /// 인스턴스 데이터와 뷰를 동기화하는 함수
+    /// </summary>
+    public void Sync()
+    {
+        int slot_0_ID = GameManager.Instance.InstanceData.QuickSlot_0_ID;
+        int slot_1_ID = GameManager.Instance.InstanceData.QuickSlot_1_ID;
+        int slot_2_ID = GameManager.Instance.InstanceData.QuickSlot_2_ID;
+
+        if (GameManager.Instance.InstanceData.Items.TryGetValue(slot_0_ID, out var container0))
+        {
+            quickSlots[0].Set(slot_0_ID, container0.Amount);
+        }
+        else
+        {
+            quickSlots[0].Set(slot_0_ID, 0);
+        }
+
+        if (GameManager.Instance.InstanceData.Items.TryGetValue(slot_1_ID, out var container1))
+        {
+            quickSlots[1].Set(slot_1_ID, container1.Amount);
+        }
+        else
+        {
+            quickSlots[1].Set(slot_1_ID, 0);
+        }
+
+        if (GameManager.Instance.InstanceData.Items.TryGetValue(slot_2_ID, out var container2))
+        {
+            quickSlots[2].Set(slot_2_ID, container2.Amount);
+        }
+        else
+        {
+            quickSlots[2].Set(slot_2_ID, 0);
+        }
     }
 }

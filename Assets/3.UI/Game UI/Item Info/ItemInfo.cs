@@ -98,11 +98,6 @@ public class ItemInfo : View
         SetPositionToCursorBased();
     }
 
-    public void Disable()
-    {
-        this.gameObject.SetActive(false);
-    }
-
     private void SetPositionToCursorBased()
     {
         RectTransform rtr = this.transform as RectTransform;

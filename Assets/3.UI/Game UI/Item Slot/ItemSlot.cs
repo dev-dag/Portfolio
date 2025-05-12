@@ -1,4 +1,5 @@
 ﻿using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,50 +12,20 @@ public class ItemSlot : View, IPointerClickHandler, IDragHandler, IPointerMoveHa
         Ended = 1,
     }
 
-    public int? ItemID
-    {
-        get
-        {
-            if (itemContainer != null)
-            {
-                return itemContainer.Item.ID;
-            }
-            else
-            {
-                return null;
-            }
-        }
-    }
-
-    public int? ItemAmount
-    {
-        get
-        {
-            if (itemContainer != null)
-            {
-                return itemContainer.Amount;
-            }
-            else
-            {
-                return null;
-            }
-        }
-    }
-
     public Sprite ItemIconSprite
     {
-        get
-        {
-            if (itemContainer != null)
-            {
-                return itemContainer.Item.IconSprite;
-            }
-            else
-            {
-                return null;
-            }
-        }
+        get => iconImage.sprite;
     }
+
+    protected int itemAmount = -1;
+    public int ItemAmount
+    {
+        get => itemAmount;
+    }
+
+    public bool IsEmpty { get; protected set; } = true;
+    public int ItemID { get; protected set; } = -1;
+    public ItemTypeEnum ItemType { get; protected set; }
 
     public delegate void DragEventHandler(ItemSlot trigger, Vector2 position, InputStatus dragStatus);
     public delegate void ClickEventHandler(ItemSlot trigger, PointerEventData.InputButton button);
@@ -62,8 +33,6 @@ public class ItemSlot : View, IPointerClickHandler, IDragHandler, IPointerMoveHa
 
     [SerializeField] protected Image iconImage;
     [SerializeField] protected TMP_Text amountText;
-
-    protected ItemContainer itemContainer;
 
     private DragEventHandler dragEventHandler;
     private ClickEventHandler clickEventHandler;
@@ -75,39 +44,24 @@ public class ItemSlot : View, IPointerClickHandler, IDragHandler, IPointerMoveHa
         iconImage.gameObject.SetActive(false);
     }
 
-    private void OnEnable()
-    {
-        if (itemContainer != null)
-        {
-            itemContainer.OnValueChanged -= OnContainerValueChange;
-            itemContainer.OnValueChanged += OnContainerValueChange;
-
-            OnContainerValueChange(itemContainer);
-        }
-    }
-
-    private void OnDisable()
-    {
-        if (itemContainer != null)
-        {
-            itemContainer.OnValueChanged -= OnContainerValueChange;
-        }
-    }
-
     public override void Init()
     {
         base.Init();
+
+        IsEmpty = true;
+        ItemID = -1;
+        ItemType = ItemTypeEnum.None;
+        itemAmount = -1;
 
         this.dragEventHandler = null; 
         this.clickEventHandler = null;
         this.hoverEventHandler = null;
 
-        itemContainer = null;
         onDrag = false;
         iconImage.sprite = null;
         iconImage.gameObject.SetActive(false);
-        amountText.text = string.Empty;
         iconImage.color = new Color(iconImage.color.r, iconImage.color.g, iconImage.color.b, 1f);
+        amountText.text = string.Empty;
         amountText.alpha = 1f;
     }
 
@@ -180,55 +134,45 @@ public class ItemSlot : View, IPointerClickHandler, IDragHandler, IPointerMoveHa
         }
     }
 
-    public void Set(ItemContainer newContainer)
+    public void Set(int itemID, int amount)
     {
-        if (itemContainer != null)
+        Init(dragEventHandler, clickEventHandler, hoverEventHandler); // 초기화
+
+        if (GameManager.Instance.ReferenceData.item.TryGetValue(itemID, out var item)) // 아이템 정보를 찾아서 초기화
         {
-            itemContainer.OnValueChanged -= OnContainerValueChange;
+            iconImage.sprite = item.IconSprite;
+            iconImage.gameObject.SetActive(true);
+            SetAmount(amount);
+            ItemID = itemID;
+            ItemType = item.TypeEnum;
+            IsEmpty = false;
         }
+    }
 
-        itemContainer = newContainer;
+    public virtual void SetAmount(int amount)
+    {
+        itemAmount = amount;
 
-        if (itemContainer != null)
+        if (ItemAmount >= 1)
         {
-            itemContainer.OnValueChanged += OnContainerValueChange;
-            iconImage.sprite = itemContainer.Item.IconSprite;
+            iconImage.gameObject.SetActive(true);
+            amountText.text = ItemAmount.ToString();
         }
+        else
+        {
+            iconImage.gameObject.SetActive(false);
+            amountText.text = string.Empty;
+        }
+    }
 
-        // UI 초기화
-        OnContainerValueChange(itemContainer);
+    public void AddAmount(int amount)
+    {
+        SetAmount(itemAmount + amount);
     }
 
     public void SetAlpha(float alpha)
     {
         iconImage.color = new Color(iconImage.color.r, iconImage.color.g, iconImage.color.b, alpha);
         amountText.alpha = alpha;
-    }
-
-    /// <summary>
-    /// UI의 상태를 컨테이너 값으로 갱신
-    /// </summary>
-    protected virtual void OnContainerValueChange(ItemContainer changed)
-    {
-        if (itemContainer == null)
-        {
-            iconImage.gameObject.SetActive(false);
-            amountText.text = string.Empty;
-        }
-        else if (itemContainer.Amount >= 1)
-        {
-            iconImage.gameObject.SetActive(true);
-
-            if (itemContainer.Item.TypeEnum == ItemTypeEnum.Potion)
-            {
-                amountText.text = itemContainer.Amount.ToString();
-            }
-        }
-        else
-        {
-            iconImage.gameObject.SetActive(false);
-            amountText.text = string.Empty;
-            itemContainer = null;
-        }
     }
 }

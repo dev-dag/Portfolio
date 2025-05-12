@@ -506,6 +506,7 @@ MonoBehaviour:
   - {fileID: 6527783138342453504}
   - {fileID: 3625262507482363043}
   holdingItemImage: {fileID: 1058906722189128492}
+  raycaster: {fileID: 413564296769493014}
 --- !u!223 &8256694594395004660
 Canvas:
   m_ObjectHideFlags: 0
@@ -667,8 +668,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6213028982463919132}
-        m_TargetAssemblyTypeName: Inventory, Assembly-CSharp
-        m_MethodName: Disable
+        m_TargetAssemblyTypeName: View, Assembly-CSharp
+        m_MethodName: Hide
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

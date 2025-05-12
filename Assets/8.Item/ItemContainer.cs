@@ -4,7 +4,7 @@ using System;
 
 public class ItemContainer
 {
-    public event Action<ItemContainer> OnValueChanged;
+    public event Action<ItemContainer> OnAmountChanged;
 
     private Item item;
     public Item Item
@@ -15,7 +15,7 @@ public class ItemContainer
             if (item != value)
             {
                 item = value;
-                OnValueChanged?.Invoke(this);
+                OnAmountChanged?.Invoke(this);
             }
         }
     }
@@ -29,7 +29,7 @@ public class ItemContainer
             if (amount != value)
             {
                 amount = value;
-                OnValueChanged?.Invoke(this);
+                OnAmountChanged?.Invoke(this);
             }
         }
     }
