@@ -9,7 +9,6 @@ public class View : MonoBehaviour
     /// </summary>
     public virtual void Init()
     {
-        Hide();
         IsInit = true;
     }
 
