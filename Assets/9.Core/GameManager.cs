@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.U2D;
 
@@ -129,9 +130,20 @@ public class GameManager : SingleTon<GameManager>
         }
     }
 
+    private bool onProgress = false;
+
     public async void StartGame()
     {
-        await cachingAwaiter;
+        if (onProgress)
+        {
+            return;
+        }
+        else if (cachingAwaiter != null)
+        {
+            await cachingAwaiter;
+        }
+
+        onProgress = true;
 
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(1, LoadSceneMode.Additive);
         var task = new TaskCompletionSource<object>();
@@ -159,7 +171,15 @@ public class GameManager : SingleTon<GameManager>
             globalInputActionAsset.Enable(); // 인풋 활성화
 
             globalUI.Fade.FadeIn(1f);
+
+            onProgress = false;
         });
+    }
+
+    [ContextMenu("Add Potion")]
+    public void A()
+    {
+        InstanceData.AddItem(3, 1);
     }
 
     protected override void Awake()
@@ -171,24 +191,26 @@ public class GameManager : SingleTon<GameManager>
         Init();
     }
 
-    private void Init()
+    private async Task Init()
     {
         DB_Connecter dbConnecter = new DB_Connecter();
         ReferenceData = dbConnecter.ConnectAndLoadDB();
         cachingAwaiter = MakeCache();
+        await cachingAwaiter;
 
-        globalInputActionAsset.Enable(); // 인풋 활성화
-
-        InstanceData = new InstanceData(new Dictionary<int, int>()
+        InstanceData = new InstanceData(new Dictionary<int, int>() // 인스턴스 데이터 생성
         {
             { 0, 1 },
             { 1, 1 },
             { 2, 1 },
             { 3, 3 }
         }
-        , 1, 3, -1, -1);
+        , 1, 3, -1, -1, 10, 1f, 1f, 1f);
+
+        globalInputActionAsset.Enable(); // 인풋 활성화
 
         globalUI = GameObject.Instantiate(globalUI_Prefab).GetComponent<GlobalUI>(); // 글로벌 UI 생성
+        globalUI.Init();
         DontDestroyOnLoad(globalUI.gameObject); // UI 오브젝트 파괴 방지
 
         GameObject.Instantiate(player_Prefab); // 플레이어 오브젝트 생성

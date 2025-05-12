@@ -18,6 +18,10 @@ public class AudioSystem : MonoBehaviour
     private Dictionary<int, AudioPlayer> SFX_Player; // 재생중인 SFX 플레이어
     private Dictionary<int, AudioPlayer> UI_SFX_Player; // UI SFX 플레이어
 
+    private float BGM_Volume = 1.0f; // BGM 볼륨
+    private float SFX_Volume = 1.0f; // SFX 볼륨
+    private float UI_SFX_Volume = 1.0f; // UI SFX 볼륨
+
     public void Init()
     {
         // BGM 초기화
@@ -118,6 +122,45 @@ public class AudioSystem : MonoBehaviour
     {
         var audioPlayer = GetAudioPlayer(audioType); // SFX 플레이어 가져오기
         audioPlayer.Play(audioClip); // SFX 재생
+    }
+
+    /// <summary>
+    /// 분류별 볼륨을 설정하는 함수
+    /// </summary>
+    public void SetVolume(AudioType audioType, float value)
+    {
+        switch (audioType)
+        {
+            case AudioType.BGM:
+            {
+                BGM_Volume = value;
+                BGM_Player.SetVolume(BGM_Volume); // BGM 볼륨 설정
+
+                break;
+            }
+            case AudioType.SFX:
+            {
+                SFX_Volume = value;
+
+                foreach (var player in SFX_Player.Values)
+                {
+                    player.SetVolume(SFX_Volume); // SFX 볼륨 설정
+                }
+
+                break;
+            }
+            case AudioType.UI_SFX:
+            {
+                UI_SFX_Volume = value;
+
+                foreach (var player in UI_SFX_Player.Values)
+                {
+                    player.SetVolume(UI_SFX_Volume); // UI SFX 볼륨 설정
+                }
+
+                break;
+            }
+        }
     }
 
     /// <summary>
