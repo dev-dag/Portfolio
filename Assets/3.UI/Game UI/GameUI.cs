@@ -3,7 +3,7 @@ using Database_Table;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameUI : MonoBehaviour
+public class GameUI : View
 {
     public ObjectPool OverheadUI_Pool { get => overheadUI_Pool; }
     public Dialog Dialog { get => dialog; }
@@ -32,19 +32,23 @@ public class GameUI : MonoBehaviour
         skillView.gameObject.SetActive(false);
     }
 
-    public void Init()
+    public override void Init()
     {
         dialog.Init();
-        inventory.Init();
         quickSlot.Init();
+        inventory.Init();
         itemInfo.Init();
         playerInfoPreview.Init();
         skillView.Init();
-        inventory.Init();
 
+        dialog.Hide();
+        inventory.Hide();
+        itemInfo.Hide();
         quickSlot.Show();
         playerInfoPreview.Show();
         skillView.Show();
+
+        base.Init();
     }
 
     public void ShowUI_ForCinematic(bool isShown = false)
